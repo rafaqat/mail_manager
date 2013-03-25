@@ -1,0 +1,20 @@
+<% form_for(@mailing_list) do |f| %>
+  <%= f.error_messages %>
+  <table cellspacing='1' cellpadding='0' border='0'>  
+    <tr valign="top">
+       <td width='150'><%= f.label :name %></td>
+       <td><%= f.text_field :name %></td>
+    </tr>
+    <tr valign="top">
+       <td width='150'><%= f.label :description %></td>
+       <td><%= f.text_area :description %></td>
+    </tr>
+    <tr valign="top">
+       <td width='150'><%= f.label :defaults_to_active %></td>
+       <td><%= f.check_box :defaults_to_active %></td>
+    </tr>
+    <tr>
+      <td align="right" colspan="2"><%= f.submit "Submit", :class => 'button' %><div class="buttonEnding"></div></td>
+    </tr>
+  </table>
+<% end %>

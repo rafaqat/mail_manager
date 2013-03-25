@@ -1,0 +1,13 @@
+<% form_tag mail_mgr_unsubscribe_by_email_address_path do %>
+<% title "Unsubscribe" %>
+<p>Please enter your email address below to unsubscribe from all of our lists.</p>
+  <table cellpadding="0" cellspacing="2" border="0">
+  <tr>
+    <td><%= label_tag :email_address, 'Email Address: '  %></td>
+    <td><%= text_field_tag :email_address %></td>
+  </tr>
+  <tr>
+     <td colspan="2" align="right"><%= submit_tag 'Unsubscribe', :class => 'button' %><div class="buttonEnding"></div>
+  </tr>
+<% end %>
+</table>

@@ -1,0 +1,22 @@
+<% title "Contact" %>
+
+<p>
+  <strong>First Name:</strong>
+  <%=h @contact.first_name %>
+</p>
+<p>
+  <strong>Last Name:</strong>
+  <%=h @contact.last_name %>
+</p>
+<p>
+  <strong>Email Address:</strong>
+  <%=h @contact.email_address %>
+</p>
+
+<% content_for :page_navigation do %>
+<div>
+  <%= link_to "Edit", edit_mail_mgr_contact_path(@contact), :class => 'button' %><div class="linkbuttonEnding"></div> 
+  <%= link_to "Delete", @contact, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %><div class="linkbuttonEnding"></div> 
+  <%= link_to "View All", mail_mgr_contacts_path, :class => 'button' %><div class="linkbuttonEnding"></div>
+</div>
+<% end %>

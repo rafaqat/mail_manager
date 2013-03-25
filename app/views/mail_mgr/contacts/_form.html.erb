@@ -1,0 +1,27 @@
+<% form_for @contact do |f| %>
+  <%= f.error_messages %>
+  <table cellspacing='1' cellpadding='0' border='0' width="400">  
+    <tr valign='top'>
+    <tr valign="top">
+       <td width='150'><%= f.label :first_name %></td>
+       <td><%= f.text_field :first_name %></td>
+    </tr>
+    <tr valign='top'>
+    <tr valign="top">
+       <td width='150'><%= f.label :last_name %></td>
+       <td><%= f.text_field :last_name %></td>
+    </tr>
+    <tr valign='top'>
+    <tr valign="top">
+       <td width='150'><%= f.label :email_address %></td>
+       <td><%= f.text_field :email_address %></td>
+    </tr>
+  </table>
+  <table cellspacing='1' cellpadding='0' border='0' width="400">
+    <%= contactable_subscriptions_selector(f) %>
+    <tr valign='top'>
+      <td align="right" colspan="2"><%= f.submit "Submit", :class => 'button' %><div class="buttonEnding"></div></td>
+    </tr>
+  </table>
+    
+<% end %>

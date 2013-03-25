@@ -1,0 +1,148 @@
+=General Requirements=
+The goal of this project will be to create a plugin for use in any site which will provide an interface to manage mailing lists, scheduling of email mailings, subscribe/unsubscribe from lists by contacts, and view reports of bounces and possible track views of emails. Currently, only one list is supported for subscribe/unsubscribe by contact. An interface is available to provide mailable objects from other plugins.
+
+=Overview=
+
+==Installation==
+Steps:
+* Install code base
+* Configure '''config/config.yml''' (see Basic Configuration below)
+* Set up an init script for the background daemon: lib/daemons/ctl [start|stop]
+
+===Install code base===
+Using Application Designs, it will install the source and bootstrap the database migrations, set up dumb defaults in '''config/config.yml'' and other features such as the background process that sends mailings and processes the bounced emails.
+If you wish to manually 
+<pre>
+#Existing App:
+cd /into/your/rails/root
+rake rails:design -m http://svn.lnstar.com/app_designs/mlm.rb
+#new application - answer questions as you like ... and 'y' to lsi plugins & mlm
+rails -m http://svn.lnstar.com/app_designs/base.rb app_name
+</pre>
+
+==Basic Configuration==
+Configuration currently is defined with a plugin [[AppConfig]], which pulls application configuration in from the file: "'''config/config.yml'''" in the root of your rails application. Paths and urls in general do NOT have a trailing slash. Here are the applicable settings for mlm:
+*  Specific
+** '''path_prefix''' - relative path for newsletter administrative routes, '''site_path/site_url''' are prepended when calculating urls and paths for routes
+** '''unsubscribe_path''' - route to your unsubscribe url, this does not have to be the action/controller names, but needs to be set up in your routes to point to controller: subscriptions and action: unsubscribe
+** '''default_from_email_address''' - email address pre-populates in the mailings data for from address
+** '''secret''' - secret key to create message GUIDs
+** '''bounce''' - section for bounce settings
+*** '''email_address''' - email account to receive bounces
+*** '''login''' - login for pop acount
+*** '''password''' - password for pop account
+*** '''pop_server''' - server for pop account
+site_path:
+* Site wide 
+** '''site_path''' - path relative to your domain name if your project is in a sub url
+** '''site_url''' - full url to your site... will include your '''site_path'''
+==StatusHistory==
+This is currently only a module, which we may give "history" in the future. Models that use this module will have the following fields, and will have a method to "change_status", which will update both the status and its status_changed_at. A model should also define its valid statuses.
+* status - text - the status
+* status_changed_at - datetime of last change
+
+==Contact==
+This will be the object that stores BASIC info on a contact and can be extended for different apps... name, email are probably all that are NEEDED You can either use an existing table or create a new one... so long as it supports the following methods
+* full_name
+* email_address
+* has_many Subscriptions
+* has_many Messages
+
+==MailingList==
+This describes a list that Contacts can subscribe to and Mailing Lists admins can send to.
+* name
+* description
+* has_many Subscriptions
+
+==Subscription==
+Ties Contacts to MailingLists, status of 'active' is the only status that will allow messages to be sent.
+* has StatusHistory (:active, :unsubscribed, :pending, :failed_address)
+* belongs_to Contact
+* belongs_to MailingList
+
+==Message==
+This is a join table which defines the contacts that this mailing will send a message to and used to track success/failure/bounce/retries etc...
+* guid - global identifier sent with message identify bounces
+* result - used to save messages for failure from bounces or sending
+* belongs_to Mailing
+* belongs_to Contact
+* has StatusHistory
+** pending - message has been created - awaiting send
+** processing - message is being sent
+** sent - successful sending to MTA - does not mean it is successfully delivered
+** failed - either a program error or bounced message with a permanent failure code
+
+==Mailing==
+An actual Mailing to schedule a message to be sent to a list. On creation, it will be in a pending state, so you can send your message as a test. Once you are ready to send the mailing, you should set when you want to schedule it and click "Schedule" from the Mailings management screen. You may pause your mailing once it has started processing, and resume or cancel it. You may cancel your message at any time. Currently, Cancelled and Completed messages are in a terminal state.
+* Data
+** name
+** description
+** scheduled_at
+** include_images? - whether to send the images inline with the message
+** has StatusHistory 
+*** pending - initial state - will not be sent, can send test messages and edit details
+*** scheduled - will be sent as soon as its scheduled_at date is in the past and a job can pick it up, can still send test messages and edit details
+*** processing - the mailing is being sent - can view messages and their status, and any bounces
+*** completed - the mailing has been completed - can view messages and their status, and any bounces
+*** paused - mailing is paused, can either be cancelled or resumed.
+** has_many Messages
+** has_and_belongs_to_many MailingLists
+
+==JobQueue==
+Not currently implementing a queue, all job data is inferred from the objects themselves, and statuses and results are also recorded there.
+* [http://nubyonrails.com/articles/about-this-blog-beanstalk-messaging-queue Beanstalk]
+* [http://backgroundrb.rubyforge.org/ BackgroundRB] *** starting with this one
+* Workers:
+** Send Mailing
+*** sends mailings that are ready(status of scheduled and )
+** Bounce Checking
+*** checks the configured mailbox (pop supported) and tries to match the messages with those that were sent using the message GUID, if a match is not found ... it simply marks the message as 'invalid', if a match is found it ties the bounce to the message and continues... it checks for a diagnostic code, if it does not recognize the diagnostic code it marks the bounce as 'needs_manual_intervention', so it will show up in a list of bounces that need to be looked in to ... if it recognizes the code as a temporary failure ... it is marked as resolved and no action is taken. if it recognizes the code as a permanent failure it marks the bounce as resolved and all subscriptions for that user as 'failed_address'
+
+=Useful Links=
+* Articles on available software:
+** [http://www.openemm.org OpenEMM - actually looks like a decent open source app] [http://www.openemm.org/demo.html Demo]
+*** [https://db.lnstar.com/wiki/media/InstallGuide_OpenEMM-5.5.1.pdf Installation Guide - some useful insights into setting up sendmail and stuff]
+*** [https://db.lnstar.com/wiki/media/OpenEMM_UserManual_5.5.1.pdf User Manual]
+*** [https://db.lnstar.com/wiki/media/OpenEMMWebservices112.pdf Web services]
+** [http://www.idealware.org/articles/fgt_email_newsletter_tools.php Article on Options]
+** [http://www.allwebdesignresources.com/webdesignblogs/graphics/email-newsletter-and-mass-email-sending-services-sites/ Available List]
+** [http://www.version-next.com/vemail_list_manager.htm Commercial Product - Feature Wish List?]
+* Non-usefull garbage == XLSuite
+
+=More Requirements=
+==Mailing List Management==
+There will be an administrative interface to create categories/lists in which to include contacts, which should be deduped by email and any other means available. Assuming this is a plugin, 'contacts' will be the point of interface to the rest of the app.  
+* Subscription CRUD
+* Contact CRUD
+* Contacts Import(/Export?) xml? csv? 
+* Contact Subscription(s) administrative opt in/out
+* Dedupe management tool
+* schedule/send an email to a list (create a mailing)
+* send test email (to test list?)
+* cancel/stop/pause a (scheduled) email?
+* create design instances
+* throttling
+
+===Subscription Management===
+* Public Web View
+** There will be a generic form/action for adding subscribers to list(s)
+** There will be a generic action to request removal from all lists, or the ability to log in and change subscription preferences if there are multiple lists/categories (future?)
+* API
+** add contacts to lists
+** unsubscribe contacts from lists
+* Import 
+
+===Automated Bounce/Removal Invalidation===
+There will be a system in place to receive bounces and invalidate email addresses from lists, this requires MTA setup, system mail accounts and other stuff I may not know about yet
+* Need to set up or use an existing MTA(sendmail/postfix)
+* Need to set up an account to receive bounces
+* set up an account to receive unsubscribe reply-requests? or only through web?
+
+==Daemon Actions needed==
+These are processes that should NOT be done by a web request, but should wait around an listen for messages and/or process queues.
+* Send Email to List
+* Bounce Detection
+* Email Reply-Unsubscribe requests?
+
+==Authentication/Security==
+Administration should be available to 'Administrator's defined from within the app, there may be a more comprehensive role based solution in the future, but KISS should apply for now. Unsubscribe links should not need login info EVER, but if we have more than one subscription type for a site, they should have to login for changing levels of subscription.... in which case the Contacts should be required to have a link back to a 'User' account.

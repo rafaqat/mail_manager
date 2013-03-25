@@ -1,0 +1,52 @@
+<% title "Listing Mailings" %>
+
+<% if @mailings.length > 0 %>
+
+	<table class="list" border="0" cellpadding="0" cellspacing="0">
+	  <tr class="title">
+      <td>Subject</td>
+      <td>Scheduled At</td>
+      <td>Status</td>
+      <td colspan="6"> </td>
+    </tr>
+		<% @mailings.each do |mailing| 
+         dynamic_tds_left = 5 %>
+		<tr class="<%= cycle('odd','even') %>">
+			<td><%=h mailing.subject %></td>
+			<td><%=h mailing.scheduled_at %></td>
+			<td><b><%=h mailing.status %></b></td>
+			<td align="center"><nobr><%= link_to 'Send Test', test_mail_mgr_mailing_path(mailing), :id => 'Send_Test', :class => 'button' %></nobr><div class="linkbuttonEnding"></div></td>
+      <% if mailing.can_edit? 
+          dynamic_tds_left -= 1 %>
+			<td align="center"><%= link_to 'Edit', edit_mail_mgr_mailing_path(mailing), :class => 'button' %><div class="linkbuttonEnding"></div></td>
+			<% if mailing.can_schedule? 
+           dynamic_tds_left -= 1 %>
+			<td align="center"><%= link_to 'Schedule', schedule_mail_mgr_mailing_path(mailing), :class => 'button' %><div class="linkbuttonEnding"></div></td>
+			<% elsif mailing.can_cancel? 
+           dynamic_tds_left -= 1 %>
+			<td align="center"><%= link_to 'Cancel', cancel_mail_mgr_mailing_path(mailing), :class => 'button' %>     <div class="linkbuttonEnding"></div></td>
+          <% end %>
+			<% end %>
+      <% if mailing.messages.length > 0 
+           dynamic_tds_left -= 1 %>
+			<td align="center"><%= link_to 'Messages', mail_mgr_mailing_messages_path(mailing), :class => 'button' %><div class="linkbuttonEnding"></div></td>
+      <% end %>
+      <% if mailing.bounces.length > 0 
+           dynamic_tds_left -= 1 %>
+			<td align="center"><%= link_to 'Bounces', mail_mgr_bounces_path(:mailing_id => mailing.id), :class => 'button' %><div class="linkbuttonEnding"></div></td>
+      <% end %>
+      <% 1.upto( dynamic_tds_left ) do %>
+      <td align="center"></td>
+      <% end %>
+		</tr>
+		<% end %>
+	</table>
+<% else %>
+No mailings exist.
+<% end %>
+
+<% content_for :page_navigation do %>
+<div>
+  <%= link_to "New Mailing", new_mail_mgr_mailing_path, :class => 'button' %><div class="linkbuttonEnding"></div>
+</div>
+<% end %>
