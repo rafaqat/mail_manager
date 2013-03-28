@@ -47,7 +47,7 @@ module MailMgr
             change_status(:resolved)
             message.change_status(:failed)
             message.update_attribute(:result,"Failure Message from Bounce: #{delivery_error_message}")
-            Subscription.fail_by_email_address(contact_email_address)
+            Subscription.fail_by_email_address(contact_email_address) 
           end
         else
           update_attribute(:comments, 'unrecognized diagnostic code')
@@ -87,11 +87,11 @@ module MailMgr
     end
   
     def contact_full_name
-      contact.full_name
+      contact.try(:full_name).to_s
     end
 
     def contact_email_address
-      contact.email_address
+      contact.try(:email_address).to_s
     end
   
     def delivery_error_code
