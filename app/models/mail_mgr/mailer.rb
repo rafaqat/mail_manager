@@ -104,7 +104,8 @@ module MailMgr
     end
   
     def inline_html_with_images(html_source)
-      parsed_data = html_source.split(/(<\s*img[^>]+src\s*=\s*["'])([^"']*)(["'])/i)
+      regex = /(<\s*img[^>]+src\s*=\s*["'])([^"']*)(["'])|(<\s*table[^>]+background\s*=\s*["'])([^"']*)(["'])/i
+      parsed_data = html_source.split(regex)
       images = Array.new
       final_html = ''
       image_errors = ''
