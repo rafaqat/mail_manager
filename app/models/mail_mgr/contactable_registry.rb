@@ -113,7 +113,6 @@ module MailMgr
       
       def reload
         @subscriptions = nil
-        super
       end
       
       def subscriptions
@@ -131,7 +130,6 @@ module MailMgr
           begin 
             transaction do 
               success = success && super
-              Rails.logger.debug "Should I save contactable? Email: #{self.contactable_value(:email_address)}"
               if self.contactable_value(:email_address).present?
                 Rails.logger.debug "User save super success? #{success.inspect}"
                 success = update_subscription_data && success
@@ -139,10 +137,10 @@ module MailMgr
                 success = update_contactable_data unless (!success or self.is_a?(MailMgr::Contact))
                 Rails.logger.debug "User save contactable data success? #{success.inspect}"
               end
-              raise "Failed to update contactable and/or #{self.class.name} data.User Errors:  #{self.errors.full_messages}" unless success
+              raise "Failed to update contactable and/or #{self.class.name} data." unless success
             end
           rescue => e
-            Rails.logger.debug "User save failed! #{e.message} #{e.backtrace.join("\n  ")} #{self.errors.full_messages}"
+            Rails.logger.debug "User save failed! #{e.message} #{e.backtrace.join("\n  ")}"
           end
           Rails.logger.debug "User save successful? #{success}"
         else

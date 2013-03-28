@@ -30,14 +30,10 @@ module MailMgr
     def schedule
       @mailing.schedule
       redirect_to mail_mgr_mailings_path
-    rescue => e
-      flash[:error] = e.message
-      redirect_to mail_mgr_mailings_path
     end
   
     def cancel
       @mailing.cancel
-      flash[:notice] = 'Mailing was successfully canceled and set to pending.  Be sure to reschedule or remove your mailing.'
       redirect_to mail_mgr_mailings_path
     end
   

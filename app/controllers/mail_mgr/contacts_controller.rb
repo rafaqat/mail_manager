@@ -1,22 +1,52 @@
+require 'digest/md5'
 module MailMgr
   class ContactsController < ApplicationController
     layout 'admin'
-
+    
     def subscribe
-      if params[:mail_mgr_contact].present? and params[:mail_mgr_contact][:email_address].present?
+      if params[:mail_mgr_contact].present? and 
+        params[:mail_mgr_contact][:email_address].present? and
+        params[:checkomatic].eql?(Digest::MD5.hexdigest(
+          params[:mail_mgr_contact][:email_address].to_s.strip))
         @contact = MailMgr::Contact.find_by_email_address(params[:mail_mgr_contact][:email_address])
         @contact = MailMgr::Contact.new if @contact.nil?
-        @contact.update_attributes(params[:mail_mgr_contact])
+        @contact.double_opt_in(params[:mail_mgr_contact])
+        raise @contact.errors.full_messages.join("\n") unless @contact.valid?
         #check to see what list we subscribed to, if Austin local redirect, if San Antonio, redirect to their thank you page
       end
-
-      if params[:redirect_url].present? #check to see if it came from SA
-        redirect_to params[:redirect_url]
+      if request.xhr?
+        render :head, :status => '200'
       else
-        redirect_to mail_mgr_thank_you_path #uncomment after testing...
+        #if params[:redirect_url].present? #check to see if it came from SA
+        #  redirect_to params[:redirect_url]
+        #else
+        #  redirect_to mail_mgr_thank_you_path #uncomment after testing...
+        #end
+        render :layout => Conf.mail_mgr_public_layout
       end
     end
-    
+
+    def thank_you
+      render :layout => Conf.mail_mgr_public_layout
+    end
+
+    def double_opt_in
+      @contact = Contact.find_by_token(params[:login_token])
+      if @contact.authorized?(params[:login_token])
+        @contact.subscriptions.select(&:"pending?").each do |subscription| 
+          subscription.change_status(:active)
+        end
+        @mailing_list_names = @contact.subscriptions.select(&:"active?").
+          collect(&:mailing_list).collect(&:name)
+        @message = "You have successfully subscribed to #{@mailing_list_names.join(',')}!"
+      else
+        @contact.generate_login_token
+        @contact.send_later(:deliver_double_opt_in)
+        @message = "Your token has expired! Please check your email for a new one."
+      end
+      render :layout => Conf.mail_mgr_public_layout
+    end
+
     def send_one_off_message
       @contact = Contact.find(params[:id])
       @mailing = Mailing.find(params[:mailing_id])

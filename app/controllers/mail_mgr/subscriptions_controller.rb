@@ -40,7 +40,7 @@ module MailMgr
         @mailing_lists = unsubscribed_subscriptions.reject{|subscription|
           subscription.mailing_list.nil?}.collect{|subscription| subscription.mailing_list.name}
         @contact = Contact.new(:email_address => params[:email_address])
-        return render('unsubscribe', :layout => 'layout')
+        return render('unsubscribe', :layout => Conf.mail_mgr_public_layout)
       end
       render :layout => 'layout'
     end

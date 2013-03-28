@@ -29,6 +29,7 @@ module MailMgr
                             and #{Conf.mail_mgr_table_prefix}contacts.deleted_at IS NULL"
 
     named_scope :unsubscribed, :conditions => {:status => 'unsubscribed'}  
+    named_scope :pending, :conditions => {:status => 'pending'}  
 
     include StatusHistory  
     before_create :set_default_status
@@ -75,6 +76,10 @@ module MailMgr
       status.eql?('active')
     end
 
+    def pending?
+      status.eql?('pending')
+    end
+
     # unsubscribes a contact from all lists by looking them up through a messages GUID
     # FIXME: when we add more lists and the ability to have multiple subscriptions, this should 
     # remove only the list that is tied in the GUID and they should be linked to their options
@@ -95,7 +100,7 @@ module MailMgr
       end
       nil
     end
-  
+
     def default_status
       'pending'
     end

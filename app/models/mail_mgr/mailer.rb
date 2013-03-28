@@ -29,6 +29,15 @@ module MailMgr
       Rails.logger.debug "Really Sending Unsubscribed from #{@mailing_lists.first} to #{@contact.email_address}"
     end
 
+    def double_opt_in(contact)
+      @contact = contact
+      @recipients = @contact.email_address
+      @subject = "Confirm Newsletter Subscription at #{Conf.site_url}"
+      @from = Conf.newsletter_signup_email_address
+      @mailing_list_names = contact.subscriptions.map(&:mailing_list).map(&:name).join(', ')
+      @headers    = {'Return-Path' => Conf.mail_mgr_bounce['email_address']}
+    end
+
     def message(message)
       mail(message.subject,message.email_address_with_name,message.from_email_address,
         message.parts,message.guid,message.mailing.include_images?)
@@ -87,12 +96,13 @@ module MailMgr
       identify_string = ''
       identify_string = ''
       file = Tempfile.new('guess_image_format')
-      file.write image_data;
+      file.write image_data; 
+      file.close
       identify_string = `identify #{file.path}`
       file.close!
       identify_string.split(/\s+/)[1].to_s.downcase
     end
-
+  
     def inline_html_with_images(html_source)
       parsed_data = html_source.split(/(<\s*img[^>]+src\s*=\s*["'])([^"']*)(["'])/i)
       images = Array.new
@@ -110,9 +120,9 @@ module MailMgr
           rescue => e
             image_errors += "Couldn't fetch url '#{data}'<!--, #{e.message} - #{e.backtrace.join("\n")}-->\n"
           end
-          extension = get_extension_from_data(image[:body])
           image[:filename] = data.gsub(/^.*\//,'')
-          extension = data.gsub(/^.*\./,'').downcase if image_mime_types(extension).blank?
+          extension = ''#data.gsub(/^.*\./,'').downcase
+          extension = get_extension_from_data(image[:body]) if image_mime_types(extension).blank?
           image_errors += "Couldn't find mime type for #{extension} on #{data}" if image_mime_types(extension).blank?
           image[:content_type] = image_mime_types(extension)
           images << image

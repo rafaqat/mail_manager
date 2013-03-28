@@ -25,6 +25,7 @@ module MailMgr
   
     named_scope :pending, {:conditions => {:status => 'pending'}}
     named_scope :failed, {:conditions => {:status => 'failed'}}
+    named_scope :sent, {:conditions => {:status => 'sent'}}
     named_scope :ready, :conditions => ["status=?", 'ready']
 
     def initialize(*args)

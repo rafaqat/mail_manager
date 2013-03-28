@@ -46,7 +46,8 @@ module MailMgr
     def deliver
       Rails.logger.info "Starting to Process Mailing '#{subject}' ID:#{id}"
       Lock.with_lock("mail_mgr_mailing_send[#{id}]") do |lock| 
-        change_status(:processing) if status.to_s.eql?('scheduled')
+        raise "Mailing not scheduled!" unless status.to_s.eql?('scheduled')
+        change_status(:processing)
         initialize_messages
         messages.pending.each do |message|
           if reload.status.to_s != 'processing'
@@ -73,7 +74,7 @@ module MailMgr
     def mailable
       return @mailable if @mailable
       return self unless mailable_type and mailable_id
-      @mailable = mailable_type.constantize.find_by_id(mailable_id)
+      @mailable = mailable_type.constantize.find(mailable_id)
     end
 
     def self.substitute_values(source,substitutions)
@@ -208,7 +209,7 @@ module MailMgr
     def cancel
       raise "Unable to cancel" unless can_cancel?
       change_status('pending')
-      Delayed::Job.active.find(:all, :conditions => ["handler like ?","%AR:MailMgr::Mailing:#{id}%"]).each(&:cancel)
+      Delayed::Job.active.find(:all, :conditions => ["handler like ?","%MailMgr::Mailing:#{id}%deliver%"]).each(&:destroy) 
     end
   
     def resume
