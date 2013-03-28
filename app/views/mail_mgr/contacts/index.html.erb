@@ -15,6 +15,7 @@
     <td>First Name</td>
     <td>Last Name</td>
     <td>Email Address</td>
+    <% if MailMgr::Contact.new.respond_to?(:company) %><td>Company</td><% end %>
   <% colspan = 2 
      colspan += 1 if Conf.use_show_for_resources
      colspan += 1 if @mailings.length > 0 %>
@@ -25,6 +26,7 @@
       <td><%=h contact.first_name %></td>
       <td><%=h contact.last_name %></td>
       <td><%=h contact.email_address %></td>
+    <% if contact.respond_to?(:company) %><td><%=h contact.company %></td><% end %>
     <% if Conf.use_show_for_resources %>
       <td><%= link_to "View", contact, :class => 'button' %><div class="linkbuttonEnding"></div></td>
     <% end %>

@@ -27,11 +27,11 @@
 			<td align="center"><%= link_to 'Cancel', cancel_mail_mgr_mailing_path(mailing), :class => 'button' %>     <div class="linkbuttonEnding"></div></td>
           <% end %>
 			<% end %>
-      <% if mailing.messages.length > 0 
+      <% if mailing.messages.count > 0 
            dynamic_tds_left -= 1 %>
 			<td align="center"><%= link_to 'Messages', mail_mgr_mailing_messages_path(mailing), :class => 'button' %><div class="linkbuttonEnding"></div></td>
       <% end %>
-      <% if mailing.bounces.length > 0 
+      <% if mailing.bounces.count > 0 
            dynamic_tds_left -= 1 %>
 			<td align="center"><%= link_to 'Bounces', mail_mgr_bounces_path(:mailing_id => mailing.id), :class => 'button' %><div class="linkbuttonEnding"></div></td>
       <% end %>
