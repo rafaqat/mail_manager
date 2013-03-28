@@ -5,6 +5,10 @@ Factory.sequence :name do |n|
   "AName#{n}"
 end
 
+def self.table_exists?(name)
+  ActiveRecord::Base.connection.select_all("show tables").collect{|row| row.values.first}.include?(name)
+end
+
 Factory.define :mailing_list, :class => MailMgr::MailingList  do |f|
   Factory.next(:name)
 end
@@ -35,11 +39,11 @@ class TestUser < ActiveRecord::Base
   include MailMgr::ContactableRegistry::Contactable
 end
 
-ActiveRecord::Schema.create_table :"#{Conf.mail_mgr_table_prefix}test_users", :force => true do |t|
+ActiveRecord::Schema.create_table :"#{Conf.mail_mgr_table_prefix}test_users" do |t|
   t.string :first
   t.string :last
   t.string :email
-end
+end unless table_exists?("#{Conf.mail_mgr_table_prefix}test_users")
 
 ContactableRegistry.register_contactable(TestUser, {
   :first_name => :first,
@@ -67,7 +71,7 @@ ActiveRecord::Schema.create_table :"#{Conf.mail_mgr_table_prefix}test_mailables"
   t.string :name
   t.string :email_html
   t.string :email_text
-end
+end unless table_exists?("#{Conf.mail_mgr_table_prefix}test_mailables")
 
 MailableRegistry.register(TestMailable,{
   :find_mailables => :all,

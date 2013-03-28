@@ -23,6 +23,7 @@ module MailMgr
     def self.run
       Lock.with_lock('mail_mgr_bounce_job') do |lock|
         Rails.logger.info "Bounce Job Connecting to #{Conf.mail_mgr_bounce['pop_server']} with #{Conf.mail_mgr_bounce['login']}:#{Conf.mail_mgr_bounce['password']}"
+        Net::POP3.enable_ssl
         Net::POP3.start(Conf.mail_mgr_bounce['pop_server'],Conf.mail_mgr_bounce['port'],
         	Conf.mail_mgr_bounce['login'], Conf.mail_mgr_bounce['password']) do |pop|
 

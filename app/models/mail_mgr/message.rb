@@ -21,12 +21,11 @@ module MailMgr
     belongs_to :contact, :class_name => 'MailMgr::Contact'
     #FIXME: if we add more types ... change the base message to be MailingMessage or something and don't use
     #me as a message type
-    default_scope :conditions => {:type => "MailMgr::#{(self.class.name.eql?('Class') ? self.name : self.class.name).gsub(/^MailMgr::/,'')}" } 
+    default_scope :conditions => {:type => self.class.name.eql?('Class') ? self.name : self.class.name } 
   
     named_scope :pending, {:conditions => {:status => 'pending'}}
+    named_scope :failed, {:conditions => {:status => 'failed'}}
     named_scope :ready, :conditions => ["status=?", 'ready']
-    named_scope :sent, :conditions => ["status=?", 'sent']
-    named_scope :processing, :conditions => ["status=?", 'processing']
 
     def initialize(*args)
       super
@@ -50,7 +49,6 @@ module MailMgr
       }}
   
     include StatusHistory
-    override_statuses(['pending','processing','sent','failed','ready'], 'pending')
     before_create :set_default_status
     after_create :generate_guid
 
@@ -110,11 +108,23 @@ module MailMgr
     def unsubscribe_url
       "#{Conf.site_url}#{Conf.mail_mgr_unsubscribe_path}/#{guid}"
     end
+  
+    def self.valid_statuses
+      ['pending','processing','sent','failed','ready']
+    end
 
+    def valid_statuses
+      ['pending','processing','sent','failed','ready']
+    end
+  
     # generated the guid for which the message is identified by in transit
     def generate_guid
       update_attribute(:guid,       
         "#{contact.id}-#{subscription.try(:id)}-#{self.id}-#{Digest::SHA1.hexdigest("#{contact.id}-#{subscription.try(:id)}-#{self.id}-#{Conf.mail_mgr_secret}")}")
+    end
+  
+    def default_status
+      'pending'
     end
 
     protected

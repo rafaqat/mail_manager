@@ -22,7 +22,6 @@ module MailMgr
     belongs_to :message, :class_name => 'MailMgr::Message'
     belongs_to :mailing, :class_name => 'MailMgr::Mailing'
     include StatusHistory
-    override_statuses(['needs_manual_intervention','unprocessed','dismissed','resolved','invalid'],'unprocessed')
     before_create :set_default_status
     default_scope :order => "#{Conf.mail_mgr_table_prefix}contacts.last_name, #{Conf.mail_mgr_table_prefix}contacts.first_name, #{Conf.mail_mgr_table_prefix}contacts.email_address",
         :joins => 
@@ -92,11 +91,7 @@ module MailMgr
     end
 
     def contact_email_address
-      if contact.blank?
-      "Contact Deleted"
-      else
       contact.email_address
-      end
     end
   
     def delivery_error_code
@@ -167,6 +162,14 @@ module MailMgr
     def email
       return @email if @email
       @email = TMail::Mail.parse(bounce_message)
+    end
+  
+    def valid_statuses
+      ['needs_manual_intervention','unprocessed','dismissed','resolved','invalid']
+    end
+  
+    def default_status
+      'unprocessed'
     end
   end
 end

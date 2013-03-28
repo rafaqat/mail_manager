@@ -8,23 +8,26 @@ module MailMgr
     #accepts_nested_attributes_for :subscriptions
   
     validates_presence_of :email_address
-    #validates_format_of :email_address, :with => Authentication.email_regex, 
-    #  :message => Authentication.bad_email_message, :allow_nil => true
-    validates_format_of :email_address, :with => /\w{1,}[@][\w\-]{1,}([.]([\w\-]{1,})){1,3}$/, :allow_nil => true
+    validates_format_of :email_address, :with => Authentication.email_regex, 
+      :message => Authentication.bad_email_message, :allow_nil => true
 
     include MailMgr::ContactableRegistry::Contactable
 
     def contact
       self
     end
+
+    before_save :initialize_subscriptions
     
     named_scope :search, lambda{|params| 
-      conditions = ["deleted_at IS NULL"]
+      conditions = ["#{table_name}.deleted_at IS NULL"]
       unless params[:term].blank?
         conditions[0] += " AND (#{params[:term].split(/\s+/).collect{ |term|
           term = "%#{term}%";
           3.times{conditions << term}
-          "(first_name like ? OR last_name like ? OR email_address like ?)"
+          conditions << term if new.respond_to?(:company)
+          "(first_name like ? OR last_name like ? OR email_address like ?#{
+            " OR company like ?" if new.respond_to?(:company)})"
         }.join(' OR ')})"
       end
 
@@ -74,11 +77,12 @@ module MailMgr
         Rails.logger.warn "Building Subscription for Mailing List #{list.name}"
         subscription = Subscription.new(:contact => self)
         subscription.mailing_list_id = list.id 
-        subscription.change_status((self.new_record? and list.defaults_to_active?) ? :active : :pending,false)
+        status = list.defaults_to_active? ? :active : :pending
+        subscription.change_status(status, !self.new_record? && !status.eql?(:pending))
         @subscriptions << subscription
       end
-      @subscriptions = subscriptions.reject{|subscription| subscription.mailing_list.try(:inactive?) or
-        subscription.mailing_list.nil?}.sort_by{|subscription|
+      @subscriptions = subscriptions.reject{|subscription| subscription.mailing_list.blank? or 
+        subscription.mailing_list.inactive? }.sort_by{|subscription|
         subscription.mailing_list.name.downcase}
     end
   end

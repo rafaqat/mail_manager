@@ -31,7 +31,6 @@ module MailMgr
     named_scope :unsubscribed, :conditions => {:status => 'unsubscribed'}  
 
     include StatusHistory  
-    override_statuses(['active','pending','unsubscribed','failed_address','duplicate'],'pending')
     before_create :set_default_status
     
     #acts_as_audited rescue Rails.logger.warn "Audit Table not defined!"
@@ -63,6 +62,14 @@ module MailMgr
     def mailing_list_name
       mailing_list.try(:name)
     end
+
+    def valid_statuses
+      ['active','pending','unsubscribed','failed_address','duplicate']
+    end
+  
+    def self.valid_statuses
+      ['active','pending','unsubscribed','failed_address','duplicate']
+    end
     
     def active?
       status.eql?('active')
@@ -89,6 +96,10 @@ module MailMgr
       nil
     end
   
+    def default_status
+      'pending'
+    end
+
     def self.fail_by_email_address(email_address)
       Contact.find_all_by_email_address(email_address).each do |contact|
         contact.subscriptions.each do |subscription|

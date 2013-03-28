@@ -23,30 +23,34 @@ module MailMgr
 
     def edit
     end
-
+  
     def test
     end
-
+  
     def schedule
       @mailing.schedule
       redirect_to mail_mgr_mailings_path
-    end
-
-    def cancel
-      @mailing.cancel
+    rescue => e
+      flash[:error] = e.message
       redirect_to mail_mgr_mailings_path
     end
-
+  
+    def cancel
+      @mailing.cancel
+      flash[:notice] = 'Mailing was successfully canceled and set to pending.  Be sure to reschedule or remove your mailing.'
+      redirect_to mail_mgr_mailings_path
+    end
+  
     def resume
       @mailing.resume
       redirect_to mail_mgr_mailings_path
     end
-
+  
     def pause
       @mailing.pause
       redirect_to mail_mgr_mailings_path
     end
-
+  
     def send_test
       @mailing.send_test_message(params[:test_email_addresses])
       flash[:notice] = "Test messages sent to #{params[:test_email_addresses]}."
@@ -65,8 +69,7 @@ module MailMgr
 
     def update
       if @mailing.update_attributes(params[:mail_mgr_mailing])
-        @mailing.cancel
-        flash[:notice] = 'Mailing was successfully updated and set to pending.  Be sure to reschedule your mailing.'
+        flash[:notice] = 'Mailing was successfully updated.'
         redirect_to(mail_mgr_mailings_path)
       else
         render :action => "edit"
@@ -77,26 +80,26 @@ module MailMgr
       @mailing.destroy
       redirect_to(mail_mgr_mailings_url)
     end
-
+  
     protected
-
+  
     def find_mailing
       @mailing = Mailing.find(params[:id])
     end
-
+  
     def find_all_mailing_lists
       @all_mailing_lists = MailingList.active.find(:all, :order => "name asc")
     end
-
+  
     def find_mailables
       @mailables = MailableRegistry.find
     end
-
+  
     def get_mailables_for_select
-      #@mailables_for_select = [['Choose Mailable', @mailable.is_a?(Mailable)  ?
-      #  'Mailable_new' : '']]+@mailables.collect{|mailable|
+      #@mailables_for_select = [['Choose Mailable', @mailable.is_a?(Mailable)  ? 
+      #  'Mailable_new' : '']]+@mailables.collect{|mailable| 
       #  [mailable.name,"#{mailable.class.name}_#{mailable.id}"]}
-      @mailables_for_select = @mailables.collect{|mailable|
+      @mailables_for_select = @mailables.collect{|mailable| 
         [mailable.name,"#{mailable.class.name}_#{mailable.id}"]}
     end
   end

@@ -6,7 +6,7 @@ This class is responsible for actually sending email messages... its mostly just
 
 Messages:
 unsubscribed - sends an email to notify the user that they have been removed
-message - sends and Message
+message - sends and Message 
 test_mailing - sends a test message for a mailing
 mail - knows how to send any message based on the different "mime" parts its given
 
@@ -15,12 +15,6 @@ mail - knows how to send any message based on the different "mime" parts its giv
 require 'net/http'
 require 'uri'
 require "base64"
-begin
-  require "mini_magick"
-rescue => e
-  require 'rmagick' rescue nil
-end
-
 
 module MailMgr
   class Mailer < ActionMailer::Base
@@ -39,9 +33,9 @@ module MailMgr
       mail(message.subject,message.email_address_with_name,message.from_email_address,
         message.parts,message.guid,message.mailing.include_images?)
     end
-
+  
     def mail(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
-      include_images = (include_images and !Conf.mail_mgr_dont_include_images_domains.detect{|domain|
+      include_images = (include_images and !Conf.mail_mgr_dont_include_images_domains.detect{|domain| 
         to_email_address.strip =~ /#{domain}>?$/})
       @recipients = to_email_address
       @subject    = subject
@@ -49,9 +43,9 @@ module MailMgr
       @sent_on    = Time.now()
       @headers    = {'Return-Path' => Conf.mail_mgr_bounce['email_address']}
       @headers['X-Bounce-Guid'] = message_id if message_id
-
+    
       TMail::HeaderField::FNAME_TO_CLASS.delete 'content-id'
-
+    
       @content_type = 'multipart/alternative'
       the_parts.each do |type,content|
         Rails.logger.warn "Adding Part: #{type} - #{content[0..40]}"
@@ -62,7 +56,7 @@ module MailMgr
         end
       end
     end
-
+  
     def inline_attachment(params, &block)
       params = { :content_type => params } if String === params
       params = { :disposition => "inline",
@@ -88,10 +82,15 @@ module MailMgr
         when 'tiff' then 'image/tiff'
       end
     end
-
+    
     def get_extension_from_data(image_data)
-      return "" unless defined?(Magick)
-      Magick::Image.from_blob(image_data).first.format
+      identify_string = ''
+      identify_string = ''
+      file = Tempfile.new('guess_image_format')
+      file.write image_data;
+      identify_string = `identify #{file.path}`
+      file.close!
+      identify_string.split(/\s+/)[1].to_s.downcase
     end
 
     def inline_html_with_images(html_source)
@@ -111,10 +110,9 @@ module MailMgr
           rescue => e
             image_errors += "Couldn't fetch url '#{data}'<!--, #{e.message} - #{e.backtrace.join("\n")}-->\n"
           end
+          extension = get_extension_from_data(image[:body])
           image[:filename] = data.gsub(/^.*\//,'')
-          extension = ''#data.gsub(/^.*\./,'').downcase
-          Rails.logger.debug "Fetching Image for: #{image[:filename]} #{image[:body].to_s[0..30]}"
-          extension = get_extension_from_data(image[:body]) if image_mime_types(extension).blank?
+          extension = data.gsub(/^.*\./,'').downcase if image_mime_types(extension).blank?
           image_errors += "Couldn't find mime type for #{extension} on #{data}" if image_mime_types(extension).blank?
           image[:content_type] = image_mime_types(extension)
           images << image
@@ -123,7 +121,7 @@ module MailMgr
         end
       end
       raise image_errors unless image_errors.eql?('')
-      related_part = ActionMailer::Part.new({})
+      related_part = ActionMailer::Part.new({}) 
       related_part.part :content_type => "text/html",
         :body => final_html
 
@@ -133,7 +131,7 @@ module MailMgr
       related_part.content_type = 'multipart/related'
       related_part
     end
-
+  
     def fetch(uri_str, limit = 10)
       # You should choose better exception.
       raise ArgumentError, 'HTTP redirect too deep' if limit == 0
