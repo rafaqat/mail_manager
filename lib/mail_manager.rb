@@ -4,10 +4,10 @@ module MailManager
 
 
   # Include hook code here
-  require File.join(File.dirname(__FILE__), 'lib', 'workers', 'mail_manager', 'bounce_job.rb')
-  require File.join(File.dirname(__FILE__), 'lib', 'workers', 'mail_manager', 'mailing_job.rb')
-  require File.join(File.dirname(__FILE__), 'lib', 'workers', 'mail_manager', 'test_message_job.rb')
-  require File.join(File.dirname(__FILE__), 'lib', 'workers', 'mail_manager', 'message_job.rb')
+  require File.join(File.dirname(__FILE__), 'workers', 'mail_manager', 'bounce_job.rb')
+  require File.join(File.dirname(__FILE__), 'workers', 'mail_manager', 'mailing_job.rb')
+  require File.join(File.dirname(__FILE__), 'workers', 'mail_manager', 'test_message_job.rb')
+  require File.join(File.dirname(__FILE__), 'workers', 'mail_manager', 'message_job.rb')
   config.to_prepare do
     ApplicationController.helper(MailManager::SubscriptionsHelper)
   end
