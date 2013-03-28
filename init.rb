@@ -9,6 +9,8 @@ end
 
 module ::MailMgrPlugin
   PLUGIN_ROOT = File.dirname(__FILE__)
+
+
   def self.load_routes(map)
     begin
       path_prefix = "#{Conf.site_path}#{Conf.mail_mgr_path_prefix}"
@@ -48,9 +50,9 @@ module ::MailMgrPlugin
         mailing.resources :messages, :only => [:index]
       end
 
-      mail_mgr.resources :bounces, :path_prefix => path_prefix, 
-        :only => [:index, :show], 
-        :member => { 
+      mail_mgr.resources :bounces, :path_prefix => path_prefix,
+        :only => [:index, :show],
+        :member => {
           :dismiss => :get,
           :fail_address => :get
         }
@@ -58,9 +60,11 @@ module ::MailMgrPlugin
       mail_mgr.resources :mailing_lists, :path_prefix => path_prefix do |mailing_list|
         mailing_list.resources :subscriptions, :only => [:index,:new]
       end
-      mail_mgr.unsubscribe_by_email_address 'unsubscribe_by_email_address', 
+      mail_mgr.unsubscribe_by_email_address 'unsubscribe_by_email_address',
         :controller => 'subscriptions', :action => 'unsubscribe_by_email_address'
       mail_mgr.resources :contacts, :member => [:send_one_off_message], :path_prefix => path_prefix
     end
   end
+
+
 end
