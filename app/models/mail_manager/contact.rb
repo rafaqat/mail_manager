@@ -1,18 +1,18 @@
-module MailMgr
+module MailManager
   class Contact < ActiveRecord::Base
-    set_table_name "#{Conf.mail_mgr_table_prefix}contacts"
-    has_many :messages, :class_name => 'MailMgr::Message'
-    
+    set_table_name "#{Conf.mail_manager_table_prefix}contacts"
+    has_many :messages, :class_name => 'MailManager::Message'
+
     belongs_to :contactable, :polymorphic => true
     #not working for some reasom
     #accepts_nested_attributes_for :subscriptions
-  
+
     validates_presence_of :email_address
-    #validates_format_of :email_address, :with => Authentication.email_regex, 
+    #validates_format_of :email_address, :with => Authentication.email_regex,
     #  :message => Authentication.bad_email_message, :allow_nil => true
     validates_format_of :email_address, :with => /\w{1,}[@][\w\-]{1,}([.]([\w\-]{1,})){1,3}$/, :allow_nil => true
 
-    include MailMgr::ContactableRegistry::Contactable
+    include MailManager::ContactableRegistry::Contactable
 
     named_scope :active, lambda {{:conditions => "#{table_name}.deleted_at IS NULL"}}
 
@@ -20,7 +20,7 @@ module MailMgr
       self
     end
 
-    named_scope :search, lambda{|params| 
+    named_scope :search, lambda{|params|
       conditions = ["#{table_name}.deleted_at IS NULL"]
       unless params[:term].blank?
         conditions[0] += " AND (#{params[:term].split(/\s+/).collect{ |term|
@@ -40,12 +40,12 @@ module MailMgr
         conditions[0] += " AND status=?"
         conditions << params[:status]
       end
-      { 
-        :conditions => conditions, 
+      {
+        :conditions => conditions,
         :order =>  'last_name, first_name, email_address'
       }
     }
-  
+
     default_scope :order => 'last_name, first_name, email_address'
 
     def email_address_with_name
@@ -64,15 +64,15 @@ module MailMgr
     # generated the token for which an opt-in is emailed
     def generate_login_token
       time = Time.now
-      token = MailMgr::Contact::inject_contact_id("#{Digest::SHA1.hexdigest(
-        "#{self.id}#{Conf.mail_mgr_secret}#{time}")}", self.id)
+      token = MailManager::Contact::inject_contact_id("#{Digest::SHA1.hexdigest(
+        "#{self.id}#{Conf.mail_manager_secret}#{time}")}", self.id)
       self.update_attribute(:login_token, token)
       self.update_attribute(:login_token_created_at, time)
       token
     end
 
     def double_opt_in_url
-      "#{Conf.site_url}#{Conf.mail_mgr_double_opt_in_path}/#{login_token}"
+      "#{Conf.site_url}#{Conf.mail_manager_double_opt_in_path}/#{login_token}"
     end
 
     def double_opt_in(params={})
@@ -84,7 +84,7 @@ module MailMgr
     end
 
     def deliver_double_opt_in
-      MailMgr::Mailer.deliver_double_opt_in(self)
+      MailManager::Mailer.deliver_double_opt_in(self)
     end
 
     def self.inject_contact_id(token,id)
@@ -109,7 +109,7 @@ module MailMgr
     end
 
     def self.find_by_token(token)
-      Contact.find_by_id(MailMgr::Contact::extract_contact_id(token))
+      Contact.find_by_id(MailManager::Contact::extract_contact_id(token))
     end
 
     def login_token
@@ -121,12 +121,12 @@ module MailMgr
     end
 
     def initialize_subscriptions
-      @subscriptions = new_record? ? [] : Subscription.find_all_by_contact_id(self.id) 
+      @subscriptions = new_record? ? [] : Subscription.find_all_by_contact_id(self.id)
       MailingList.active.each do |list|
         next if @subscriptions.detect{|subscription| subscription.mailing_list_id.eql?(list.id) }
         Rails.logger.warn "Building Subscription for Mailing List #{list.name}"
         subscription = Subscription.new(:contact => self)
-        subscription.mailing_list_id = list.id 
+        subscription.mailing_list_id = list.id
         subscription.change_status((self.new_record? and list.defaults_to_active?) ? :active : :pending,false)
         @subscriptions << subscription
       end

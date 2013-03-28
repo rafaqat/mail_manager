@@ -6,7 +6,7 @@ This class is responsible for actually sending email messages... its mostly just
 
 Messages:
 unsubscribed - sends an email to notify the user that they have been removed
-message - sends and Message 
+message - sends and Message
 test_mailing - sends a test message for a mailing
 mail - knows how to send any message based on the different "mime" parts its given
 
@@ -16,7 +16,7 @@ require 'net/http'
 require 'uri'
 require "base64"
 
-module MailMgr
+module MailManager
   class Mailer < ActionMailer::Base
     def unsubscribed(message,subscriptions)
       @contact = message.contact
@@ -35,26 +35,26 @@ module MailMgr
       @subject = "Confirm Newsletter Subscription at #{Conf.site_url}"
       @from = Conf.newsletter_signup_email_address
       @mailing_list_names = contact.subscriptions.map(&:mailing_list).map(&:name).join(', ')
-      @headers    = {'Return-Path' => Conf.mail_mgr_bounce['email_address']}
+      @headers    = {'Return-Path' => Conf.mail_manager_bounce['email_address']}
     end
 
     def message(message)
       mail(message.subject,message.email_address_with_name,message.from_email_address,
         message.parts,message.guid,message.mailing.include_images?)
     end
-  
+
     def mail(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
-      include_images = (include_images and !Conf.mail_mgr_dont_include_images_domains.detect{|domain| 
+      include_images = (include_images and !Conf.mail_manager_dont_include_images_domains.detect{|domain|
         to_email_address.strip =~ /#{domain}>?$/})
       @recipients = to_email_address
       @subject    = subject
       @from       = from_email_address
       @sent_on    = Time.now()
-      @headers    = {'Return-Path' => Conf.mail_mgr_bounce['email_address']}
+      @headers    = {'Return-Path' => Conf.mail_manager_bounce['email_address']}
       @headers['X-Bounce-Guid'] = message_id if message_id
-    
+
       TMail::HeaderField::FNAME_TO_CLASS.delete 'content-id'
-    
+
       @content_type = 'multipart/alternative'
       the_parts.each do |type,content|
         Rails.logger.warn "Adding Part: #{type} - #{content[0..40]}"
@@ -65,7 +65,7 @@ module MailMgr
         end
       end
     end
-  
+
     def inline_attachment(params, &block)
       params = { :content_type => params } if String === params
       params = { :disposition => "inline",
@@ -91,18 +91,18 @@ module MailMgr
         when 'tiff' then 'image/tiff'
       end
     end
-    
+
     def get_extension_from_data(image_data)
       identify_string = ''
       identify_string = ''
       file = Tempfile.new('guess_image_format')
-      file.write image_data; 
+      file.write image_data;
       file.close
       identify_string = `identify #{file.path}`
       file.close!
       identify_string.split(/\s+/)[1].to_s.downcase
     end
-  
+
     def inline_html_with_images(html_source)
       regex = /(<\s*img[^>]+src\s*=\s*["'])([^"']*)(["'])|(<\s*table[^>]+background\s*=\s*["'])([^"']*)(["'])/i
       parsed_data = html_source.split(regex)
@@ -132,7 +132,7 @@ module MailMgr
         end
       end
       raise image_errors unless image_errors.eql?('')
-      related_part = ActionMailer::Part.new({}) 
+      related_part = ActionMailer::Part.new({})
       related_part.part :content_type => "text/html",
         :body => final_html
 
@@ -142,7 +142,7 @@ module MailMgr
       related_part.content_type = 'multipart/related'
       related_part
     end
-  
+
     def fetch(uri_str, limit = 10)
       # You should choose better exception.
       raise ArgumentError, 'HTTP redirect too deep' if limit == 0

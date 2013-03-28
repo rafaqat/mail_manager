@@ -6,7 +6,7 @@ Worker used to pop bounces from the bounce email account and create an Bounce to
 
 Configuration:
   config/config.yml in application root
-  
+
   bounce:
       email_address: bounce@example.com
       login: bounce
@@ -15,24 +15,24 @@ Configuration:
 
 =end
 require 'net/pop'
-module MailMgr
+module MailManager
   class BounceJob < Struct.new(:repeats_every)
     def perform
       BounceJob.run
     end
     def self.run
-      Lock.with_lock('mail_mgr_bounce_job') do
-        Rails.logger.info "Bounce Job Connecting to #{Conf.mail_mgr_bounce['pop_server']} with #{Conf.mail_mgr_bounce['login']}:#{Conf.mail_mgr_bounce['password']}"
+      Lock.with_lock('mail_manager_bounce_job') do
+        Rails.logger.info "Bounce Job Connecting to #{Conf.mail_manager_bounce['pop_server']} with #{Conf.mail_manager_bounce['login']}:#{Conf.mail_manager_bounce['password']}"
         Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE)
-        Net::POP3.start(Conf.mail_mgr_bounce['pop_server'],Conf.mail_mgr_bounce['port'],
-        	Conf.mail_mgr_bounce['login'], Conf.mail_mgr_bounce['password']) do |pop|
+        Net::POP3.start(Conf.mail_manager_bounce['pop_server'],Conf.mail_manager_bounce['port'],
+        	Conf.mail_manager_bounce['login'], Conf.mail_manager_bounce['password']) do |pop|
 
           if pop.mails.empty?
             Rails.logger.info "No mail."
           else
             Rails.logger.info "You have #{pop.mails.length} new bounced messages."
             Rails.logger.info "Downloading..."
-  
+
             pop.mails.each_with_index do|m,i|
               bounce = Bounce.create({
                 :bounce_message => m.pop

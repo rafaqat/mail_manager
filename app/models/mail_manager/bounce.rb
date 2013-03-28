@@ -16,17 +16,17 @@ Statuses:
 'dismissed' - bounce has been dismissed by user
 =end
 
-module MailMgr
+module MailManager
   class Bounce < ActiveRecord::Base
-    set_table_name "#{Conf.mail_mgr_table_prefix}bounces"
-    belongs_to :message, :class_name => 'MailMgr::Message'
-    belongs_to :mailing, :class_name => 'MailMgr::Mailing'
+    set_table_name "#{Conf.mail_manager_table_prefix}bounces"
+    belongs_to :message, :class_name => 'MailManager::Message'
+    belongs_to :mailing, :class_name => 'MailManager::Mailing'
     include StatusHistory
     before_create :set_default_status
-    default_scope :order => "#{Conf.mail_mgr_table_prefix}contacts.last_name, #{Conf.mail_mgr_table_prefix}contacts.first_name, #{Conf.mail_mgr_table_prefix}contacts.email_address",
-        :joins => 
-        "INNER JOIN #{Conf.mail_mgr_table_prefix}messages on #{Conf.mail_mgr_table_prefix}bounces.message_id=#{Conf.mail_mgr_table_prefix}messages.id "+
-        " INNER JOIN #{Conf.mail_mgr_table_prefix}contacts on #{Conf.mail_mgr_table_prefix}messages.contact_id=#{Conf.mail_mgr_table_prefix}contacts.id"
+    default_scope :order => "#{Conf.mail_manager_table_prefix}contacts.last_name, #{Conf.mail_manager_table_prefix}contacts.first_name, #{Conf.mail_manager_table_prefix}contacts.email_address",
+        :joins =>
+        "INNER JOIN #{Conf.mail_manager_table_prefix}messages on #{Conf.mail_manager_table_prefix}bounces.message_id=#{Conf.mail_manager_table_prefix}messages.id "+
+        " INNER JOIN #{Conf.mail_manager_table_prefix}contacts on #{Conf.mail_manager_table_prefix}messages.contact_id=#{Conf.mail_manager_table_prefix}contacts.id"
 #
     named_scope :by_mailing_id, lambda {|mailing_id| {:conditions => {:mailing_id => mailing_id}}}
     named_scope :by_status, lambda {|status| {:conditions => {:status => status.to_s}}}
@@ -42,12 +42,12 @@ module MailMgr
           update_attribute(:comments, delivery_error_message)
           change_status(:resolved)
         elsif delivery_error_code =~ /5\.\d\.\d/
-          transaction do 
+          transaction do
             update_attribute(:comments, delivery_error_message)
             change_status(:resolved)
             message.change_status(:failed)
             message.update_attribute(:result,"Failure Message from Bounce: #{delivery_error_message}")
-            Subscription.fail_by_email_address(contact_email_address) 
+            Subscription.fail_by_email_address(contact_email_address)
           end
         else
           update_attribute(:comments, 'unrecognized diagnostic code')
@@ -56,17 +56,17 @@ module MailMgr
         save
       end
     end
-  
+
     def dismiss
       raise "Status cannot be manually changed unless it needs manual intervention!" unless
         status.eql?('needs_manual_intervention')
       change_status(:dismissed)
     end
-  
+
     def fail_address
       raise "Status cannot be manually changed unless it needs manual intervention!"  unless
         status.eql?('needs_manual_intervention')
-      transaction do 
+      transaction do
         Subscription.fail_by_email_address(contact_email_address)
         message.result = message.result.to_s + "Failed by Administrator: (bounced, not auto resolved) "
         message.change_status(:failed)
@@ -77,15 +77,15 @@ module MailMgr
     def mailing_subject
       message.try(:mailing).try(:subject)
     end
-  
+
     def subscription
       message.try(:subscription)
     end
-    
+
     def contact
       message.try(:contact)
     end
-  
+
     def contact_full_name
       contact.try(:full_name).to_s
     end
@@ -93,7 +93,7 @@ module MailMgr
     def contact_email_address
       contact.try(:email_address).to_s
     end
-  
+
     def delivery_error_code
       delivery_error_part['status'].try(:body) if delivery_error_part
     end
@@ -103,13 +103,13 @@ module MailMgr
       error_message = nil
       return error_message if error_message = delivery_error_part['diagnostic-code'].try(:body)
       return error_message if error_message = get_part_with_header('content-type',/^text\/plain/).try(:body)
-      return "No Known Error Message" 
+      return "No Known Error Message"
     end
 
     def delivery_error_part
       return @delivery_error_part if @delivery_error_part
-      return @delivery_error_part if @delivery_error_part = get_part_with_header('diagnostic-code') 
-      @delivery_error_part = get_part_with_header('content-type',/message\/delivery-status/) 
+      return @delivery_error_part if @delivery_error_part = get_part_with_header('diagnostic-code')
+      @delivery_error_part = get_part_with_header('content-type',/message\/delivery-status/)
       begin
         @delivery_error_part = TMail::Mail.parse(TMail::Mail.parse(@delivery_error_part.body).body)
       rescue => e
@@ -118,7 +118,7 @@ module MailMgr
       return @delivery_error_part
     end
 
-    # Returns message guid 
+    # Returns message guid
     def bounce_message_guid
       guid = nil
       return guid if guid = get_header('X-Bounce-GUID')
@@ -163,11 +163,11 @@ module MailMgr
       return @email if @email
       @email = TMail::Mail.parse(bounce_message)
     end
-  
+
     def valid_statuses
       ['needs_manual_intervention','unprocessed','dismissed','resolved','invalid']
     end
-  
+
     def default_status
       'unprocessed'
     end

@@ -2,12 +2,12 @@
 
 <% content_for :subnav do %>
 <ul>
-  <li><%= link_to 'Back', mail_mgr_mailings_path %></li>
+  <li><%= link_to 'Back', mail_manager_mailings_path %></li>
 </ul>
 <% end %>
 
     <%= will_paginate @messages %>
-    <% form_tag mail_mgr_mailing_messages_path(@mailing), :id => 'search_form', :method => 'GET' do %>
+    <% form_tag mail_manager_mailing_messages_path(@mailing), :id => 'search_form', :method => 'GET' do %>
       Status:<%= select_tag "message[status]", options_for_select(@valid_statuses,params[:message][:status]), :onChange => "$('search_form').submit()" %>
     <% end %>
     <% if @messages.length == 0 %>

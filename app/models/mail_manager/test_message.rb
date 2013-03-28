@@ -1,4 +1,4 @@
-module MailMgr
+module MailManager
   class TestMessage < Message
     default_scope :order => "status_changed_at desc"
     named_scope :ready, :conditions => ["status=?", 'ready']
@@ -7,21 +7,21 @@ module MailMgr
     end
 
     def email_address_with_name
-      "\"Test Guy\" <#{email_address}>" 
+      "\"Test Guy\" <#{email_address}>"
     end
 
     def default_status
       'ready'
     end
     def generate_guid
-      update_attribute(:guid,       
-        "test-#{self.id}-#{Digest::SHA1.hexdigest("test-#{self.id}-#{Conf.mail_mgr_secret}")}")
+      update_attribute(:guid,
+        "test-#{self.id}-#{Digest::SHA1.hexdigest("test-#{self.id}-#{Conf.mail_manager_secret}")}")
     end
-        
+
     def subscription
       Subscription.new(self)
     end
-        
+
     def valid_statuses
       ['ready'] + super
     end

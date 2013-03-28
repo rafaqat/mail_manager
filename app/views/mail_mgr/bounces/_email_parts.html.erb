@@ -1,4 +1,4 @@
-<% if email.is_a?(TMail::Mail) 
+<% if email.is_a?(TMail::Mail)
      this_part = email
    elsif email.length > 0
      begin
@@ -8,14 +8,14 @@
      An error occured parsing this part of the email: <%= e.message %>
      <%= e.backtrace.join("\n") %>
      </pre>
-  <% end 
+  <% end
    end%>
 <% unless this_part.nil? %>
     <hr/>
   <h3>Headers</h3>
     <pre>
       <% this_part.header.each do |header| %>
-        <%= header[0] %>: <%= header[1] %> 
+        <%= header[0] %>: <%= header[1] %>
       <% end %>
     </pre>
   <% if this_part['content-type'].to_s =~ /text\/html/i %>
@@ -26,7 +26,7 @@
     <pre><%= this_part.body %></pre>
   <% end %>
       <% this_part.parts.each do |part| %>
-  <%= render :partial => 'mail_mgr/bounces/email_parts', :locals => {:email => part} %>
+  <%= render :partial => 'mail_manager/bounces/email_parts', :locals => {:email => part} %>
       <% end
    end %>
 

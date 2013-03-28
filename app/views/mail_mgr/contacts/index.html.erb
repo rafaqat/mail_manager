@@ -1,13 +1,13 @@
 <% title "Contacts" %>
 
 
-<% form_tag mail_mgr_contacts_path(), :id => 'search_form', :method => 'get' do %>
+<% form_tag mail_manager_contacts_path(), :id => 'search_form', :method => 'get' do %>
   <label class="form">Contact Search:</label> <%= text_field_tag "term","",  :class => "text"%>
   <%= submit_tag "Search", :class => 'button' %><div class="buttonEnding"></div>
 <% end %>
 <br/>
 <b>Listing Contacts </b>
-    
+
 <%= will_paginate @contacts %>
 
 <table class="list" cellpadding="1" cellspacing="0">
@@ -15,8 +15,8 @@
     <td>First Name</td>
     <td>Last Name</td>
     <td>Email Address</td>
-    <% if MailMgr::Contact.new.respond_to?(:company) %><td>Company</td><% end %>
-  <% colspan = 2 
+    <% if MailManager::Contact.new.respond_to?(:company) %><td>Company</td><% end %>
+  <% colspan = 2
      colspan += 1 if Conf.use_show_for_resources
      colspan += 1 if @mailings.length > 0 %>
     <td colspan="<%= colspan %>"> </td>
@@ -30,14 +30,14 @@
     <% if Conf.use_show_for_resources %>
       <td><%= link_to "View", contact, :class => 'button' %><div class="linkbuttonEnding"></div></td>
     <% end %>
-      <td><%= link_to "Edit", edit_mail_mgr_contact_path(contact), :class => 'button' %><div class="linkbuttonEnding"></div></td>
+      <td><%= link_to "Edit", edit_mail_manager_contact_path(contact), :class => 'button' %><div class="linkbuttonEnding"></div></td>
       <td><%= link_to "Delete", contact, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %><div class="linkbuttonEnding"></div></td>
 <!--
       <% if @mailings.length > 0 %>
       <td>
-        <% form_tag send_one_off_message_mail_mgr_contact_path(contact), :style => 'display:inline' do |f| %>
-        <%= select_tag 'mailing_id',  
-              options_for_select(@mailings.collect{|mailing| [mailing.subject, mailing.id]}) %> 
+        <% form_tag send_one_off_message_mail_manager_contact_path(contact), :style => 'display:inline' do |f| %>
+        <%= select_tag 'mailing_id',
+              options_for_select(@mailings.collect{|mailing| [mailing.subject, mailing.id]}) %>
         <%= submit_tag "Send One Off Message", :class => 'button' %><div class="buttonEnding"></div>
         <% end %>
       </td>
@@ -50,7 +50,7 @@
 <%= will_paginate @contacts %><br/>
 <% content_for :page_navigation do %>
 <div>
-  <%= link_to "New Contact", new_mail_mgr_contact_path, :class => 'button' %><div class="linkbuttonEnding"></div>
+  <%= link_to "New Contact", new_mail_manager_contact_path, :class => 'button' %><div class="linkbuttonEnding"></div>
 </div>
 <% end %>
 

@@ -6,7 +6,7 @@ Worker used to check for ready Mailings and process/send them.
 
 =end
 
-module MailMgr
+module MailManager
   class MailingJob < Struct.new(:repeats_every)
     def perform
       MailingJob.run
@@ -17,9 +17,9 @@ module MailMgr
       end
       Rails.logger.info "No ready mailings #{Time.now}"
     end
-  
+
     def self.get_ready
-      Lock.with_lock('mail_mgr_mailing_job_ready') do |lock|
+      Lock.with_lock('mail_manager_mailing_job_ready') do |lock|
         mailing = Mailing.ready.first
         return nil if mailing.nil?
         mailing.change_status('processing')

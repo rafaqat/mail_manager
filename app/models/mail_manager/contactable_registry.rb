@@ -1,13 +1,13 @@
-module MailMgr
+module MailManager
   class ContactableRegistry
-    
+
     @@contactable_things = {}
     def self.register_contactable(classname, methods={})
       @@contactable_things.merge!(classname => methods)
       Rails.logger.warn "Registered Contactable: #{classname}"
       Rails.logger.debug "Current Contactables: #{@@contactable_things.inspect}"
     end
-    
+
     def self.registered_methods(classname=nil)
       return @@contactable_things[classname.to_s].keys unless classname.nil?
       all_methods = {}
@@ -16,20 +16,20 @@ module MailMgr
       end
       all_methods.keys
     end
-    
+
     def self.valid_contactable_substitutions(classname=nil)
       registered_methods(classname).collect{|key| key.to_s.upcase}
     end
-  
+
     def self.contactable_method(classname,method)
       @@contactable_things[classname][method] || method
     end
-    
+
     module Contactable
 
       #FIXME: this is NOT secure!!!!
       def update_contactable_data
-        unless self.is_a?(MailMgr::Contact)
+        unless self.is_a?(MailManager::Contact)
           if self.contact.present?
             self.contact.update_attributes(
               :first_name => contactable_value(:first_name).to_s,
@@ -46,10 +46,10 @@ module MailMgr
         end
         self.contact.present? and self.contact.errors.empty?
       end
-      
+
       def initialize_subscriptions
         if self.contact.nil?
-          self.contact = MailMgr::Contact.new(
+          self.contact = MailManager::Contact.new(
             :first_name => contactable_value(:first_name).to_s,
             :last_name => contactable_value(:last_name).to_s,
             :email_address => contactable_value(:email_address).to_s)
@@ -76,23 +76,23 @@ module MailMgr
         end
         true
       end
-      
+
       def get_subscription_atttributes_for_subscription(subscription)
         return {} if @subscriptions_attributes.nil?
-        subscriptions_attributes.values.detect{|subscription_attributes| 
+        subscriptions_attributes.values.detect{|subscription_attributes|
           subscription_attributes[:mailing_list_id].to_i == subscription.mailing_list_id.to_i} || {}
       end
 
       def subscribe(mailing_list)
-        MailMgr::Subscription.subscribe(self,mailing_list)
+        MailManager::Subscription.subscribe(self,mailing_list)
       end
 
       def unsubscribe(mailing_list)
-        MailMgr::Subscription.unsubscribe(self,mailing_list)
+        MailManager::Subscription.unsubscribe(self,mailing_list)
       end
 
       def change_subscription_status(mailing_list,status)
-        MailMgr::Subscription.change_subscription_status(self,mailing_list,status)
+        MailManager::Subscription.change_subscription_status(self,mailing_list,status)
       end
 
       def contactable_value(method)
@@ -105,36 +105,36 @@ module MailMgr
 
       def contactable_method(method)
         begin
-          MailMgr::ContactableRegistry.contactable_method(self.class,method.to_sym)
+          MailManager::ContactableRegistry.contactable_method(self.class,method.to_sym)
         rescue => e
           method
         end
       end
-      
+
       def reload
         @subscriptions = nil
       end
-      
+
       def subscriptions
         return @subscriptions unless @subscriptions.nil?
         @subscriptions = self.initialize_subscriptions
       end
-      
+
       def active_subscriptions
         subscriptions.select{|subscription| subscription.active?}
       end
-      
+
       def save(*args)
         success = true
         if args[0] != false
-          begin 
-            transaction do 
+          begin
+            transaction do
               success = success && super
               if self.contactable_value(:email_address).present?
                 Rails.logger.debug "User save super success? #{success.inspect}"
                 success = update_subscription_data && success
                 Rails.logger.debug "User save subscription data success? #{success.inspect}"
-                success = update_contactable_data unless (!success or self.is_a?(MailMgr::Contact))
+                success = update_contactable_data unless (!success or self.is_a?(MailManager::Contact))
                 Rails.logger.debug "User save contactable data success? #{success.inspect}"
               end
               raise "Failed to update contactable and/or #{self.class.name} data." unless success
@@ -152,9 +152,9 @@ module MailMgr
       module Associations
         def self.included(model)
           model.class_eval do
-            has_one :contact, :as => :contactable, :class_name => 'MailMgr::Contact'
+            has_one :contact, :as => :contactable, :class_name => 'MailManager::Contact'
             #overloading with some extra stuff is better than this
-            #has_many :subscriptions, :through => :contact, :class_name => 'MailMgr::Subscription'
+            #has_many :subscriptions, :through => :contact, :class_name => 'MailManager::Subscription'
           end
         end
       end
@@ -167,7 +167,7 @@ module MailMgr
           end
         end
       end
-      
+
       def self.included(model)
         model.send(:include, Associations)
         model.send(:include, AttrAccessors)

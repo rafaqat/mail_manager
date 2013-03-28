@@ -1,7 +1,7 @@
 <% form_for @mailing do |f| %>
   <%= f.error_messages %>
-  <% if @all_mailing_lists.length == 1 %><%= hidden_field_tag 'mail_mgr_mailing[mailing_list_ids][]', @mailing.mailing_lists.first.try(:id) %><% end %>
-  <table cellspacing='1' cellpadding='0' border='0'>  
+  <% if @all_mailing_lists.length == 1 %><%= hidden_field_tag 'mail_manager_mailing[mailing_list_ids][]', @mailing.mailing_lists.first.try(:id) %><% end %>
+  <table cellspacing='1' cellpadding='0' border='0'>
     <tr valign="top">
        <td width='150'><%= f.label :subject %></td>
        <td><%= f.text_field :subject %></td>
@@ -13,7 +13,7 @@
     <% if @mailables.length > 0 %>
     <tr valign="top">
        <td width='150'><%= f.label "Select Mailable Item" %></td>
-  		 <td><%= select_tag 'mail_mgr_mailing[mailable_class_and_id]',
+  		 <td><%= select_tag 'mail_manager_mailing[mailable_class_and_id]',
   		         options_for_select(@mailables_for_select,
   		         @mailing.mailable_thing_and_id), :onChange => "if($('mailing_mailable')."+
   		         "getValue() == 'Mailable_new') {$('new_mailable').show();}else"+
@@ -34,12 +34,12 @@
       <td width='150'><%= fm.label :email_text %></td>
       <td><%= fm.text_area :email_html %></td>
     </tr>
-      <% end %> 
+      <% end %>
     <% end %>
     <% end %>
     <tr valign="top">
        <td width='150'><%= f.label :scheduled_at %></td>
-       <td><%= calendar_date_select_tag 'mail_mgr_mailing[scheduled_at]', @mailing.scheduled_at, :time => true %></td>
+       <td><%= calendar_date_select_tag 'mail_manager_mailing[scheduled_at]', @mailing.scheduled_at, :time => true %></td>
     </tr>
     <tr valign="top">
        <td width='150'><%= f.label :include_images %></td>
@@ -52,8 +52,8 @@
            <h2 style='padding-bottom: 0; margin-bottom: 0; font-size: 10pt; '>Available Lists</h2>
            <p>
   		<% @all_mailing_lists.each do |mailing_list| %>
-  				<%= check_box_tag 'mail_mgr_mailing[mailing_list_ids][]', mailing_list.id, @mailing.mailing_lists.include?(mailing_list) %>
-  				<%= label_tag :mail_mgr_mailing_mailing_list_id, "#{mailing_list.name}" %><br/>
+  				<%= check_box_tag 'mail_manager_mailing[mailing_list_ids][]', mailing_list.id, @mailing.mailing_lists.include?(mailing_list) %>
+  				<%= label_tag :mail_manager_mailing_mailing_list_id, "#{mailing_list.name}" %><br/>
   		<% end %>
   		    </p>
   		  </div>
@@ -63,7 +63,7 @@
       <td align="right" colspan="2"><%= f.submit "Submit", :class => 'button' %><div class="buttonEnding"></div></td>
     </tr>
   </table>
-    
+
 <% end %>
 
 

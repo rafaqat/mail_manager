@@ -6,7 +6,7 @@ Worker used to check for ready Mailings and process/send them.
 
 =end
 
-module MailMgr
+module MailManager
   class TestMessageJob < Struct.new(:repeats_every)
     def perform
       TestMessageJob.run
@@ -21,12 +21,12 @@ module MailMgr
   	      test_message.result = "Error: #{e.message} - #{e.backtrace.join("\n")}"
   	      test_message.change_status(:failed)
   	    end
-        sleep Conf.mail_mgr_sleep_time_between_messages
+        sleep Conf.mail_manager_sleep_time_between_messages
       end
     end
-  
+
     def self.get_ready
-      Lock.with_lock('mail_mgr_test_message_ready') do |lock|
+      Lock.with_lock('mail_manager_test_message_ready') do |lock|
         test_message = TestMessage.ready.first
         return nil if test_message.nil?
         test_message.change_status('processing')

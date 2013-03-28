@@ -6,7 +6,7 @@ Worker used to check for ready Messages and process/send them.
 
 =end
 
-module MailMgr
+module MailManager
   class MessageJob < Struct.new(:repeats_every)
     def perform
       MessageJob.run
@@ -21,12 +21,12 @@ module MailMgr
   	      message.result = "Error: #{e.message} - #{e.backtrace.join("\n")}"
   	      message.change_status(:failed)
   	    end
-        sleep Conf.mail_mgr_sleep_time_between_messages
+        sleep Conf.mail_manager_sleep_time_between_messages
       end
     end
-  
+
     def self.get_ready
-      Lock.with_lock('mail_mgr_message_ready') do |lock|
+      Lock.with_lock('mail_manager_message_ready') do |lock|
         Rails.logger.warn "Finding ready messages"
         message = Message.ready.first
         return nil if message.nil?
