@@ -1,8 +1,8 @@
-class MailManagerInitial < ActiveRecord::Migration
+class MailMgrInitial < ActiveRecord::Migration
   def self.up
-    table_prefix = 'mail_manager_'
+    table_prefix = 'mail_mgr_'
     begin
-      table_prefix = Conf.mail_manager_table_prefix
+      table_prefix = Conf.mail_mgr_table_prefix
     rescue
     end
     create_table :"#{table_prefix}mailing_lists" do |t|
@@ -24,7 +24,7 @@ class MailManagerInitial < ActiveRecord::Migration
       t.integer :updated_by
       t.timestamps
     end
-
+    
     create_table :"#{table_prefix}mailings" do |t|
       t.string :subject
       t.string :from_email_address
@@ -36,7 +36,7 @@ class MailManagerInitial < ActiveRecord::Migration
       t.boolean :include_images
       t.timestamps
     end
-
+    
     create_table :"#{table_prefix}mailing_lists_#{table_prefix}mailings", :id => false do |t|
       t.integer :mailing_id
       t.integer :mailing_list_id
@@ -65,7 +65,7 @@ class MailManagerInitial < ActiveRecord::Migration
       t.string    :name, :null => false
       t.text      :email_html
       t.text      :email_text
-      t.boolean   :reusable
+      t.boolean   :reusable  
       t.integer   :updated_by
       t.timestamps
     end

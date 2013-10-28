@@ -1,8 +1,8 @@
-class MailManagerTestMessage < ActiveRecord::Migration
+class MailMgrTestMessage < ActiveRecord::Migration
   def self.up
-    table_prefix = 'mail_manager_'
+    table_prefix = 'mail_mgr_'
     begin
-      table_prefix = Conf.mail_manager_table_prefix
+      table_prefix = Conf.mail_mgr_table_prefix
     rescue
     end
     change_table :"#{table_prefix}messages" do |t|
@@ -12,9 +12,9 @@ class MailManagerTestMessage < ActiveRecord::Migration
     end
   end
   def self.down
-    table_prefix = 'mail_manager_'
+    table_prefix = 'mail_mgr_'
     begin
-      table_prefix = Conf.mail_manager_table_prefix
+      table_prefix = Conf.mail_mgr_table_prefix
     rescue
     end
     change_table :"#{table_prefix}messages" do |t|

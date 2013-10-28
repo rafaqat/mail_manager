@@ -15,7 +15,7 @@
     <td><%=h mailing_list.name %></td>
     <td align="right"> <%= mailing_list.subscriptions.active.size %> </td>
     <td align="center"> <%= mailing_list.subscriptions.unsubscribed.size %>  </td>
-    <td><%= link_to 'Edit', edit_mail_manager_mailing_list_path(mailing_list), :class => 'button'  %><div class="linkbuttonEnding"></div></td>
+    <td><%= link_to 'Edit', edit_mail_mgr_mailing_list_path(mailing_list), :class => 'button'  %><div class="linkbuttonEnding"></div></td>
     <td><%= link_to 'Delete', mailing_list, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %><div class="linkbuttonEnding"></div></td>
   </tr>
 <% end %>
@@ -26,8 +26,8 @@ No mailing lists exist.
 
 
 <% @page_title = "Mailing Lists" %>
-<% content_for :page_navigation do %>
+<%= content_for :page_navigation do %>
 <div>
-  <%= link_to "New Mailing List", new_mail_manager_mailing_list_path, :class => 'button' %><div class="linkbuttonEnding"></div>
+  <%= link_to "New Mailing List", new_mail_mgr_mailing_list_path, :class => 'button' %><div class="linkbuttonEnding"></div>
 </div>
 <% end %>

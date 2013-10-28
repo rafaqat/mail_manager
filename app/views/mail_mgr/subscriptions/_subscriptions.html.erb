@@ -1,5 +1,5 @@
-<% contactable_form.fields_for :subscriptions do |subscription_fields| 
-		 subscription = subscription_fields.object %>
+<%= contactable_form.fields_for :subscriptions do |subscription_fields| %>
+	<% subscription = subscription_fields.object %>
   <tr valign="top">
     <td>
     <%= subscription_fields.label :status, subscription.mailing_list.try(:name) %>
