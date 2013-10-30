@@ -44,24 +44,24 @@ namespace :mail_manager do
        :auth_all=>1)
   end
 
-  desc "Add mlm defaults to config/config.yml"
+  desc "Add mlm defaults to config/mail_manager.yml"
   task :default_app_config, :table_prefix do |t,args|
-    Rails.logger.warn "Adding defaults to config/config.yml"
+    Rails.logger.warn "Adding defaults to config/mail_manager.yml"
     begin
-      app_config = YAML.load_file('config/config.yml')
+      app_config = YAML.load_file('config/mail_manager.yml')
     rescue => e
       app_config = Hash.new
     end
-    File.open('config/config.yml','w') do |file|
+    File.open('config/mail_manager.yml','w') do |file|
       file.write YAML.dump({
         'common' => {
-          'mail_manager_unsubscribe_path' => '/listmgr',
-          'mail_manager_sleep_time_between_messages' => 0.3,
-          'mail_manager_path_prefix' => '/admin',
-          'mail_manager_table_prefix' => args.table_prefix,
-          'mail_manager_default_from_email_address' => 'eESI <eESINews@eesipeo.com>',
-          'mail_manager_secret' => ActiveSupport::SecureRandom.hex(15),
-          'mail_manager_bounce' => {
+          'unsubscribe_path' => '/listmgr',
+          'sleep_time_between_messages' => 0.3,
+          'path_prefix' => '/admin',
+          'table_prefix' => args.table_prefix,
+          'default_from_email_address' => 'eESI <eESINews@eesipeo.com>',
+          'secret' => SecureRandom.hex(15).to_s,
+          'bounce' => {
               'email_address' => 'test@example.com',
               'login' => 'test',
               'password' => 'secret',

@@ -1,7 +1,7 @@
 require 'erb'
 require 'yaml'
 
-class MailManager::Conf
+class MailManager::Config
   attr_reader :sections, :params
   
   def initialize(file = nil)
@@ -29,6 +29,19 @@ class MailManager::Conf
     else
       Rails.logger.warn "Invalid AppConfig Parameter " + param
     end
+  end
+
+  def self.initialize!
+    standard_file = File.join(Rails.root,'config','mail_manager.yml')
+    local_file = File.join(Rails.root,'config','mail_manager.local.yml')
+    unless File.exists?(standard_file)
+      $stderr.puts "Missing Configuration: either define ::Conf with proper values or create a config/mail_manager.yml with rake mail_manager:default_app_config"
+    end
+    c = ::MailManager::Config.new
+    c.use_file!("#{Rails.root}/config/mail_manager.yml")
+    c.use_file!("#{Rails.root}/config/mail_manager.local.yml")
+    c.use_section!(Rails.env)
+    c
   end
   
 end

@@ -7,15 +7,4 @@ module MailManager
   def self.assets_path
     File.join(PLUGIN_ROOT,'assets')
   end
-  if defined?(::Conf)
-    Conf = ::Conf
-  else
-    require 'mail_manager/config'
-    c = Config.new
-    $stderr.puts "Missing Configuration: either define ::Conf with proper values or create a config/mail_manager.yml with rake mail_manager:create_config"
-    c.use_file!("#{Rails.root}/config/mail_manager.yml")
-    c.use_file!("#{Rails.root}/config/mail_manager.local.yml")
-    c.use_section!(Rails.env)
-    Conf = c
-  end
 end
