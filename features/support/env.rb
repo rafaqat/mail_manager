@@ -23,7 +23,7 @@ require 'webrat/core/matchers'
 
 `rake db:test:clone_structure`
 
-require "#{MailMgrPlugin::PLUGIN_ROOT}/spec/factories"
+require "#{MailManager::PLUGIN_ROOT}/spec/factories"
 require 'pickle/world'
 # Example of configuring pickle:
 #

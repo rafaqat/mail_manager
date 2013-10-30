@@ -4,7 +4,7 @@ module MailManager
     before_filter :find_mailing_list, :except => [:new,:create,:index]
 
     def index
-      @mailing_lists = MailingList.active.find(:all, :order => "name asc").paginate(:page => params[:page])
+      @mailing_lists = MailingList.active.order("name asc").paginate(:page => params[:page])
     end
 
     def show
@@ -40,9 +40,9 @@ module MailManager
       @mailing_list.destroy
       redirect_to(mail_manager_mailing_lists_url)
     end
-
-    protected
-
+  
+    protected 
+  
     def find_mailing_list
       @mailing_list = MailingList.find(params[:id])
     end

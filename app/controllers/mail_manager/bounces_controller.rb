@@ -3,7 +3,7 @@ module MailManager
     layout 'admin'
     before_filter :find_bounce, :except => [:new, :create, :index]
     before_filter :find_mailing
-
+  
 
     def index
       params[:bounce] = Hash.new unless params[:bounce]
@@ -12,17 +12,17 @@ module MailManager
       @mailing = @mailings.first unless @mailing
       @bounces = []
       if params[:bounce][:status].eql?('invalid')
-        @bounces = Bounce.by_status('invalid').paginate(:all, :page => params[:page])
+        @bounces = Bounce.by_status('invalid').paginate(:page => params[:page])
       elsif !@mailing.nil?
-        @bounces = Bounce.by_mailing_id(@mailing.id).by_status(params[:bounce][:status]).paginate(:all, :page => params[:page])
+        @bounces = Bounce.by_mailing_id(@mailing.id).by_status(params[:bounce][:status]).paginate(:page => params[:page])
       end
     end
 
     def show
     end
-
-    protected
-
+  
+    protected 
+  
     def find_bounce
       @bounce = Bounce.find(params[:id])
     end

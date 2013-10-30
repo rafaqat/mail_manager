@@ -6,7 +6,7 @@ This class is responsible for actually sending email messages... its mostly just
 
 Messages:
 unsubscribed - sends an email to notify the user that they have been removed
-message - sends and Message
+message - sends and Message 
 test_mailing - sends a test message for a mailing
 mail - knows how to send any message based on the different "mime" parts its given
 
@@ -15,6 +15,12 @@ mail - knows how to send any message based on the different "mime" parts its giv
 require 'net/http'
 require 'uri'
 require "base64"
+begin
+  require "mini_magick" 
+rescue => e
+  require 'rmagick' rescue nil
+end
+
 
 module MailManager
   class Mailer < ActionMailer::Base
@@ -27,132 +33,231 @@ module MailManager
         collect{|subscription| subscription.mailing_list.name}
       @subject = "Unsubscribed from #{@mailing_lists.join(',')} at #{Conf.site_url}"
       Rails.logger.debug "Really Sending Unsubscribed from #{@mailing_lists.first} to #{@contact.email_address}"
+      mail(to: @recipients, from: @from, subject: @subject)
     end
 
-    def double_opt_in(contact)
-      @contact = contact
-      @recipients = @contact.email_address
-      @subject = "Confirm Newsletter Subscription at #{Conf.site_url}"
-      @from = Conf.newsletter_signup_email_address
-      @mailing_list_names = contact.subscriptions.map(&:mailing_list).map(&:name).join(', ')
-      @headers    = {'Return-Path' => Conf.mail_manager_bounce['email_address']}
-    end
-
-    def message(message)
-      mail(message.subject,message.email_address_with_name,message.from_email_address,
-        message.parts,message.guid,message.mailing.include_images?)
-    end
-
-    def mail(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
-      include_images = (include_images and !Conf.mail_manager_dont_include_images_domains.detect{|domain|
-        to_email_address.strip =~ /#{domain}>?$/})
-      @recipients = to_email_address
-      @subject    = subject
-      @from       = from_email_address
-      @sent_on    = Time.now()
-      @headers    = {'Return-Path' => Conf.mail_manager_bounce['email_address']}
-      @headers['X-Bounce-Guid'] = message_id if message_id
-
-      TMail::HeaderField::FNAME_TO_CLASS.delete 'content-id'
-
-      @content_type = 'multipart/alternative'
-      the_parts.each do |type,content|
-        Rails.logger.warn "Adding Part: #{type} - #{content[0..40]}"
-        if type.eql?('text/html') and include_images
-          parts << inline_html_with_images(content)
-        else
-          part :content_type => type, :body => content
-        end
+    # we do special junk ... so lets make them class methods
+    class << self
+      def deliver_message(message)
+        self.send_mail(message.subject,message.email_address_with_name,message.from_email_address,
+          message.parts,message.guid,message.mailing.include_images?)
       end
-    end
 
-    def inline_attachment(params, &block)
-      params = { :content_type => params } if String === params
-      params = { :disposition => "inline",
-                 :transfer_encoding => "base64" }.merge(params)
-      params[:headers] ||= {}
-      params[:headers]['Content-ID'] = params[:cid]
-      params
-    end
-
-    def image_mime_types(extension)
-      case extension.downcase
-        when 'bmp' then 'image/bmp'
-        when 'cod' then 'image/cis-cod'
-        when 'gif' then 'image/gif'
-        when 'ief' then 'image/ief'
-        when 'jpe' then 'image/jpeg'
-        when 'jpeg' then 'image/jpeg'
-        when 'jpg' then 'image/jpeg'
-        when 'png' then 'image/png'
-        when 'jfif' then 'image/pipeg'
-        when 'svg' then 'image/svg+xml'
-        when 'tif' then 'image/tiff'
-        when 'tiff' then 'image/tiff'
-      end
-    end
-
-    def get_extension_from_data(image_data)
-      identify_string = ''
-      identify_string = ''
-      file = Tempfile.new('guess_image_format')
-      file.write image_data;
-      file.close
-      identify_string = `identify #{file.path}`
-      file.close!
-      identify_string.split(/\s+/)[1].to_s.downcase
-    end
-
-    def inline_html_with_images(html_source)
-      regex = /(<\s*img[^>]+src\s*=\s*["'])([^"']*)(["'])|(<\s*table[^>]+background\s*=\s*["'])([^"']*)(["'])/i
-      parsed_data = html_source.split(regex)
-      images = Array.new
-      final_html = ''
-      image_errors = ''
-      parsed_data.each_with_index do |data,index|
-        if(index % 4 == 2)
-          image = Hash.new
-          image[:cid] = Base64.encode64(data).gsub(/\s*/,'').reverse[0..59]
-          final_html << "cid:#{image[:cid]}"
-          #only attach new images!
-          next if images.detect{|this_image| this_image[:cid].eql?(image[:cid])}
-          begin
-            image[:body] = fetch(data)
-          rescue => e
-            image_errors += "Couldn't fetch url '#{data}'<!--, #{e.message} - #{e.backtrace.join("\n")}-->\n"
+      def multipart_with_inline_images(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
+        text_source = the_parts.first[1];nil
+        original_html_source = the_parts.last[1];nil
+        mail = Mail.new do
+          to            to_email_address
+          from          from_email_address
+          subject       subject
+          part :content_type => "multipart/alternative", :content_disposition => "inline" do |main|
+            main.part :content_type => "text/plain", :body => text_source
+            if include_images
+              main.part :content_type => "multipart/related" do |related|
+                (html_source,images) = MailManager::Mailer::inline_html_with_images(original_html_source)
+                images.each_with_index do |image,index|
+                  related.attachments.inline[image[:filename]] = {
+                    :content_id => image[:cid],
+                    :content => image[:content]
+                  }
+                  html_source.gsub!(image[:cid],related.attachments[index].cid)
+                end
+                related.part :content_type => "text/html; charset=UTF-8", :body => html_source
+              end
+            else
+              main.part :content_type => "text/html; charset=UTF-8", :body => original_html_source
+            end
           end
-          image[:filename] = data.gsub(/^.*\//,'')
-          extension = ''#data.gsub(/^.*\./,'').downcase
-          extension = get_extension_from_data(image[:body]) if image_mime_types(extension).blank?
-          image_errors += "Couldn't find mime type for #{extension} on #{data}" if image_mime_types(extension).blank?
-          image[:content_type] = image_mime_types(extension)
-          images << image
+        end
+        mail
+      end
+
+      def multipart_alternative_without_images(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
+        text_source = the_parts.first[1];nil
+        original_html_source = the_parts.last[1];nil
+        mail = Mail.new do
+          to            to_email_address
+          from          from_email_address
+          subject       subject
+
+          text_part do
+            body text_source
+          end
+
+          html_part do
+            content_type 'text/html; charset=UTF-8'
+            body original_html_source
+          end
+        end
+        mail
+      end
+    
+      def send_mail(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
+        include_images = (include_images and !Conf.mail_manager_dont_include_images_domains.detect{|domain| 
+          to_email_address.strip =~ /#{domain}>?$/})
+        mail = if include_images
+          multipart_with_inline_images(subject,to_email_address,from_email_address,the_parts,message_id,include_images)
         else
-          final_html << data
+          multipart_alternative_without_images(subject,to_email_address,from_email_address,the_parts,message_id,include_images)
+        end
+        mail.header['Return-Path'] = Conf.mail_manager_bounce['email_address']
+        mail.header['X-Bounce-Guid'] = message_id if message_id
+        set_mail_settings(mail)
+        mail.deliver!
+        Rails.logger.info "Sent mail to: #{to_email_address}"
+        Rails.logger.debug mail.to_s
+      end
+
+      def set_mail_settings(mail)
+        mail.delivery_method ActionMailer::Base.delivery_method.eql?(:letter_opener) ? :test : ActionMailer::Base.delivery_method
+        # letter opener blows up!
+        # Ex set options!
+        #         mail.delivery_method.settings.merge!( {
+        #   user_name: 'chauboldt_lnstar.com',
+        #   password: 'Secret1!',
+        #   address: 'mail.lnstar.com',
+        #   domain: 'mail.lnstar.com',
+        #   enable_starttls_auto: true,
+        #   authentication: :plain,
+        #   port: 587
+        # } )
+
+        mail.delivery_method.settings.merge!(
+          (case method
+           when :smtp then ActionMailer::Base.smtp_settings
+           when :sendmail then ActionMailer::Base.sendmail_settings
+           else
+             {}
+           end rescue {})
+        )
+      end
+    
+      def inline_attachment(params, &block)
+        params = { :content_type => params } if String === params
+        params = { :disposition => "inline",
+                   :transfer_encoding => "base64" }.merge(params)
+        params[:headers] ||= {}
+        params[:headers]['Content-ID'] = params[:cid]
+        params
+      end
+
+      def image_mime_types(extension)
+        case extension.downcase
+          when 'bmp' then 'image/bmp'
+          when 'cod' then 'image/cis-cod'
+          when 'gif' then 'image/gif'
+          when 'ief' then 'image/ief'
+          when 'jpe' then 'image/jpeg'
+          when 'jpeg' then 'image/jpeg'
+          when 'jpg' then 'image/jpeg'
+          when 'png' then 'image/png'
+          when 'jfif' then 'image/pipeg'
+          when 'svg' then 'image/svg+xml'
+          when 'tif' then 'image/tiff'
+          when 'tiff' then 'image/tiff'
         end
       end
-      raise image_errors unless image_errors.eql?('')
-      related_part = ActionMailer::Part.new({})
-      related_part.part :content_type => "text/html",
-        :body => final_html
-
-      images.each do |image|
-          related_part.part inline_attachment(image)
+      
+      def get_extension_from_data(image_data)
+        if defined?(MiniMagick)
+          MiniMagick::Image.read(image_data)[:format] || ''
+        elsif defined?(Magick)
+          Magick::Image.from_blob(image_data).first.format || ''
+        else
+          ''
+        end
+      rescue => e
+        ''
       end
-      related_part.content_type = 'multipart/related'
-      related_part
-    end
+    
+      def inline_html_with_images(html_source)
+        parsed_data = html_source.split(/(<\s*img[^>]+src\s*=\s*["'])([^"']*)(["'])/i)
+        images = Array.new
+        final_html = ''
+        image_errors = ''
+        parsed_data.each_with_index do |data,index|
+          if(index % 4 == 2)
+            image = Hash.new()
+            image[:cid] = Base64.encode64(data).gsub(/\s*/,'').reverse[0..59]
+            final_html << "cid:#{image[:cid]}"
+            #only attach new images!
+            next if images.detect{|this_image| this_image[:cid].eql?(image[:cid])}
+            begin
+              image[:content] = fetch(data)
+            rescue => e
+              image_errors += "Couldn't fetch url '#{data}'<!--, #{e.message} - #{e.backtrace.join("\n")}-->\n"
+            end
+            image[:filename] = filename = File.basename(data)
+            extension = filename.gsub(/^.*\./,'').downcase
+            Rails.logger.debug "Fetching Image for: #{filename} #{image[:content].to_s[0..30]}"
+            extension = get_extension_from_data(image[:content]) if image_mime_types(extension).blank?
+            image_errors += "Couldn't find mime type for #{extension} on #{data}" if image_mime_types(extension).blank?
+            image[:content_type] = image_mime_types(extension)
+            images << image
+          else
+            final_html << data
+          end
+        end
+        raise image_errors unless image_errors.eql?('')
+        [final_html,images]
+        # related_part = Mail::Part.new do 
+        #   body final_html
+        # end
+        # images.each do |image|
+        #   related_part.part inline_attachment(image)
+        # end
+        # related_part.content_type = 'multipart/related'
+        # related_part
 
-    def fetch(uri_str, limit = 10)
-      # You should choose better exception.
-      raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+        # related_part = Mail::Part.new do
+        #   content_type 'multipart/related'
+        #   # content_type 'text/html; charset=UTF-8'
+        #   # body final_html
+        # end
+        # related_part.parts << Mail::Part.new do
+        #   content_type 'text/html; charset=UTF-8'
+        #   body final_html
+        # end
+        # images.each do |image|
+        #   related_part.attachments[image[:filename]] = image[:body]
+        # end
+        # related_part.content_type = 'multipart/related'
+        # related_part.parts.first.content_type = 'text/html; charset=UTF-8'
+        # related_part.parts.first.header['Content-Disposition'] = 'inline'
 
-      response = Net::HTTP.get_response(URI.parse(uri_str))
-      case response
-      when Net::HTTPSuccess     then response.body
-      when Net::HTTPRedirection then fetch(response['location'], limit - 1)
-      else
-        response.error!
+      end
+
+      def local_ips
+        `/sbin/ifconfig`
+      end
+
+      def request_local?(uri_str)
+        uri = URI.parse(uri_str)
+        ip_address = `host #{uri.host}`.gsub(/.*has address ([\d\.]+)\s.*/m,"\\1")
+        local_ips.include?(ip_address)
+      rescue => e
+        false
+      end
+    
+      def fetch(uri_str, limit = 10)
+        # You should choose better exception.
+        # raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+
+        # response = Net::HTTP.get_response(URI.parse(uri_str))
+        # case response
+        # when Net::HTTPSuccess     then response.body
+        # when Net::HTTPRedirection then fetch(response['location'], limit - 1)
+        # else
+        #   response.error!
+        # end
+        body = ''
+        Curl.get(uri_str) do |http|
+          http.follow_location = true
+          http.interface = '127.0.0.1' if request_local?(uri_str)
+          http.on_success{|response| body = response.body}
+        end
+        raise Exception.new("Couldn't fetch URL: #{uri_str}") unless body.present?
+        body
       end
     end
   end

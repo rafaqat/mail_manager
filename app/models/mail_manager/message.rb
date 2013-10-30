@@ -21,19 +21,21 @@ module MailManager
     belongs_to :contact, :class_name => 'MailManager::Contact'
     #FIXME: if we add more types ... change the base message to be MailingMessage or something and don't use
     #me as a message type
-    default_scope :conditions => {:type => self.class.name.eql?('Class') ? self.name : self.class.name }
+    default_scope :conditions => {:type => "MailManager::#{(self.class.name.eql?('Class') ? self.name : self.class.name).gsub(/^MailManager::/,'')}" } 
+  
+    scope :pending, {:conditions => {:status => 'pending'}}
+    scope :ready, :conditions => ["status=?", 'ready']
+    scope :sent, :conditions => ["status=?", 'sent']
+    scope :processing, :conditions => ["status=?", 'processing']
 
-    named_scope :pending, {:conditions => {:status => 'pending'}}
-    named_scope :failed, {:conditions => {:status => 'failed'}}
-    named_scope :sent, {:conditions => {:status => 'sent'}}
-    named_scope :ready, :conditions => ["status=?", 'ready']
+    attr_protected :id
 
     def initialize(*args)
       super
       set_type
     end
 
-    named_scope :search, lambda{|params|
+    scope :search, lambda{|params| 
       conditions = ["1"]
       if params[:mailing_id]
         conditions[0] += " AND #{Conf.mail_manager_table_prefix}messages.mailing_id=?"
@@ -44,12 +46,13 @@ module MailManager
         conditions << params[:status]
       end
       {
-        :conditions => conditions,
+        :conditions => conditions, 
         :order => "#{Conf.mail_manager_table_prefix}contacts.last_name, #{Conf.mail_manager_table_prefix}contacts.first_name, #{Conf.mail_manager_table_prefix}contacts.email_address",
         :joins => " INNER JOIN #{Conf.mail_manager_table_prefix}contacts on #{Conf.mail_manager_table_prefix}messages.contact_id=#{Conf.mail_manager_table_prefix}contacts.id"
       }}
-
+  
     include StatusHistory
+    override_statuses(['pending','processing','sent','failed','ready'], 'pending')
     before_create :set_default_status
     after_create :generate_guid
 
@@ -63,7 +66,7 @@ module MailManager
       MailManager::Mailer.deliver_message(self)
       change_status(:sent)
     end
-
+  
     def full_name
       contact.full_name
     end
@@ -86,7 +89,7 @@ module MailManager
     def parts
       @parts ||= mailing.parts(substitutions)
     end
-
+    
     def contactable
       contact.try(:contactable)
     end
@@ -110,22 +113,10 @@ module MailManager
       "#{Conf.site_url}#{Conf.mail_manager_unsubscribe_path}/#{guid}"
     end
 
-    def self.valid_statuses
-      ['pending','processing','sent','failed','ready']
-    end
-
-    def valid_statuses
-      ['pending','processing','sent','failed','ready']
-    end
-
     # generated the guid for which the message is identified by in transit
     def generate_guid
-      update_attribute(:guid,
+      update_attribute(:guid,       
         "#{contact.id}-#{subscription.try(:id)}-#{self.id}-#{Digest::SHA1.hexdigest("#{contact.id}-#{subscription.try(:id)}-#{self.id}-#{Conf.mail_manager_secret}")}")
-    end
-
-    def default_status
-      'pending'
     end
 
     protected

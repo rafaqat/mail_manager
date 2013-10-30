@@ -12,7 +12,8 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{Mailing list management tool}
   gem.homepage      = "http://lone-star.net"
 
-  gem.add_development_dependency "rspec"
+  gem.add_development_dependency "rspec-rails"
+  gem.add_development_dependency "cucumber-rails"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

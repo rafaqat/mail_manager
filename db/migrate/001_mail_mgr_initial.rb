@@ -1,8 +1,8 @@
-class MailMgrInitial < ActiveRecord::Migration
+class MailManagerInitial < ActiveRecord::Migration
   def self.up
-    table_prefix = 'mail_mgr_'
+    table_prefix = 'mail_manager_'
     begin
-      table_prefix = Conf.mail_mgr_table_prefix
+      table_prefix = Conf.mail_manager_table_prefix
     rescue
     end
     create_table :"#{table_prefix}mailing_lists" do |t|

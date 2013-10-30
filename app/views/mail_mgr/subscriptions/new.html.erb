@@ -1,9 +1,0 @@
-<% title "New Subscription for #{@mailing_list.name}" %>
-
-<%= content_for :subnav do %>
-<ul>
-  <li><%= link_to 'Back', mail_mgr_mailing_list_subscriptions_path(@mailing_list) %>
-</ul>
-<% end %>
-
-      <%= render :partial => 'form' %>

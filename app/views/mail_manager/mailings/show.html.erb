@@ -1,0 +1,28 @@
+<p>
+  <b>Name:</b>
+  <%=h @mailing.subject %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%=h @mailing.status %>
+</p>
+
+<p>
+  <b>Status changed at:</b>
+  <%=h @mailing.status_changed_at %>
+</p>
+
+<p>
+  <b>Scheduled at:</b>
+  <%=h @mailing.scheduled_at %>
+</p>
+
+<p>
+  <b>Include images:</b>
+  <%=h @mailing.include_images %>
+</p>
+
+
+<%= link_to 'Edit', edit_mail_manager_mailing_path(@mailing) %> |
+<%= link_to 'Back', mail_manager_mailings_path %>

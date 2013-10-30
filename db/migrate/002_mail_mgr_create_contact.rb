@@ -1,8 +1,8 @@
-class MailMgrCreateContact < ActiveRecord::Migration
+class MailManagerCreateContact < ActiveRecord::Migration
   def self.up
-    table_prefix = 'mail_mgr_'
+    table_prefix = 'mail_manager_'
     begin
-      table_prefix = Conf.mail_mgr_table_prefix
+      table_prefix = Conf.mail_manager_table_prefix
     rescue
     end
     create_table :"#{table_prefix}contacts" do |t|
@@ -17,23 +17,23 @@ class MailMgrCreateContact < ActiveRecord::Migration
     end
     add_column :"#{table_prefix}subscriptions", :contact_id, :integer
     transaction do 
-      MailMgr::Subscription.all.each do |subscription|
-        if subscription.contactable_type.eql?('MailMgr::Subscription')
-          contact = MailMgr::Contact.
+      MailManager::Subscription.all.each do |subscription|
+        if subscription.contactable_type.eql?('MailManager::Subscription')
+          contact = MailManager::Contact.
             find_by_email_address_and_contactable_type_and_contactable_id(subscription.email_address,nil,nil)
         else
-          contact = MailMgr::Contact.
+          contact = MailManager::Contact.
             find_by_email_address_and_contactable_type_and_contactable_id(subscription.email_address,
             subscription.contactable_type, subscription.contactable_id)
         end
         if contact.nil?
-          contact = MailMgr::Contact.new(
+          contact = MailManager::Contact.new(
             :first_name => subscription.first_name,
             :last_name => subscription.last_name,
             :email_address => subscription.email_address)
           contact.save!
         end
-        unless subscription.contactable_type.eql?('MailMgr::Subscription')
+        unless subscription.contactable_type.eql?('MailManager::Subscription')
           contact.update_attribute(:contactable_type,subscription.contactable_type)
           contact.update_attribute(:contactable_id,subscription.contactable_id)
         end
@@ -49,9 +49,9 @@ class MailMgrCreateContact < ActiveRecord::Migration
   end
 
   def self.down
-    table_prefix = 'mail_mgr_'
+    table_prefix = 'mail_manager_'
     begin
-      table_prefix = Conf.mail_mgr_table_prefix
+      table_prefix = Conf.mail_manager_table_prefix
     rescue
     end
     drop_table :"#{table_prefix}contacts"

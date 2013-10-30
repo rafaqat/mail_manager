@@ -1,0 +1,37 @@
+<% title "Listing Messages for #{@mailing.subject} " %>
+
+<%= content_for :subnav do %>
+<ul>
+  <li><%= link_to 'Back', mail_manager_mailings_path %></li>
+</ul>
+<% end %>
+
+    <%= will_paginate @messages %>
+    <%= form_tag mail_manager_mailing_messages_path(@mailing), :id => 'search_form', :method => 'GET' do %>
+      Status:<%= select_tag "message[status]", options_for_select(@valid_statuses,params[:message][:status]), :onChange => "$('#search_form').submit()" %>
+    <% end %>
+    <% if @messages.length == 0 %>
+      <h3>No messages found for your query.</h3>
+    <% else %>
+<table class="list" cellpadding="2" cellspacing="0" border="0">
+  <tr class="title">
+    <td>Contact</td>
+    <!--
+    <td>Status</td>
+    <td>Status changed at</td>
+    -->
+    <td>Result</td>
+  </tr>
+
+<% @messages.each do |message| %>
+  <tr class="<%= cycle('odd','even') %>">
+    <td><%=h message.full_name %> <%=h message.email_address %></td>
+    <!--
+    <td><%=h message.status %></td>
+    <td><%=h message.status_changed_at %></td>
+    -->
+    <td><%=h message.result %></td>
+  </tr>
+<% end %>
+</table>
+    <% end %>

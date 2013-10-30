@@ -7,8 +7,8 @@ Subscription ties Contacts to MailingLists and keeps track of subscription prefe
 Statuses:
 'active' - user has an active subscription to list
 'pending' - awaiting user approval through email
-'unsubscribed' - user or admin has unsubscribe user from list
-'failed_address' - BounceJob has detected a 'permanently' fatal email failure - like the account or domain doesn't exist
+'unsubscribed' - user or admin has unsubscribe user from list 
+'failed_address' - BounceJob has detected a 'permanently' fatal email failure - like the account or domain doesn't exist 
 
 FIXME: currently tied to users table
 =end
@@ -23,23 +23,25 @@ module MailManager
     validates_presence_of :mailing_list_id
     validates_associated :mailing_list
 
-    named_scope :active, :conditions => {:status => 'active'},
-                         :joins => "INNER JOIN #{Conf.mail_manager_table_prefix}contacts ON
-                            #{Conf.mail_manager_table_prefix}subscriptions.contact_id = #{Conf.mail_manager_table_prefix}contacts.id
+    scope :active, :conditions => {:status => 'active'}, 
+                         :joins => "INNER JOIN #{Conf.mail_manager_table_prefix}contacts ON 
+                            #{Conf.mail_manager_table_prefix}subscriptions.contact_id = #{Conf.mail_manager_table_prefix}contacts.id 
                             and #{Conf.mail_manager_table_prefix}contacts.deleted_at IS NULL"
 
-    named_scope :unsubscribed, :conditions => {:status => 'unsubscribed'}
-    named_scope :pending, :conditions => {:status => 'pending'}
+    scope :unsubscribed, :conditions => {:status => 'unsubscribed'}  
 
-    include StatusHistory
+    include StatusHistory  
+    override_statuses(['active','pending','unsubscribed','failed_address','duplicate'],'pending')
     before_create :set_default_status
 
+    attr_protected :id
+    
     #acts_as_audited rescue Rails.logger.warn "Audit Table not defined!"
-
+  
     def contact_full_name
        contact.full_name
     end
-
+ 
     # changes or creates a subscription for the given contact and list and assigns the given status
     def self.change_subscription_status(contact, mailing_list, status)
       subscription = self.find_by_contact_id_and_mailing_list_id(contact.id, mailing_list.id)
@@ -59,29 +61,17 @@ module MailManager
     def self.unsubscribe(contact, mailing_list)
       change_subscription_status(contact, mailing_list, 'unsubscribed')
     end
-
+  
     def mailing_list_name
       mailing_list.try(:name)
     end
-
-    def valid_statuses
-      ['active','pending','unsubscribed','failed_address','duplicate']
-    end
-
-    def self.valid_statuses
-      ['active','pending','unsubscribed','failed_address','duplicate']
-    end
-
+    
     def active?
       status.eql?('active')
     end
 
-    def pending?
-      status.eql?('pending')
-    end
-
     # unsubscribes a contact from all lists by looking them up through a messages GUID
-    # FIXME: when we add more lists and the ability to have multiple subscriptions, this should
+    # FIXME: when we add more lists and the ability to have multiple subscriptions, this should 
     # remove only the list that is tied in the GUID and they should be linked to their options
     def self.unsubscribe_by_message_guid(guid)
       message = Message.find_by_guid(guid)
@@ -100,11 +90,7 @@ module MailManager
       end
       nil
     end
-
-    def default_status
-      'pending'
-    end
-
+  
     def self.fail_by_email_address(email_address)
       Contact.find_all_by_email_address(email_address).each do |contact|
         contact.subscriptions.each do |subscription|
@@ -112,7 +98,7 @@ module MailManager
         end
       end
     end
-
+    
     def self.unsubscribe_by_email_address(email_address)
       subscriptions = []
       Contact.find_all_by_email_address(email_address).each do |contact|

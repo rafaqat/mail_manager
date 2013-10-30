@@ -1,4 +1,4 @@
-class MlmToMailMgrScoped < ActiveRecord::Migration
+class MlmToMailManagerScoped < ActiveRecord::Migration
 
   def self.up
     rename_column :mlm_subscriptions, :mlm_mailing_list_id, :mailing_list_id
@@ -12,7 +12,7 @@ class MlmToMailMgrScoped < ActiveRecord::Migration
     #this is better done with a straight query
     conn = ActiveRecord::Base.connection
     conn.execute("UPDATE `mlm_subscriptions` 
-      SET contactable_type='MailMgr::Subscription'
+      SET contactable_type='MailManager::Subscription'
       WHERE contactable_type='MlmSubscription'")
   end
   

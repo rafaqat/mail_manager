@@ -1,0 +1,12 @@
+<% title "Send Test for #{@mailing.subject}" %>
+<%= form_tag send_test_mail_manager_mailing_path(@mailing) do %>
+  <table cellpadding="1" cellspacing="0" border="0">
+    <tr valign="top">
+      <td width="150"><%= label_tag "Test Email Address" %></td>
+      <td><%= text_field_tag "test_email_addresses", @current_user ? @current_user.email : '' %></td>
+    </tr>
+    <tr valign="top">
+		  <td colspan="2" align="right"><%= submit_tag "Send Test Email", :class => 'button' %><div class="buttonEnding"></div></td>
+		</tr>
+  </table>
+<% end %>

@@ -8,17 +8,17 @@ module MailManager
 
     def index
       params[:search] = Hash.new unless params[:search]
-      search_params = params[:search].merge(:mailing_list_id => params[:mailing_list_id])
+      search_params = params[:search].merge(:mailing_list_id => params[:mailing_list_id]) 
       @valid_statuses = Subscription.valid_statuses
       @subscriptions = Subscription.search(search_params).paginate(:all, :page => params[:page])
     end
-
+  
     def unsubscribe
       raise "Empty id for#{params[:guid]}" if params[:guid].blank?
       if params[:guid] =~ /^test/
         @message = TestMessage.find_by_guid(params[:guid])
-        @mailing_lists = ['Test Mailing List']
-        @contact = Contact.new(:first_name => 'Test', :last_name => 'Guy',
+        @mailing_lists = ['Test Mailing List'] 
+        @contact = Contact.new(:first_name => 'Test', :last_name => 'Guy', 
           :email_address => @message.test_email_address)
       else
         unsubscribed_subscriptions = Subscription.unsubscribe_by_message_guid(params[:guid])
@@ -33,14 +33,14 @@ module MailManager
       flash[:error] = e.message
       redirect_to mail_manager_unsubscribe_by_email_address_path
     end
-
+    
     def unsubscribe_by_email_address
       unless params[:email_address].blank?
         unsubscribed_subscriptions = Subscription.unsubscribe_by_email_address(params[:email_address])
         @mailing_lists = unsubscribed_subscriptions.reject{|subscription|
           subscription.mailing_list.nil?}.collect{|subscription| subscription.mailing_list.name}
         @contact = Contact.new(:email_address => params[:email_address])
-        return render('unsubscribe', :layout => Conf.mail_manager_public_layout)
+        return render('unsubscribe', :layout => 'layout')
       end
       render :layout => 'layout'
     end
@@ -83,9 +83,9 @@ module MailManager
       @subscription.destroy
       redirect_to(mail_manager_subscriptions_url)
     end
-
-    protected
-
+  
+    protected 
+  
     def find_subscription
       @subscription = Subscription.find(params[:id])
     end
@@ -97,7 +97,7 @@ module MailManager
         params[:mail_manager_subscription]
       nil
     end
-
+  
     def find_contact
       @contact = @subscription.contact
     end

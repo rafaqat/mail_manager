@@ -1,13 +1,13 @@
 module MailManager
   class ContactableRegistry
-
+    
     @@contactable_things = {}
     def self.register_contactable(classname, methods={})
       @@contactable_things.merge!(classname => methods)
       Rails.logger.warn "Registered Contactable: #{classname}"
       Rails.logger.debug "Current Contactables: #{@@contactable_things.inspect}"
     end
-
+    
     def self.registered_methods(classname=nil)
       return @@contactable_things[classname.to_s].keys unless classname.nil?
       all_methods = {}
@@ -16,15 +16,15 @@ module MailManager
       end
       all_methods.keys
     end
-
+    
     def self.valid_contactable_substitutions(classname=nil)
       registered_methods(classname).collect{|key| key.to_s.upcase}
     end
-
+  
     def self.contactable_method(classname,method)
       @@contactable_things[classname][method] || method
     end
-
+    
     module Contactable
 
       #FIXME: this is NOT secure!!!!
@@ -46,7 +46,7 @@ module MailManager
         end
         self.contact.present? and self.contact.errors.empty?
       end
-
+      
       def initialize_subscriptions
         if self.contact.nil?
           self.contact = MailManager::Contact.new(
@@ -76,10 +76,10 @@ module MailManager
         end
         true
       end
-
+      
       def get_subscription_atttributes_for_subscription(subscription)
         return {} if @subscriptions_attributes.nil?
-        subscriptions_attributes.values.detect{|subscription_attributes|
+        subscriptions_attributes.values.detect{|subscription_attributes| 
           subscription_attributes[:mailing_list_id].to_i == subscription.mailing_list_id.to_i} || {}
       end
 
@@ -110,25 +110,25 @@ module MailManager
           method
         end
       end
-
+      
       def reload
         @subscriptions = nil
       end
-
+      
       def subscriptions
         return @subscriptions unless @subscriptions.nil?
         @subscriptions = self.initialize_subscriptions
       end
-
+      
       def active_subscriptions
         subscriptions.select{|subscription| subscription.active?}
       end
-
+      
       def save(*args)
         success = true
         if args[0] != false
-          begin
-            transaction do
+          begin 
+            transaction do 
               success = success && super
               if self.contactable_value(:email_address).present?
                 Rails.logger.debug "User save super success? #{success.inspect}"
@@ -167,7 +167,7 @@ module MailManager
           end
         end
       end
-
+      
       def self.included(model)
         model.send(:include, Associations)
         model.send(:include, AttrAccessors)
