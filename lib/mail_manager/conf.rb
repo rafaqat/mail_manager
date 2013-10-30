@@ -1,7 +1,7 @@
 require 'erb'
 require 'yaml'
 
-class MailManager::Config
+class MailManager::Conf
   attr_reader :sections, :params
   
   def initialize(file = nil)
