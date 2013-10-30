@@ -73,6 +73,7 @@ class MailMgrInitial < ActiveRecord::Migration
   end
 
   def self.down
+    drop_table :"#{table_prefix}mailables"
     drop_table :"#{table_prefix}bounces"
     drop_table :"#{table_prefix}messages"
     drop_table :"#{table_prefix}mailing_lists_#{table_prefix}mailings"
