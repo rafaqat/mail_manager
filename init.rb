@@ -1,5 +1,5 @@
 unless defined?(::MailManager::Conf)
-  Rails.application.config.to_prepare do
+  MailManager::Engine.config.to_prepare do
     ApplicationController.helper(MailManager::SubscriptionsHelper)
     if defined?(::Conf)
       ::MailManager::Conf = ::Conf
@@ -9,3 +9,4 @@ unless defined?(::MailManager::Conf)
     end
   end
 end
+$stdout.puts "Configured Mail Manager"
