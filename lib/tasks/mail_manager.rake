@@ -1,6 +1,6 @@
 require 'rake'
 ENV["RAILS_ENV"] ||= "development"
-require "#{RAILS_ROOT}/config/environment"
+require "#{Rails.root}/config/environment"
 
 namespace :mail_manager do
   desc "Create mlm LSI Auth Menus"

@@ -1,4 +1,4 @@
-class MailManagerInitial < ActiveRecord::Migration
+class MailMgrInitial < ActiveRecord::Migration
   def self.up
     table_prefix = 'mail_manager_'
     begin

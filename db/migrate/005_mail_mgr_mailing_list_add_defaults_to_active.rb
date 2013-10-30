@@ -1,4 +1,4 @@
-class MailManagerMailingListAddDefaultsToActive < ActiveRecord::Migration
+class MailMgrMailingListAddDefaultsToActive < ActiveRecord::Migration
   def self.up
     table_prefix = 'mail_manager_'
     begin
