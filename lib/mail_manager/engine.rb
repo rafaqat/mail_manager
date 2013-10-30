@@ -11,7 +11,7 @@ module MailManager
     Conf = ::Conf
   else
     require 'mail_manager/conf'
-    c = MailMagager::Conf.new
+    c = Conf.new
     raise "Missing Configuration: either define ::Conf with proper values or create a config/mail_manager.yml with rake mail_manager:create_config"
     c.use_file!("#{Rails.root}/config/mail_manager.yml")
     c.use_file!("#{Rails.root}/config/mail_manager.local.yml")
