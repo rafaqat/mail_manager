@@ -1,10 +1,11 @@
 class MailMgrCreateContact < ActiveRecord::Migration
+  def self.table_prefix
+    Conf.mail_manager_table_prefix
+  rescue
+    'mail_manager_'
+  end
+
   def self.up
-    table_prefix = 'mail_manager_'
-    begin
-      table_prefix = Conf.mail_manager_table_prefix
-    rescue
-    end
     create_table :"#{table_prefix}contacts" do |t|
       t.integer :contactable_id
       t.string :contactable_type
@@ -49,11 +50,6 @@ class MailMgrCreateContact < ActiveRecord::Migration
   end
 
   def self.down
-    table_prefix = 'mail_manager_'
-    begin
-      table_prefix = Conf.mail_manager_table_prefix
-    rescue
-    end
     drop_table :"#{table_prefix}contacts"
     add_column :"#{table_prefix}subscriptions", :first_name, :string
     add_column :"#{table_prefix}subscriptions", :last_name, :string
