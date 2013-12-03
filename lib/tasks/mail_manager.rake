@@ -55,17 +55,23 @@ namespace :mail_manager do
     File.open('config/mail_manager.yml','w') do |file|
       file.write YAML.dump({
         'common' => {
-          'unsubscribe_path' => '/listmgr',
-          'sleep_time_between_messages' => 0.3,
-          'path_prefix' => '/admin',
-          'table_prefix' => args.table_prefix,
-          'default_from_email_address' => 'eESI <eESINews@eesipeo.com>',
-          'secret' => SecureRandom.hex(15).to_s,
-          'bounce' => {
-              'email_address' => 'test@example.com',
-              'login' => 'test',
-              'password' => 'secret',
-              'pop_server' => 'pop.example.com'
+          'site_url' => 'http://example.com',
+          'mail_manager' => {
+            'unsubscribe_path' => '/listmgr',
+            'dont_include_images_domains' => [
+              'yahoo.com', 'google.com', 'hotmail.com'
+            ],
+            'sleep_time_between_messages' => 0.3,
+            'path_prefix' => '/admin',
+            'table_prefix' => args.table_prefix,
+            'default_from_email_address' => 'eESI <eESINews@eesipeo.com>',
+            'secret' => SecureRandom.hex(15).to_s,
+            'bounce' => {
+                'email_address' => 'test@example.com',
+                'login' => 'test',
+                'password' => 'secret',
+                'pop_server' => 'pop.example.com'
+            }
           }
         }
       }.deep_merge(app_config))

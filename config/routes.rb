@@ -6,36 +6,40 @@ MailManager::Engine.routes.draw do
     mail_manager_path_prefix = '/admin/mail_manager'
     unsubscribe_path = '/listmgr'
   end
+  mail_manager_path_prefix = '/admin/mail_manager' if mail_manager_path_prefix.blank?
+  unsubscribe_path = '/listmgr' if unsubscribe_path.blank?
 
   match "#{unsubscribe_path}/:guid", :controller => 'subscriptions', 
     :action => 'unsubscribe'
+  match '/unsubscribe_by_email_address' => 'subscriptions#unsubscribe_by_email_address', as: 'unsubscribe_by_email_address'
 
-  resources :mailings do
-    member do
-      post :send_test
-      get :test
-      get :schedule
-      get :pause
-      get :cancel
+  scope :mail_manager do
+    resources :mailings do
+      member do
+        post :send_test
+        get :test
+        get :schedule
+        get :pause
+        get :cancel
+      end
+      resources :messages, only: [:index]
     end
-    resources :messages, only: [:index]
-  end
 
-  resources :bounces, only: [:index, :show] do
-    member do
-      get :dismiss
-      get :fail_address
+    resources :bounces, only: [:index, :show] do
+      member do
+        get :dismiss
+        get :fail_address
+      end
     end
-  end
 
-  resources :mailing_lists do
-    resources :subscriptions, only: [:index,:new]
-  end
+    resources :mailing_lists do
+      resources :subscriptions, only: [:index,:new]
+    end
 
-  match '/unsubscribe_by_email_address' => 'subscriptions#unsubscribe_by_email_address'
-  resources :contacts do
-    member do
-      get :send_one_off_message
+    resources :contacts do
+      member do
+        get :send_one_off_message
+      end
     end
   end
 end

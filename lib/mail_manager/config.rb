@@ -15,7 +15,9 @@ class MailManager::Config
       hash = YAML::load(ERB.new(IO.read(file)).result)       
       @sections.merge!(hash) {|key, old_val, new_val| (old_val || new_val).merge new_val }
       @params.merge!(@sections['common'])
-    rescue; end    
+    rescue => e
+      nil
+    end    
   end
   
   def use_section!(section)
@@ -28,6 +30,7 @@ class MailManager::Config
       @params[param]
     else
       Rails.logger.warn "Invalid AppConfig Parameter " + param
+      nil
     end
   end
 

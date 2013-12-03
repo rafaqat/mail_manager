@@ -18,16 +18,16 @@ Statuses:
 
 module MailManager
   class Bounce < ActiveRecord::Base
-    set_table_name "#{Conf.mail_manager_table_prefix}bounces"
+    set_table_name "#{Conf.mail_manager['table_prefix']}bounces"
     belongs_to :message, :class_name => 'MailManager::Message'
     belongs_to :mailing, :class_name => 'MailManager::Mailing'
     include StatusHistory
     override_statuses(['needs_manual_intervention','unprocessed','dismissed','resolved','invalid'],'unprocessed')
     before_create :set_default_status
-    default_scope :order => "#{Conf.mail_manager_table_prefix}contacts.last_name, #{Conf.mail_manager_table_prefix}contacts.first_name, #{Conf.mail_manager_table_prefix}contacts.email_address",
+    default_scope :order => "#{Conf.mail_manager['table_prefix']}contacts.last_name, #{Conf.mail_manager['table_prefix']}contacts.first_name, #{Conf.mail_manager['table_prefix']}contacts.email_address",
         :joins => 
-        "INNER JOIN #{Conf.mail_manager_table_prefix}messages on #{Conf.mail_manager_table_prefix}bounces.message_id=#{Conf.mail_manager_table_prefix}messages.id "+
-        " INNER JOIN #{Conf.mail_manager_table_prefix}contacts on #{Conf.mail_manager_table_prefix}messages.contact_id=#{Conf.mail_manager_table_prefix}contacts.id"
+        "INNER JOIN #{Conf.mail_manager['table_prefix']}messages on #{Conf.mail_manager['table_prefix']}bounces.message_id=#{Conf.mail_manager['table_prefix']}messages.id "+
+        " INNER JOIN #{Conf.mail_manager['table_prefix']}contacts on #{Conf.mail_manager['table_prefix']}messages.contact_id=#{Conf.mail_manager['table_prefix']}contacts.id"
 #
     scope :by_mailing_id, lambda {|mailing_id| where(:mailing_id => mailing_id)}
     scope :by_status, lambda {|status| where(:status => status.to_s)}

@@ -14,7 +14,7 @@ failed - either the message couldn't be handed to the Email Server or it has bee
 
 module MailManager
   class Message < ActiveRecord::Base
-    set_table_name "#{Conf.mail_manager_table_prefix}messages"
+    set_table_name "#{Conf.mail_manager['table_prefix']}messages"
     belongs_to :mailing, :class_name => 'MailManager::Mailing'
     belongs_to :subscription, :class_name => 'MailManager::Subscription'
     has_many :bounces, :class_name => 'MailManager::Bounce'
@@ -38,17 +38,17 @@ module MailManager
     scope :search, lambda{|params| 
       conditions = ["1"]
       if params[:mailing_id]
-        conditions[0] += " AND #{Conf.mail_manager_table_prefix}messages.mailing_id=?"
+        conditions[0] += " AND #{Conf.mail_manager['table_prefix']}messages.mailing_id=?"
         conditions << params[:mailing_id]
       end
       if params[:status]
-        conditions[0] += " AND #{Conf.mail_manager_table_prefix}messages.status=?"
+        conditions[0] += " AND #{Conf.mail_manager['table_prefix']}messages.status=?"
         conditions << params[:status]
       end
       {
         :conditions => conditions, 
-        :order => "#{Conf.mail_manager_table_prefix}contacts.last_name, #{Conf.mail_manager_table_prefix}contacts.first_name, #{Conf.mail_manager_table_prefix}contacts.email_address",
-        :joins => " INNER JOIN #{Conf.mail_manager_table_prefix}contacts on #{Conf.mail_manager_table_prefix}messages.contact_id=#{Conf.mail_manager_table_prefix}contacts.id"
+        :order => "#{Conf.mail_manager['table_prefix']}contacts.last_name, #{Conf.mail_manager['table_prefix']}contacts.first_name, #{Conf.mail_manager['table_prefix']}contacts.email_address",
+        :joins => " INNER JOIN #{Conf.mail_manager['table_prefix']}contacts on #{Conf.mail_manager['table_prefix']}messages.contact_id=#{Conf.mail_manager['table_prefix']}contacts.id"
       }}
   
     include StatusHistory

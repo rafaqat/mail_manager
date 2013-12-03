@@ -93,14 +93,14 @@ module MailManager
       end
     
       def send_mail(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
-        include_images = (include_images and !Conf.mail_manager_dont_include_images_domains.detect{|domain| 
+        include_images = (include_images and !Conf.mail_manager['dont_include_images_domains'].detect{|domain| 
           to_email_address.strip =~ /#{domain}>?$/})
         mail = if include_images
           multipart_with_inline_images(subject,to_email_address,from_email_address,the_parts,message_id,include_images)
         else
           multipart_alternative_without_images(subject,to_email_address,from_email_address,the_parts,message_id,include_images)
         end
-        mail.header['Return-Path'] = Conf.mail_manager_bounce['email_address']
+        mail.header['Return-Path'] = Conf.mail_manager['bounce']['email_address']
         mail.header['X-Bounce-Guid'] = message_id if message_id
         set_mail_settings(mail)
         mail.deliver!

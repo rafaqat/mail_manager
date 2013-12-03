@@ -1,6 +1,6 @@
 class MailMgrTestMessage < ActiveRecord::Migration
   def self.table_prefix
-    Conf.mail_manager_table_prefix
+    Conf.mail_manager['table_prefix']
   rescue
     'mail_manager_'
   end
