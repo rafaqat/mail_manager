@@ -1,6 +1,5 @@
 module MailManager
-  class ContactsController < ApplicationController
-    layout 'admin'
+  class ContactsController < BaseController
 
     def subscribe
       if params[:mail_manager_contact].present? and params[:mail_manager_contact][:email_address].present?

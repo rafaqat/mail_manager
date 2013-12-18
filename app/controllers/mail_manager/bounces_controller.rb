@@ -1,6 +1,5 @@
 module MailManager
-  class BouncesController < ApplicationController
-    layout 'admin'
+  class BouncesController < BaseController
     before_filter :find_bounce, :except => [:new, :create, :index]
     before_filter :find_mailing
   

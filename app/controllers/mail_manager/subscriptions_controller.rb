@@ -1,6 +1,5 @@
 module MailManager
-  class SubscriptionsController < ApplicationController
-    layout 'admin'
+  class SubscriptionsController < BaseController
     before_filter :find_subscription, :except => [:new,:create,:index,:unsubscribe,:unsubscribe_by_email_address]
     before_filter :find_mailing_list
     before_filter :find_contact, :except => [:new,:create,:index,:unsubscribe,:unsubscribe_by_email_address]

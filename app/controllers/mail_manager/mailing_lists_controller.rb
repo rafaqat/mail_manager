@@ -1,6 +1,5 @@
 module MailManager
-  class MailingListsController < ApplicationController
-    layout 'admin'
+  class MailingListsController < BaseController
     before_filter :find_mailing_list, :except => [:new,:create,:index]
 
     def index
