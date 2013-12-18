@@ -21,7 +21,7 @@ module MailManager
   	      message.result = "Error: #{e.message} - #{e.backtrace.join("\n")}"
   	      message.change_status(:failed)
   	    end
-        sleep Conf.mail_manager_sleep_time_between_messages
+        sleep MailManager.sleep_time_between_messages
       end
     end
 

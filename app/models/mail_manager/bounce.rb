@@ -16,18 +16,18 @@ Statuses:
 'dismissed' - bounce has been dismissed by user
 =end
 
-module MailMgr
+module MailManager
   class Bounce < ActiveRecord::Base
-    self.table_name =  "#{Conf.mail_mgr_table_prefix}bounces"
-    belongs_to :message, :class_name => 'MailMgr::Message'
-    belongs_to :mailing, :class_name => 'MailMgr::Mailing'
+    self.table_name =  "#{MailManager.table_prefix}bounces"
+    belongs_to :message, :class_name => 'MailManager::Message'
+    belongs_to :mailing, :class_name => 'MailManager::Mailing'
     include StatusHistory
     override_statuses(['needs_manual_intervention','unprocessed','dismissed','resolved','invalid'],'unprocessed')
     before_create :set_default_status
-    default_scope :order => "#{Conf.mail_mgr_table_prefix}contacts.last_name, #{Conf.mail_mgr_table_prefix}contacts.first_name, #{Conf.mail_mgr_table_prefix}contacts.email_address",
+    default_scope :order => "#{MailManager.table_prefix}contacts.last_name, #{MailManager.table_prefix}contacts.first_name, #{MailManager.table_prefix}contacts.email_address",
         :joins => 
-        "LEFT OUTER JOIN #{Conf.mail_mgr_table_prefix}messages on #{Conf.mail_mgr_table_prefix}bounces.message_id=#{Conf.mail_mgr_table_prefix}messages.id "+
-        " LEFT OUTER JOIN #{Conf.mail_mgr_table_prefix}contacts on #{Conf.mail_mgr_table_prefix}messages.contact_id=#{Conf.mail_mgr_table_prefix}contacts.id"
+        "LEFT OUTER JOIN #{MailManager.table_prefix}messages on #{MailManager.table_prefix}bounces.message_id=#{MailManager.table_prefix}messages.id "+
+        " LEFT OUTER JOIN #{MailManager.table_prefix}contacts on #{MailManager.table_prefix}messages.contact_id=#{MailManager.table_prefix}contacts.id"
 #
     scope :by_mailing_id, lambda {|mailing_id| where(:mailing_id => mailing_id)}
     scope :by_status, lambda {|status| where(:status => status.to_s)}

@@ -14,7 +14,7 @@ module MailManager
 
     def new
       @mailing = Mailing.new
-      @mailing.from_email_address = Conf.mail_manager['default_from_email_address'] if Conf.mail_manager['default_from_email_address']
+      @mailing.from_email_address = MailManager.default_from_email_address if MailManager.default_from_email_address
       @mailing.scheduled_at = Time.now
       @mailing.include_images = true
       @mailing.mailing_lists = @all_mailing_lists

@@ -15,12 +15,12 @@ completed - Mailing has been sent
 
 module MailManager
   class Mailing < ActiveRecord::Base
-    set_table_name "#{Conf.mail_manager['table_prefix']}mailings"
+    set_table_name "#{MailManager.table_prefix}mailings"
     has_many :messages, :class_name => 'MailManager::Message'
     has_many :test_messages, :class_name => 'MailManager::TestMessage'
     has_many :bounces, :class_name => 'MailManager::Bounce'
     has_and_belongs_to_many :mailing_lists, :class_name => 'MailManager::MailingList', 
-      :join_table => "#{Conf.mail_manager['table_prefix']}mailing_lists_#{Conf.mail_manager['table_prefix']}mailings"
+      :join_table => "#{MailManager.table_prefix}mailing_lists_#{MailManager.table_prefix}mailings"
     #FIXME why does this break? 
     belongs_to :mailable, :polymorphic => true
   
@@ -67,8 +67,8 @@ module MailManager
 	          message.result = "Error: #{e.message} - #{e.backtrace.join("\n")}"
 	          message.change_status(:failed)
 	        end
-          Rails.logger.debug "Sleeping #{Conf.mail_manager['sleep_time_between_messages']} before next message"
-          sleep Conf.mail_manager['sleep_time_between_messages']
+          Rails.logger.debug "Sleeping #{MailManager.sleep_time_between_messages} before next message"
+          sleep MailManager.sleep_time_between_messages
         end
         change_status(:completed) if status.to_s.eql?('processing')
       end

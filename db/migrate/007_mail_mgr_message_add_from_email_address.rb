@@ -1,6 +1,6 @@
 class MailMgrMessageAddFromEmailAddress < ActiveRecord::Migration
   def self.table_prefix
-    Conf.mail_manager['table_prefix']
+    MailManager.table_prefix
   rescue
     'mail_manager_'
   end

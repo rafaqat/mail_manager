@@ -14,6 +14,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "rails", "~>3.2"
   gem.add_dependency "delayed_job", "~>3"
+  gem.add_dependency "dynamic_form", "~>1.1"
 
   gem.add_development_dependency "rspec-rails"
   gem.add_development_dependency "cucumber-rails"

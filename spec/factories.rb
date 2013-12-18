@@ -31,11 +31,11 @@ Factory.define :subscription,  :class => MailManager::Subscription  do |f|
 end
 
 class TestUser < ActiveRecord::Base
-  set_table_name "#{Conf.mail_manager['table_prefix']}test_users"
+  set_table_name "#{MailManager.table_prefix}test_users"
   include MailManager::ContactableRegistry::Contactable
 end
 
-ActiveRecord::Schema.create_table :"#{Conf.mail_manager['table_prefix']}test_users", :force => true do |t|
+ActiveRecord::Schema.create_table :"#{MailManager.table_prefix}test_users", :force => true do |t|
   t.string :first
   t.string :last
   t.string :email
@@ -59,11 +59,11 @@ end
 
 require 'mail_manager/mailable_registry'
 class TestMailable < ActiveRecord::Base
-  set_table_name "#{Conf.mail_manager['table_prefix']}test_mailables"
+  set_table_name "#{MailManager.table_prefix}test_mailables"
   include MailManager::MailableRegistry::Mailable if defined? MailManager::MailableRegistry.respond_to?(:object_id)
 end
 
-ActiveRecord::Schema.create_table :"#{Conf.mail_manager['table_prefix']}test_mailables", :force => true do |t|
+ActiveRecord::Schema.create_table :"#{MailManager.table_prefix}test_mailables", :force => true do |t|
   t.string :name
   t.string :email_html
   t.string :email_text

@@ -1,5 +1,5 @@
 begin
-  Conf.whatever
+  MailManager.whatever
 rescue => e
   
   class AppConfig

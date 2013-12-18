@@ -17,7 +17,7 @@ class Lock
   private
   
   def self.name_prefix
-    "#{Conf.site_url}-#{RAILS_ENV}"
+    "#{MailManager.site_url}-#{RAILS_ENV}"
   end
   
   def self.get_lock(connection,name,timeout,max_attempts)

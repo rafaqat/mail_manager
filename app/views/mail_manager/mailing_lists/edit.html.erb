@@ -5,9 +5,9 @@
 
 <%= content_for :page_navigation do %>
   <div>
-  <% if Conf.use_show_for_resources %>
+  <% if use_show_for_resources? %>
     <%= link_to "Show", @mailing, :class => 'button' %><div class="linkbuttonEnding"></div>
   <% end %>
-    <%= link_to "Back", mail_manager_mailing_lists_path, :class => 'button' %><div class="linkbuttonEnding"></div>
+    <%= link_to "Back", mail_manager.mailing_lists_path, :class => 'button' %><div class="linkbuttonEnding"></div>
   </div>
 <% end %>

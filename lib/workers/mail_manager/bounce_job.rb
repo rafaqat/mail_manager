@@ -22,10 +22,10 @@ module MailManager
     end
     def self.run
       Lock.with_lock('mail_manager_bounce_job') do
-        Rails.logger.info "Bounce Job Connecting to #{Conf.mail_manager_bounce['pop_server']} with #{Conf.mail_manager_bounce['login']}:#{Conf.mail_manager_bounce['password']}"
+        Rails.logger.info "Bounce Job Connecting to #{MailManager.bounce['pop_server']} with #{MailManager.bounce['login']}:#{MailManager.bounce['password']}"
         Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE)
-        Net::POP3.start(Conf.mail_manager_bounce['pop_server'],Conf.mail_manager_bounce['port'],
-        	Conf.mail_manager_bounce['login'], Conf.mail_manager_bounce['password']) do |pop|
+        Net::POP3.start(MailManager.bounce['pop_server'],MailManager.bounce['port'],
+        	MailManager.bounce['login'], MailManager.bounce['password']) do |pop|
 
           if pop.mails.empty?
             Rails.logger.info "No mail."

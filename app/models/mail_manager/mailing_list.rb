@@ -8,12 +8,12 @@ MailingList simply defines the available lists for subscriptions in the system. 
 module MailManager
   class MailingList < ActiveRecord::Base
 
-    set_table_name "#{Conf.mail_manager['table_prefix']}mailing_lists"
+    set_table_name "#{MailManager.table_prefix}mailing_lists"
     
     # associations get stupid when ActiveRecord is scoped for some horrible reason
     has_many :subscriptions, :class_name => 'MailManager::Subscription'
     has_and_belongs_to_many :mailings, :class_name => 'MailManager::Mailing',
-      :join_table => "#{Conf.mail_manager['table_prefix']}mailing_lists_#{Conf.mail_manager['table_prefix']}mailings"
+      :join_table => "#{MailManager.table_prefix}mailing_lists_#{MailManager.table_prefix}mailings"
   
     scope :active, {:conditions => {:status => 'active',:deleted_at => nil}}
   
