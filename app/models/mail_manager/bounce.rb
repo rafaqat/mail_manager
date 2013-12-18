@@ -16,34 +16,34 @@ Statuses:
 'dismissed' - bounce has been dismissed by user
 =end
 
-module MailManager
+module MailMgr
   class Bounce < ActiveRecord::Base
-    set_table_name "#{Conf.mail_manager['table_prefix']}bounces"
-    belongs_to :message, :class_name => 'MailManager::Message'
-    belongs_to :mailing, :class_name => 'MailManager::Mailing'
+    self.table_name =  "#{Conf.mail_mgr_table_prefix}bounces"
+    belongs_to :message, :class_name => 'MailMgr::Message'
+    belongs_to :mailing, :class_name => 'MailMgr::Mailing'
     include StatusHistory
     override_statuses(['needs_manual_intervention','unprocessed','dismissed','resolved','invalid'],'unprocessed')
     before_create :set_default_status
-    default_scope :order => "#{Conf.mail_manager['table_prefix']}contacts.last_name, #{Conf.mail_manager['table_prefix']}contacts.first_name, #{Conf.mail_manager['table_prefix']}contacts.email_address",
+    default_scope :order => "#{Conf.mail_mgr_table_prefix}contacts.last_name, #{Conf.mail_mgr_table_prefix}contacts.first_name, #{Conf.mail_mgr_table_prefix}contacts.email_address",
         :joins => 
-        "INNER JOIN #{Conf.mail_manager['table_prefix']}messages on #{Conf.mail_manager['table_prefix']}bounces.message_id=#{Conf.mail_manager['table_prefix']}messages.id "+
-        " INNER JOIN #{Conf.mail_manager['table_prefix']}contacts on #{Conf.mail_manager['table_prefix']}messages.contact_id=#{Conf.mail_manager['table_prefix']}contacts.id"
+        "LEFT OUTER JOIN #{Conf.mail_mgr_table_prefix}messages on #{Conf.mail_mgr_table_prefix}bounces.message_id=#{Conf.mail_mgr_table_prefix}messages.id "+
+        " LEFT OUTER JOIN #{Conf.mail_mgr_table_prefix}contacts on #{Conf.mail_mgr_table_prefix}messages.contact_id=#{Conf.mail_mgr_table_prefix}contacts.id"
 #
     scope :by_mailing_id, lambda {|mailing_id| where(:mailing_id => mailing_id)}
     scope :by_status, lambda {|status| where(:status => status.to_s)}
 
     attr_protected :id
     #Parses email contents for bounce resolution
-    def process
-      if status.eql?('unprocessed')
+    def process(force=false)
+      if status.eql?('unprocessed') || force
         self.message = Message.find_by_guid(bounce_message_guid)
         self.mailing = message.mailing unless message.nil?
-        if message.nil?
+        if !from_mailer_daemon?
           change_status(:invalid)
-        elsif delivery_error_code =~ /4\.\d\.\d/
+        elsif delivery_error_code =~ /4\.\d\.\d/ || delivery_error_message.to_s =~ /quota/i
           update_attribute(:comments, delivery_error_message)
           change_status(:resolved)
-        elsif delivery_error_code =~ /5\.\d\.\d/
+        elsif delivery_error_code =~ /5\.\d\.\d/ && delivery_error_message.present?
           transaction do 
             update_attribute(:comments, delivery_error_message)
             change_status(:resolved)
@@ -57,6 +57,14 @@ module MailManager
         end
         save
       end
+    end
+
+    def reprocess
+      process(true)
+    end
+
+    def from_mailer_daemon?
+      ['postmaster','mailer-daemon'].include?(email.from.first.gsub(/\@.*$/,'').downcase)
     end
   
     def dismiss
@@ -89,85 +97,84 @@ module MailManager
     end
   
     def contact_full_name
-      contact.full_name
+      contact.try(:full_name)
     end
 
     def contact_email_address
       if contact.blank?
-      "Contact Deleted"
+        "Contact Deleted"
       else
-      contact.email_address
+        contact.email_address
       end
     end
   
     def delivery_error_code
-      delivery_error_part['status'].try(:body) if delivery_error_part
-    end
-
-    def delivery_error_message
-      return "No Known Error Message" unless delivery_error_part
-      error_message = nil
-      return error_message if error_message = delivery_error_part['diagnostic-code'].try(:body)
-      return error_message if error_message = get_part_with_header('content-type',/^text\/plain/).try(:body)
-      return "No Known Error Message" 
-    end
-
-    def delivery_error_part
-      return @delivery_error_part if @delivery_error_part
-      return @delivery_error_part if @delivery_error_part = get_part_with_header('diagnostic-code') 
-      @delivery_error_part = get_part_with_header('content-type',/message\/delivery-status/) 
-      begin
-        @delivery_error_part = TMail::Mail.parse(TMail::Mail.parse(@delivery_error_part.body).body)
-      rescue => e
-        @delivery_error_part = nil
-      end
-      return @delivery_error_part
-    end
-
-    # Returns message guid 
-    def bounce_message_guid
-      guid = nil
-      return guid if guid = get_header('X-Bounce-GUID')
-      return guid if guid = @email['x-bounce-guid']
-      return @email.to_s.gsub(/^.*X-Bounce-GUID:\s*([^\s]+).*$/mi,'\1') if @email.to_s.match(/X-Bounce-GUID:\s*([^\s]+)/mi)
-      guid
-    end
-
-    # Finds the part of the message that contains the given header
-    def get_part_with_header(key,value=nil,part=nil)
-      return get_part_with_header(key,value,email) if part.nil?
-      key = key.downcase
-      return part if part.key?(key) and (value.nil? or part[key].to_s =~ value)
-      if part.parts.length == 0
-        if part.body.length > 0
-          begin
-            this_part = TMail::Mail.parse(part.body)
-            return false unless this_part
-            return get_part_with_header(key,value,TMail::Mail.parse(part.body))
-          rescue => e
-            #this is to catch tmail errors
-          end
-        end
-      else
-        part.parts.each do |this_part|
-          part = get_part_with_header(key,value,this_part)
-          return part if part
-        end
-      end
-      return false
-    end
-
-    # Finds the given header's value
-    def get_header(key,value=nil,part=nil)
-      part = get_part_with_header(key,value,email) if part.nil?
-      return nil unless part
-      return part[key].body if part.key?(key) and (value.nil? or part[key].to_s =~ value)
+      email.error_status
+    rescue
       nil
     end
 
+    def delivery_error_message
+      email.diagnostic_code
+    rescue
+      nil
+    end
+
+    # def delivery_error_part
+    #   mail.diagnostic_code.split(":").last
+    # rescue
+    #   nil
+    #   # return @delivery_error_part if @delivery_error_part
+    #   # return @delivery_error_part if @delivery_error_part = get_part_with_header('diagnostic-code') 
+    #   # @delivery_error_part = get_part_with_header('content-type',/message\/delivery-status/) 
+    #   # begin
+    #   #   @delivery_error_part = Mail.new(Mail.new(@delivery_error_part.body).body)
+    #   # rescue => e
+    #   #   @delivery_error_part = nil
+    #   # end
+    #   # return @delivery_error_part
+    # end
+
+    # Returns message guid 
+    def bounce_message_guid
+      email.to_s.gsub(/^.*X-Bounce-GUID:\s*([^\s]+).*$/mi,'\1') if email.to_s.match(/X-Bounce-GUID:\s*([^\s]+)/mi)
+    end
+
+    # # Finds the part of the message that contains the given header
+    # def get_part_with_header(key,value=nil,part=nil)
+    #   return get_part_with_header(key,value,email) if part.nil?
+    #   key = key.downcase
+    #   return part if part.header[key] and (value.nil? or part.header[key].to_s =~ value)
+    #   if part.parts.length == 0
+    #     if part.body.length > 0
+    #       begin
+    #         this_part = Mail.new(part.body)
+    #         return false unless this_part
+    #         return get_part_with_header(key,value,Mail.new(part.body))
+    #       rescue => e
+    #         #this is to catch mail errors
+    #       end
+    #     end
+    #   else
+    #     part.parts.each do |this_part|
+    #       part = get_part_with_header(key,value,this_part)
+    #       return part if part
+    #     end
+    #   end
+    #   return false
+    # end
+
+    # # Finds the given header's value
+    # def get_header(key,value=nil,part=nil)
+    #   part = get_part_with_header(key,value,email) if part.nil?
+    #   return nil unless part
+    #   return part.header[key] if part.header[key].present? and (value.nil? or part.header[key].to_s =~ value)
+    #   nil
+    # end
+
     def email
       return @email if @email
-      @email = TMail::Mail.parse(bounce_message)
+      @email = Mail.new(bounce_message)
     end
   end
 end

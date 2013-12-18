@@ -12,6 +12,9 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{Mailing list management tool}
   gem.homepage      = "http://lone-star.net"
 
+  gem.add_dependency "rails", "~>3.2"
+  gem.add_dependency "delayed_job", "~>3"
+
   gem.add_development_dependency "rspec-rails"
   gem.add_development_dependency "cucumber-rails"
 
