@@ -53,9 +53,9 @@ function toggleStatus() {
       <td colspan="2"><%= contactable.class.name.humanize %> is Deleted</td>
     <% else %>
       <td colspan="2"><%= link_to("Edit #{contactable.class.name.humanize}", 
-        send("MailManager.edit_#{contactable.class.name.underscore}_path",contactable),
-        :class => 'button') rescue "No #{contact.contactable.class.name.humanize} Actions" %>
-        <div class="linkbuttonEnding"></div></td>
+        send("mail_manager.edit_#{contactable.class.name.underscore}_path",contactable),
+        :class => 'button') + %Q|<div class="linkbuttonEnding"></div>| rescue "No #{contact.contactable.class.name.humanize} Actions" %>
+        </td>
       <% end %>
     <% else %>
       <td><%= link_to "Edit", mail_manager.edit_contact_path(contact), :class => 'button' %><div class="linkbuttonEnding"></div></td>
@@ -63,15 +63,15 @@ function toggleStatus() {
       </td>
     <% end %>
 <!--
-      <% if @mailings.length > 0 %>
+      <-% if @mailings.length > 0 %>
       <td>
-        <% form_tag mail_manager.send_one_off_message_contact_path(contact), :style => 'display:inline' do |f| %>
-        <%= select_tag 'mailing_id',  
+        <-% form_tag mail_manager.send_one_off_message_contact_path(contact), :style => 'display:inline' do |f| %>
+        <-%= select_tag 'mailing_id',  
               options_for_select(@mailings.collect{|mailing| [mailing.subject, mailing.id]}) %> 
-        <%= submit_tag "Send One Off Message", :class => 'button' %><div class="buttonEnding"></div>
-        <% end %>
+        <-%= submit_tag "Send One Off Message", :class => 'button' %><div class="buttonEnding"></div>
+        <-% end %>
       </td>
-      <% end %>
+      <-% end %>
 -->
     </tr>
   <% end %>
