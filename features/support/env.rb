@@ -1,5 +1,5 @@
 # Sets up the Rails environment for Cucumber
-ENV["RAILS_ENV"] ||= "test"
+ENV["Rails.env"] ||= "test"
 this_dir =  File.expand_path(File.dirname(__FILE__))
 if this_dir.include?('vendor/plugin')
   require File.expand_path(File.dirname(__FILE__) + '/../../../../../config/environment') 

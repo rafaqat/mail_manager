@@ -39,7 +39,7 @@
     <% end %>
     <tr valign="top">
        <td width='150'><%= f.label :scheduled_at %></td>
-       <td><%= f.text_field :scheduled_at, {class: 'datetime-picker'} %></td>
+       <td><%= f.text_field :scheduled_at, {class: 'datetime-picker', value: l(f.object.scheduled_at || Time.now)} %></td>
     </tr>
     <tr valign="top">
        <td width='150'><%= f.label :include_images %></td>
@@ -73,8 +73,8 @@
     jQuery(".datetime-picker").datetimepicker({
       stepHour: 1,
       stepMinute: 10,
-      timeFormat: 'hh:mm',
-      dateFormat: 'yy-m-d'
+      timeFormat: 'hh:mm tt',
+      dateFormat: 'M dd, yy'
     });
   });
 </script>

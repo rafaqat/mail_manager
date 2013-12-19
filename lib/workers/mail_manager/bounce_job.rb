@@ -18,9 +18,7 @@ require 'net/pop'
 module MailManager
   class BounceJob < Struct.new(:repeats_every)
     def perform
-      BounceJob.run
-    end
-    def self.run
+      found_messages = false
       Lock.with_lock('mail_manager_bounce_job') do
         Rails.logger.info "Bounce Job Connecting to #{MailManager.bounce['pop_server']} with #{MailManager.bounce['login']}:#{MailManager.bounce['password']}"
         Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE)
@@ -30,17 +28,23 @@ module MailManager
           if pop.mails.empty?
             Rails.logger.info "No mail."
           else
+            found_messages = true
             Rails.logger.info "You have #{pop.mails.length} new bounced messages."
             Rails.logger.info "Downloading..."
 
             pop.mails.each_with_index do|m,i|
-              bounce = Bounce.create({
+              bounce = ::MailManager::Bounce.create({
                 :bounce_message => m.pop
               })
               bounce.process
               m.delete
             end
           end
+        end
+        if found_messages
+          Delayed::Job.enqueue ::MailMgr::BounceJob.new, run_at: 10.minutes.from_now
+        else
+          Delayed::Job.enqueue ::MailMgr::BounceJob.new, run_at: 120.minutes.from_now
         end
       end
     end

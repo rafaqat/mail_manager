@@ -3,18 +3,14 @@ module MailManager
     before_filter :find_bounce, :except => [:new, :create, :index]
     before_filter :find_mailing
   
-
     def index
       params[:bounce] = Hash.new unless params[:bounce]
-      params[:bounce][:status] = 'needs_manual_intervention' unless params[:bounce][:status]
-      @mailings = Mailing.by_statuses('processing','paused','resumed','completed','cancelled')
-      @mailing = @mailings.first unless @mailing
+      @mailings = Mailing.with_bounces(params[:bounce][:status])
       @bounces = []
-      if params[:bounce][:status].eql?('invalid')
-        @bounces = Bounce.by_status('invalid').paginate(:page => params[:page])
-      elsif !@mailing.nil?
-        @bounces = Bounce.by_mailing_id(@mailing.id).by_status(params[:bounce][:status]).paginate(:page => params[:page])
-      end
+      @bounces = Bounce.scoped
+      @bounces = @bounces.by_mailing_id(@mailing.id) if @mailing.present?
+      @bounces = @bounces.by_status(params[:bounce][:status]) if params[:bounce][:status].present?
+      @bounces = @bounces.paginate(:page => params[:page])
     end
 
     def show

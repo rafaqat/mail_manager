@@ -57,6 +57,10 @@ module MailManager
         self.contact.initialize_subscriptions
       end
 
+      def subscription_status_for(mailing_list)
+        subscriptions.detect{|subscription| subscription.mailing_list_id.eql?(mailing_list.id)}.status
+      end
+
       def update_subscription_data
         Rails.logger.debug "Updating Subscriptions: #{@subscriptions_attributes.inspect} - #{subscriptions.inspect}"
         subscriptions.each do |subscription|

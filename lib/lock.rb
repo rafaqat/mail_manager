@@ -17,7 +17,7 @@ class Lock
   private
   
   def self.name_prefix
-    "#{MailManager.site_url}-#{RAILS_ENV}"
+    "#{MailManager.site_url}-#{Rails.env}"
   end
   
   def self.get_lock(connection,name,timeout,max_attempts)
@@ -27,7 +27,7 @@ class Lock
       attempts += 1
       lock = connection.select_one("SELECT GET_LOCK('#{name_prefix}-#{name}',#{timeout})")
     end
-    lock.values.include?('1')
+    lock.values.detect{|value| value.to_s.eql?('1')}
   end
   
   def self.release_lock(connection,name)

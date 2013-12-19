@@ -1,5 +1,5 @@
 require 'rake'
-ENV["RAILS_ENV"] ||= "development"
+ENV["Rails.env"] ||= "development"
 require "#{Rails.root}/config/environment"
 
 namespace :mail_manager do

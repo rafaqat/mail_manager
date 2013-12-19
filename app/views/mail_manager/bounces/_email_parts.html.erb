@@ -1,8 +1,8 @@
-<% if email.is_a?(TMail::Mail) 
+<% if email.is_a?(Mail::Message) 
      this_part = email
    elsif email.length > 0
      begin
-       this_part = TMail::Mail.parse(email)
+       this_part = Mail.new(email)
      rescue => e %>
      <pre>
      An error occured parsing this part of the email: <%= e.message %>
@@ -14,14 +14,12 @@
     <hr/>
   <h3>Headers</h3>
     <pre>
-      <% this_part.header.each do |header| %>
-        <%= header[0] %>: <%= header[1] %> 
-      <% end %>
+      <%= this_part.header.inspect %>
     </pre>
-  <% if this_part['content-type'].to_s =~ /text\/html/i %>
+  <% if this_part.header['content-type'].to_s =~ /text\/html/i %>
   <h3>Body Part</h3>
     <%= this_part.body %>
-  <% elsif  this_part['content-type'].to_s =~ /text\/plain|message\/delivery-status|text\/rfc822-headers/i  %>
+  <% elsif  this_part.header['content-type'].to_s =~ /text\/plain|message\/delivery-status|text\/rfc822-headers/i  %>
   <h3>Body Part</h3>
     <pre><%= this_part.body %></pre>
   <% end %>

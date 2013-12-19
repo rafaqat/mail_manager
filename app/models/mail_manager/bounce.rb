@@ -5,7 +5,7 @@ Copyright:: 2009 Lone Star Internet Inc.
 Used to record messages which are returned to the configured account for 'bounce' in the config/config.yml, and pulled by BounceJob. Also responsible for knowing how to process a bounce by pulling diagnostic codes and a message's guid from the bounced email, unsubscribing users when necessary.
 
 Diagnostic Codes:
-5xx - will currently unsubscribe a contact
+5xx - will currently unsubscribe a contact, except when the error contains 'quota'
 4xx - is ignored, and marked 'resolved' as they are temporary errors
 
 Statuses:
@@ -120,57 +120,10 @@ module MailManager
       nil
     end
 
-    # def delivery_error_part
-    #   mail.diagnostic_code.split(":").last
-    # rescue
-    #   nil
-    #   # return @delivery_error_part if @delivery_error_part
-    #   # return @delivery_error_part if @delivery_error_part = get_part_with_header('diagnostic-code') 
-    #   # @delivery_error_part = get_part_with_header('content-type',/message\/delivery-status/) 
-    #   # begin
-    #   #   @delivery_error_part = Mail.new(Mail.new(@delivery_error_part.body).body)
-    #   # rescue => e
-    #   #   @delivery_error_part = nil
-    #   # end
-    #   # return @delivery_error_part
-    # end
-
     # Returns message guid 
     def bounce_message_guid
       email.to_s.gsub(/^.*X-Bounce-GUID:\s*([^\s]+).*$/mi,'\1') if email.to_s.match(/X-Bounce-GUID:\s*([^\s]+)/mi)
     end
-
-    # # Finds the part of the message that contains the given header
-    # def get_part_with_header(key,value=nil,part=nil)
-    #   return get_part_with_header(key,value,email) if part.nil?
-    #   key = key.downcase
-    #   return part if part.header[key] and (value.nil? or part.header[key].to_s =~ value)
-    #   if part.parts.length == 0
-    #     if part.body.length > 0
-    #       begin
-    #         this_part = Mail.new(part.body)
-    #         return false unless this_part
-    #         return get_part_with_header(key,value,Mail.new(part.body))
-    #       rescue => e
-    #         #this is to catch mail errors
-    #       end
-    #     end
-    #   else
-    #     part.parts.each do |this_part|
-    #       part = get_part_with_header(key,value,this_part)
-    #       return part if part
-    #     end
-    #   end
-    #   return false
-    # end
-
-    # # Finds the given header's value
-    # def get_header(key,value=nil,part=nil)
-    #   part = get_part_with_header(key,value,email) if part.nil?
-    #   return nil unless part
-    #   return part.header[key] if part.header[key].present? and (value.nil? or part.header[key].to_s =~ value)
-    #   nil
-    # end
 
     def email
       return @email if @email

@@ -1,6 +1,8 @@
 module MailManager
   class ContactsController < BaseController
 
+    include DeleteableActions
+
     def subscribe
       if params[:mail_manager_contact].present? and params[:mail_manager_contact][:email_address].present?
         @contact = MailManager::Contact.find_by_email_address(params[:mail_manager_contact][:email_address])
@@ -25,7 +27,8 @@ module MailManager
     end
 
     def index
-      @mailings = Mailing.all
+      @mailing_list = MailingList.find_by_id(params[:mailing_list_id])
+      params[:status] ||= 'active'
       @contacts = Contact.search(params).paginate(:page => params[:page])
     end
 
@@ -59,7 +62,7 @@ module MailManager
 
     def destroy
       find_contact
-      @contact.destroy
+      @contact.delete
       redirect_to(mail_manager_contacts_url)
     end
   

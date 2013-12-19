@@ -1,6 +1,6 @@
 module MailManager
   class Contact < ActiveRecord::Base
-    set_table_name "#{MailManager.table_prefix}contacts"
+    self.table_name "#{MailManager.table_prefix}contacts"
     has_many :messages, :class_name => 'MailManager::Message'
     
     belongs_to :contactable, :polymorphic => true
@@ -13,6 +13,7 @@ module MailManager
     validates_format_of :email_address, :with => /\w{1,}[@][\w\-]{1,}([.]([\w\-]{1,})){1,3}$/, :allow_nil => true
 
     include MailManager::ContactableRegistry::Contactable
+    include Deleteable
 
     attr_protected :id
 
@@ -22,6 +23,7 @@ module MailManager
     
     scope :search, lambda{|params| 
       conditions = ["deleted_at IS NULL"]
+      joins = {}
       unless params[:term].blank?
         conditions[0] += " AND (#{params[:term].split(/\s+/).collect{ |term|
           term = "%#{term}%";
@@ -30,21 +32,23 @@ module MailManager
         }.join(' OR ')})"
       end
 
-      if params[:mailing_list_id]
-        conditions[0] += " AND mailing_list_id=?"
-        conditions << params[:mailing_list_id]
+      if params[:mailing_list_id].present? 
+        joins = {joins: "INNER JOIN #{MailManager.table_prefix}subscriptions s ON
+          s.contact_id=#{MailManager.table_prefix}contacts.id AND s.mailing_list_id=#{params[:mailing_list_id].to_i}"}
       end
-      unless params[:status].blank?
+      unless params[:status].blank? || params[:mailing_list_id].blank?
         conditions[0] += " AND status=?"
         conditions << params[:status]
       end
-      { 
+      conditions = { 
         :conditions => conditions, 
         :order =>  'last_name, first_name, email_address'
       }
+      conditions.merge!(joins) if params[:mailing_list_id].present?
+      conditions
     }
 
-    scope :active, lambda {{:conditions => "deleted_at IS NULL"}}
+    scope :active, lambda {{:conditions => "#{table_name}.deleted_at IS NULL"}}
   
     default_scope :order => 'last_name, first_name, email_address'
 

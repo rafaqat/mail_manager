@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # You might want to change this
-ENV['RAILS_ENV'] ||= 'production'
+ENV['Rails.env'] ||= 'production'
 require File.dirname(__FILE__) + "/../../config/environment"
 require 'workers/mail_manager/mailing_job'
 require 'workers/mail_manager/test_message_job'

@@ -15,7 +15,7 @@ completed - Mailing has been sent
 
 module MailManager
   class Mailing < ActiveRecord::Base
-    set_table_name "#{MailManager.table_prefix}mailings"
+    self.table_name "#{MailManager.table_prefix}mailings"
     has_many :messages, :class_name => 'MailManager::Message'
     has_many :test_messages, :class_name => 'MailManager::TestMessage'
     has_many :bounces, :class_name => 'MailManager::Bounce'
@@ -26,13 +26,23 @@ module MailManager
   
     accepts_nested_attributes_for :mailable
 
-  
+    attr_accessor :bounce_count
+
     validates_presence_of :subject
     #validates_presence_of :mailable
   
     scope :ready, lambda {{:conditions => ["(status='scheduled' AND scheduled_at < ?) OR status='resumed'",Time.now.utc]}}
     scope :by_statuses, lambda {|*statuses| {:conditions => ["status in (#{statuses.collect{|bindings,status| '?'}.join(",")})",statuses].flatten}}
   
+    def self.with_bounces(bounce_status=nil)
+      bounce_status_condition = bounce_status.present? ? ActiveRecord::Base.send(:sanitize_sql_array,[" WHERE status=?", bounce_status]) : ''
+      bounce_query = "SELECT mailing_id, COUNT(id) AS count from mail_mgr_bounces #{bounce_status_condition} group by mailing_id"
+      bounce_data = Bounce.connection.execute(bounce_query).inject({}){|hash,(mailing_id,count)| hash.merge(mailing_id => count)}
+      mailings = scoped
+      mailings = mailings.where("id in (#{bounce_data.keys.select(&:present?).join(',')})") if bounce_data.keys.select(&:present?).present?
+      mailings.order("created_at desc").map{|mailing| mailing.bounce_count = bounce_data[mailing.id]; mailing}
+    end
+
     include StatusHistory
     override_statuses(['pending','scheduled','processing','paused','resumed','cancelled','completed'],'pending')
     before_create :set_default_status
@@ -49,7 +59,15 @@ module MailManager
     
     def deliver
       Rails.logger.info "Starting to Process Mailing '#{subject}' ID:#{id}"
-      Lock.with_lock("mail_manager_mailing_send[#{id}]") do |lock| 
+      Lock.with_lock("mail_mgr_mailing_send[#{id}]") do |lock|
+        unless status.to_s.eql?('scheduled')
+          raise Exception.new("Mailing was not scheduled when job tried to run!")
+        end
+        unless scheduled_at <= Time.now
+          Rails.logger.info "Mailing is not scheduled to run until #{scheduled_at} rescheduling job!")
+          self.delay(run_at: scheduled_at).deliver
+          return true
+        end     
         change_status(:processing)
         initialize_messages
         messages.pending.each do |message|
@@ -223,13 +241,15 @@ module MailManager
     def cancel
       raise "Unable to cancel" unless can_cancel?
       change_status('pending')
-      # Delayed::Job.active.find(:all, :conditions => ["handler like ?","MailManager::Mailing"])
+      # Delayed::Job.active.find(:all, :conditions => ["handler like ?","MailMgr::Mailing"])
 
-      mailing_jobs = Delayed::Job.active.find(:all, :conditions => ["handler like ?","%MailManager::Mailing%"])
+      #Changing this to return only the jobs that match the id so I don't have to parse with YAML ... seems logical
+      mailing_jobs = Delayed::Job.find(:all, :conditions => ["handler like ?","%MailMgr::Mailing%"] || ["handler like ?", "%id: {job_mailing_id.to_i}\n%"])
+      #mailing_jobs = Delayed::Job.active.find(:all, :conditions => ["handler like ?","%MailMgr::Mailing%"])
       mailing_jobs.each do |job|
-        job_mailing_id = YAML::load(job.handler).object.split(':').last
-        logger.debug "Job mailing id: #{job_mailing_id} - This mailing id: #{self.id} - do they match: #{job_mailing_id.to_i == self.id.to_i}"
-        job.destroy if job_mailing_id.to_i == self.id.to_i
+        #job_mailing_id = YAML::load(job.handler).object.split(':').last
+        #logger.debug "Job mailing id: #{job_mailing_id} - This mailing id: #{self.id} - do they match: #{job_mailing_id.to_i == self.id.to_i}"
+        job.destroy #if job_mailing_id.to_i == self.id.to_i
       end
     end
   

@@ -31,7 +31,7 @@ Factory.define :subscription,  :class => MailManager::Subscription  do |f|
 end
 
 class TestUser < ActiveRecord::Base
-  set_table_name "#{MailManager.table_prefix}test_users"
+  self.table_name "#{MailManager.table_prefix}test_users"
   include MailManager::ContactableRegistry::Contactable
 end
 
@@ -59,7 +59,7 @@ end
 
 require 'mail_manager/mailable_registry'
 class TestMailable < ActiveRecord::Base
-  set_table_name "#{MailManager.table_prefix}test_mailables"
+  self.table_name "#{MailManager.table_prefix}test_mailables"
   include MailManager::MailableRegistry::Mailable if defined? MailManager::MailableRegistry.respond_to?(:object_id)
 end
 

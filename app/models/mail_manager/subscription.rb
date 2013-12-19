@@ -15,7 +15,7 @@ FIXME: currently tied to users table
 
 module MailManager
   class Subscription < ActiveRecord::Base
-    set_table_name "#{MailManager.table_prefix}subscriptions"
+    self.table_name "#{MailManager.table_prefix}subscriptions"
     belongs_to :contact, :class_name => 'MailManager::Contact'
     belongs_to :mailing_list, :class_name => 'MailManager::MailingList'
     has_many :messages, :class_name => 'MailManager::Message'
@@ -28,10 +28,23 @@ module MailManager
                             #{MailManager.table_prefix}subscriptions.contact_id = #{MailManager.table_prefix}contacts.id 
                             and #{MailManager.table_prefix}contacts.deleted_at IS NULL"
 
-    scope :unsubscribed, :conditions => {:status => 'unsubscribed'}  
+    scope :unsubscribed, :conditions => {:status => 'unsubscribed'}, 
+                         :joins => "INNER JOIN #{Conf.mail_mgr_table_prefix}contacts ON 
+                            #{Conf.mail_mgr_table_prefix}subscriptions.contact_id = #{Conf.mail_mgr_table_prefix}contacts.id 
+                            and #{Conf.mail_mgr_table_prefix}contacts.deleted_at IS NULL"
+
+    scope :failed_address, :conditions => {:status => 'failed_address'}, 
+                         :joins => "INNER JOIN #{Conf.mail_mgr_table_prefix}contacts ON 
+                            #{Conf.mail_mgr_table_prefix}subscriptions.contact_id = #{Conf.mail_mgr_table_prefix}contacts.id 
+                            and #{Conf.mail_mgr_table_prefix}contacts.deleted_at IS NULL"
+
+    scope :pending, :conditions => {:status => 'pending'}, 
+                         :joins => "INNER JOIN #{Conf.mail_mgr_table_prefix}contacts ON 
+                            #{Conf.mail_mgr_table_prefix}subscriptions.contact_id = #{Conf.mail_mgr_table_prefix}contacts.id 
+                            and #{Conf.mail_mgr_table_prefix}contacts.deleted_at IS NULL" 
 
     include StatusHistory  
-    override_statuses(['active','pending','unsubscribed','failed_address','duplicate'],'pending')
+    override_statuses(['active','unsubscribed','failed_address','pending','duplicate','admin_unsubscribed'],'pending')
     before_create :set_default_status
 
     attr_protected :id
@@ -93,7 +106,7 @@ module MailManager
   
     def self.fail_by_email_address(email_address)
       Contact.find_all_by_email_address(email_address).each do |contact|
-        contact.subscriptions.each do |subscription|
+        contact.active_subscriptions.each do |subscription|
           subscription.change_status(:failed_address)
         end
       end
@@ -102,7 +115,7 @@ module MailManager
     def self.unsubscribe_by_email_address(email_address)
       subscriptions = []
       Contact.find_all_by_email_address(email_address).each do |contact|
-        subscriptions = contact.active_subscriptions.each do |subscription|
+        subscriptions += contact.active_subscriptions.each do |subscription|
           subscription.change_status(:unsubscribed)
         end
       end
