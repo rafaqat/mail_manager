@@ -15,7 +15,7 @@ FIXME: currently tied to users table
 
 module MailManager
   class Subscription < ActiveRecord::Base
-    self.table_name "#{MailManager.table_prefix}subscriptions"
+    self.table_name =  "#{MailManager.table_prefix}subscriptions"
     belongs_to :contact, :class_name => 'MailManager::Contact'
     belongs_to :mailing_list, :class_name => 'MailManager::MailingList'
     has_many :messages, :class_name => 'MailManager::Message'

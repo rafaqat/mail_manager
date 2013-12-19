@@ -15,7 +15,7 @@ completed - Mailing has been sent
 
 module MailManager
   class Mailing < ActiveRecord::Base
-    self.table_name "#{MailManager.table_prefix}mailings"
+    self.table_name =  "#{MailManager.table_prefix}mailings"
     has_many :messages, :class_name => 'MailManager::Message'
     has_many :test_messages, :class_name => 'MailManager::TestMessage'
     has_many :bounces, :class_name => 'MailManager::Bounce'
@@ -64,7 +64,7 @@ module MailManager
           raise Exception.new("Mailing was not scheduled when job tried to run!")
         end
         unless scheduled_at <= Time.now
-          Rails.logger.info "Mailing is not scheduled to run until #{scheduled_at} rescheduling job!")
+          Rails.logger.info "Mailing is not scheduled to run until #{scheduled_at} rescheduling job!"
           self.delay(run_at: scheduled_at).deliver
           return true
         end     

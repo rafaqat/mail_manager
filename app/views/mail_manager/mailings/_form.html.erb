@@ -1,6 +1,6 @@
 <%= form_for @mailing do |f| %>
   <%= f.error_messages %>
-  <% if @all_mailing_lists.length == 1 %><%= hidden_field_tag 'mail_manager_mailing[mailing_list_ids][]', @mailing.mailing_lists.first.try(:id) %><% end %>
+  <% if @all_mailing_lists.length == 1 %><%= hidden_field_tag 'mailing[mailing_list_ids][]', @mailing.mailing_lists.first.try(:id) %><% end %>
   <table cellspacing='1' cellpadding='0' border='0'>  
     <tr valign="top">
        <td width='150'><%= f.label :subject %></td>
@@ -13,7 +13,7 @@
     <% if @mailables.length > 0 %>
     <tr valign="top">
        <td width='150'><%= f.label "Select Mailable Item" %></td>
-  		 <td><%= select_tag 'mail_manager_mailing[mailable_class_and_id]',
+  		 <td><%= select_tag 'mailing[mailable_class_and_id]',
   		         options_for_select(@mailables_for_select,
   		         @mailing.mailable_thing_and_id), :onChange => "if($('mailing_mailable')."+
   		         "getValue() == 'Mailable_new') {$('new_mailable').show();}else"+
@@ -52,8 +52,8 @@
            <h2 style='padding-bottom: 0; margin-bottom: 0; font-size: 10pt; '>Available Lists</h2>
            <p>
   		<% @all_mailing_lists.each do |mailing_list| %>
-  				<%= check_box_tag 'mail_manager_mailing[mailing_list_ids][]', mailing_list.id, @mailing.mailing_lists.include?(mailing_list) %>
-  				<%= label_tag :mail_manager_mailing_mailing_list_id, "#{mailing_list.name}" %><br/>
+  				<%= check_box_tag 'mailing[mailing_list_ids][]', mailing_list.id, @mailing.mailing_lists.include?(mailing_list) %>
+  				<%= label_tag :mailing_mailing_list_id, "#{mailing_list.name}" %><br/>
   		<% end %>
   		    </p>
   		  </div>

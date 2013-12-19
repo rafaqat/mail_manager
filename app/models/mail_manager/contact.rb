@@ -1,6 +1,6 @@
 module MailManager
   class Contact < ActiveRecord::Base
-    self.table_name "#{MailManager.table_prefix}contacts"
+    self.table_name =  "#{MailManager.table_prefix}contacts"
     has_many :messages, :class_name => 'MailManager::Message'
     
     belongs_to :contactable, :polymorphic => true

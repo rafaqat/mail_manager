@@ -18,7 +18,7 @@ Statuses:
 
 module MailManager
   class Bounce < ActiveRecord::Base
-    self.table_name =  "#{MailManager.table_prefix}bounces"
+    self.table_name = "#{MailManager.table_prefix}bounces"
     belongs_to :message, :class_name => 'MailManager::Message'
     belongs_to :mailing, :class_name => 'MailManager::Mailing'
     include StatusHistory

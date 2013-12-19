@@ -1,6 +1,6 @@
 module MailManager
   class TestMessage  < ActiveRecord::Base
-    self.table_name "#{MailManager.table_prefix}messages"
+    self.table_name =  "#{MailManager.table_prefix}messages"
     belongs_to :mailing, :class_name => 'MailManager::Mailing'
     belongs_to :subscription, :class_name => 'MailManager::Subscription'
     has_many :bounces, :class_name => 'MailManager::Bounce'

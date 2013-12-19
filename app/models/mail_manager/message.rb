@@ -14,7 +14,7 @@ failed - either the message couldn't be handed to the Email Server or it has bee
 
 module MailManager
   class Message < ActiveRecord::Base
-    self.table_name "#{MailManager.table_prefix}messages"
+    self.table_name =  "#{MailManager.table_prefix}messages"
     belongs_to :mailing, :class_name => 'MailManager::Mailing'
     belongs_to :subscription, :class_name => 'MailManager::Subscription'
     has_many :bounces, :class_name => 'MailManager::Bounce'

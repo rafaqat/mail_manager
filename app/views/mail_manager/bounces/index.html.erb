@@ -1,8 +1,8 @@
 <% title "Listing Bounces for #{@mailing.try(:subject)}" %>
 
 
-<%= form_tag MailManager.bounces_path, :id => 'search_form', :method => 'GET' do %>
-  Mailing: <%= select_tag "mail_manager_mailing_id", options_for_select(@mailings.collect{|mailing| ["#{mailing.subject} (#{l mailing.status_changed_at}) (#{mailing.bounce_count})",mailing.id.to_s]},params[:mail_manager_mailing_id].to_i), :include_blank => true, :onChange => "$('#search_form').submit()" %></br>
+<%= form_tag mail_manager.bounces_path, :id => 'search_form', :method => 'GET' do %>
+  Mailing: <%= select_tag "mailing_id", options_for_select(@mailings.collect{|mailing| ["#{mailing.subject} (#{l mailing.status_changed_at}) (#{mailing.bounce_count})",mailing.id.to_s]},params[:mailing_id].to_i), :include_blank => true, :onChange => "$('#search_form').submit()" %></br>
   Status:<%= select_tag "bounce[status]", options_for_select([['Needs Attention','needs_manual_intervention'],['Resolved','resolved']],params[:bounce][:status]), :include_blank => true,  :onChange => "$('#search_form').submit()" %>
 <% end %>
 <% if @bounces.length == 0 %>

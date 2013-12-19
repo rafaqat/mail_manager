@@ -23,7 +23,7 @@ module MailManager
     end
 
     def find_mailing
-      return @mailing = Mailing.find_by_id(params[:mail_manager_mailing_id]) if params[:mail_manager_mailing_id]
+      return @mailing = Mailing.find_by_id(params[:mailing_id]) if params[:mailing_id]
       return @mailing = @bounce.mailing if @bounce
       nil
     end

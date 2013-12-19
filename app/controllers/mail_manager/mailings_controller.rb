@@ -28,45 +28,45 @@ module MailManager
   
     def schedule
       @mailing.schedule
-      redirect_to mail_manager_mailings_path
+      redirect_to mail_manager.mailings_path
     end
   
     def cancel
       @mailing.cancel
-      redirect_to mail_manager_mailings_path
+      redirect_to mail_manager.mailings_path
     end
   
     def resume
       @mailing.resume
-      redirect_to mail_manager_mailings_path
+      redirect_to mail_manager.mailings_path
     end
   
     def pause
       @mailing.pause
-      redirect_to mail_manager_mailings_path
+      redirect_to mail_manager.mailings_path
     end
   
     def send_test
       @mailing.send_test_message(params[:test_email_addresses])
       flash[:notice] = "Test messages sent to #{params[:test_email_addresses]}."
-      redirect_to mail_manager_mailings_path
+      redirect_to mail_manager.mailings_path
     end
 
     def create
-      @mailing = Mailing.new(params[:mail_manager_mailing])
+      @mailing = Mailing.new(params[:mailing])
       if @mailing.save
         flash[:notice] = 'Mailing was successfully created.'
-        redirect_to(mail_manager_mailings_path)
+        redirect_to(mail_manager.mailings_path)
       else
         render :action => "new"
       end
     end
 
     def update
-      if @mailing.update_attributes(params[:mail_manager_mailing])
+      if @mailing.update_attributes(params[:mailing])
         @mailing.cancel
         flash[:notice] = 'Mailing was successfully updated and set to pending.  Be sure to reschedule your mailing.'        
-        redirect_to(mail_manager_mailings_path)
+        redirect_to(mail_manager.mailings_path)
       else
         render :action => "edit"
       end
@@ -74,7 +74,7 @@ module MailManager
 
     def destroy
       @mailing.destroy
-      redirect_to(mail_manager_mailings_url)
+      redirect_to(mail_manager.mailings_url)
     end
   
     protected

@@ -30,7 +30,7 @@ module MailManager
     rescue => e
       Rails.logger.warn "Error unsubscribing: #{e.message}\n #{e.backtrace.join("\n ")}"
       flash[:error] = e.message
-      redirect_to mail_manager_unsubscribe_by_email_address_path
+      redirect_to mail_manager.unsubscribe_by_email_address_path
     end
     
     def unsubscribe_by_email_address
@@ -57,11 +57,11 @@ module MailManager
     end
 
     def create
-      @subscription = Subscription.new(params[:mail_manager_subscription])
+      @subscription = Subscription.new(params[:subscription])
       @subscription.mailing_list_id = @mailing_list.id
       if @subscription.save
         flash[:notice] = 'Subscription was successfully created.'
-        return redirect_to(mail_manager_mailing_list_subscriptions_path(@mailing_list))
+        return redirect_to(mail_manager.mailing_list_subscriptions_path(@mailing_list))
       else
         @contact = @subscription
         render :action => "new"
@@ -69,10 +69,10 @@ module MailManager
     end
 
     def update
-      if @subscription.update_attributes(params[:mail_manager_subscription])
-        @subscription.change_status(params[:mail_manager_subscription][:status])
+      if @subscription.update_attributes(params[:subscription])
+        @subscription.change_status(params[:subscription][:status])
         flash[:notice] = 'Subscription was successfully updated.'
-        redirect_to(mail_manager_mailing_list_subscriptions_path(@mailing_list))
+        redirect_to(mail_manager.mailing_list_subscriptions_path(@mailing_list))
       else
         render :action => "edit"
       end
@@ -80,7 +80,7 @@ module MailManager
 
     def destroy
       @subscription.destroy
-      redirect_to(mail_manager_subscriptions_url)
+      redirect_to(mail_manager.subscriptions_url)
     end
   
     protected 
@@ -92,8 +92,8 @@ module MailManager
     def find_mailing_list
       return @mailing_list = @subscription.mailing_list if @subscription
       return @mailing_list = MailingList.find_by_id(params[:mailing_list_id]) if params[:mailing_list_id]
-      return @mailing_list = MailingList.find_by_id(params[:mail_manager_subscription][:mailing_list_id]) if
-        params[:mail_manager_subscription]
+      return @mailing_list = MailingList.find_by_id(params[:subscription][:mailing_list_id]) if
+        params[:subscription]
       nil
     end
   
