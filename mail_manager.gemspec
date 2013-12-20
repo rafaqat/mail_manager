@@ -16,9 +16,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "delayed_job", "~>4"
   gem.add_dependency "dynamic_form", "~>1.1"
 
-  gem.add_development_dependency "rspec-rails"
-  gem.add_development_dependency "cucumber-rails"
-
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})

@@ -29,19 +29,19 @@ module MailManager
                             and #{MailManager.table_prefix}contacts.deleted_at IS NULL"
 
     scope :unsubscribed, :conditions => {:status => 'unsubscribed'}, 
-                         :joins => "INNER JOIN #{Conf.mail_mgr_table_prefix}contacts ON 
-                            #{Conf.mail_mgr_table_prefix}subscriptions.contact_id = #{Conf.mail_mgr_table_prefix}contacts.id 
-                            and #{Conf.mail_mgr_table_prefix}contacts.deleted_at IS NULL"
+                         :joins => "INNER JOIN #{MailManager.table_prefix}contacts ON 
+                            #{MailManager.table_prefix}subscriptions.contact_id = #{MailManager.table_prefix}contacts.id 
+                            and #{MailManager.table_prefix}contacts.deleted_at IS NULL"
 
     scope :failed_address, :conditions => {:status => 'failed_address'}, 
-                         :joins => "INNER JOIN #{Conf.mail_mgr_table_prefix}contacts ON 
-                            #{Conf.mail_mgr_table_prefix}subscriptions.contact_id = #{Conf.mail_mgr_table_prefix}contacts.id 
-                            and #{Conf.mail_mgr_table_prefix}contacts.deleted_at IS NULL"
+                         :joins => "INNER JOIN #{MailManager.table_prefix}contacts ON 
+                            #{MailManager.table_prefix}subscriptions.contact_id = #{MailManager.table_prefix}contacts.id 
+                            and #{MailManager.table_prefix}contacts.deleted_at IS NULL"
 
     scope :pending, :conditions => {:status => 'pending'}, 
-                         :joins => "INNER JOIN #{Conf.mail_mgr_table_prefix}contacts ON 
-                            #{Conf.mail_mgr_table_prefix}subscriptions.contact_id = #{Conf.mail_mgr_table_prefix}contacts.id 
-                            and #{Conf.mail_mgr_table_prefix}contacts.deleted_at IS NULL" 
+                         :joins => "INNER JOIN #{MailManager.table_prefix}contacts ON 
+                            #{MailManager.table_prefix}subscriptions.contact_id = #{MailManager.table_prefix}contacts.id 
+                            and #{MailManager.table_prefix}contacts.deleted_at IS NULL" 
 
     include StatusHistory  
     override_statuses(['active','unsubscribed','failed_address','pending','duplicate','admin_unsubscribed'],'pending')

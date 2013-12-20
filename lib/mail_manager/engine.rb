@@ -9,6 +9,10 @@ module MailManager
         MailManager.initialize_with_config(MailManager::Config.initialize!)
       end
     end
+    config.generators do |g|
+      g.test_framework :rspec, :fixture => false
+      g.fixture_replacement :factory_girl, :dir => 'spec/factories'
+    end
   end
   PLUGIN_ROOT = File.expand_path(File.join(File.dirname(__FILE__),'..','..'))
   def self.edit_route_for(contactable)
