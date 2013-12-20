@@ -14,7 +14,7 @@ module MailManager
       @@contactable_things.values.each do |methods|
         all_methods.merge!(methods)
       end
-      all_methods.keys
+      all_methods.keys.reject('edit_route')
     end
     
     def self.valid_contactable_substitutions(classname=nil)
@@ -23,6 +23,11 @@ module MailManager
   
     def self.contactable_method(classname,method)
       @@contactable_things[classname][method] || method
+    end
+
+    def self.edit_route_for(classname)
+      return @@contactable_things[classname][:edit_route] if @@contactable_things[classname][:edit_route].present?
+      "edit_#{classname.underscore}_path"
     end
     
     module Contactable

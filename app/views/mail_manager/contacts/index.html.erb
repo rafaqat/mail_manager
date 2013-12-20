@@ -52,9 +52,9 @@ function toggleStatus() {
       <% if contactable.respond_to?(:is_deleted?) && contactable.is_deleted? %>
       <td colspan="2"><%= contactable.class.name.humanize %> is Deleted</td>
     <% else %>
-      <td colspan="2"><%= link_to("Edit #{contactable.class.name.humanize}", 
-        send("mail_manager.edit_#{contactable.class.name.underscore}_path",contactable),
-        :class => 'button') + %Q|<div class="linkbuttonEnding"></div>| rescue "No #{contact.contactable.class.name.humanize} Actions" %>
+      <td colspan="2"><%= link_to( "Edit #{contact.contactable.class.name.humanize}", main_app.send(MailManager.edit_route_for(contactable),contactable)
+        ) rescue "No #{contact.contactable.class.name.humanize} Actions" 
+      %>
         </td>
       <% end %>
     <% else %>

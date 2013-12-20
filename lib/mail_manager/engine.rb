@@ -11,6 +11,9 @@ module MailManager
     end
   end
   PLUGIN_ROOT = File.expand_path(File.join(File.dirname(__FILE__),'..','..'))
+  def self.edit_route_for(contactable)
+    ContactableRegistry.edit_route_for(contactable.is_a?(String) ? contactable : contactable.class.name)
+  end
   def self.assets_path
     File.join(PLUGIN_ROOT,'assets')
   end
