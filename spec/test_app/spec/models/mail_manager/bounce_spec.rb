@@ -5,7 +5,6 @@ describe MailManager::Bounce do
   context "when checking pop account" do
     it "should not blow up when mail contains a bad extended char" do
       send_bounce('bad_utf8_chars.eml')
-      binding.pry
       MailManager::BounceJob.new.perform
     end
   end

@@ -42,9 +42,9 @@ module MailManager
           end
         end
         if found_messages
-          ::Delayed::Job.enqueue ::MailMgr::BounceJob.new, run_at: 10.minutes.from_now
+          ::Delayed::Job.enqueue ::MailManager::BounceJob.new, run_at: 10.minutes.from_now
         else
-          ::Delayed::Job.enqueue ::MailMgr::BounceJob.new, run_at: 120.minutes.from_now
+          ::Delayed::Job.enqueue ::MailManager::BounceJob.new, run_at: 120.minutes.from_now
         end
       end
     end
