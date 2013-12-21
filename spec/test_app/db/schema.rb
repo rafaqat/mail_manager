@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 7) do
+ActiveRecord::Schema.define(:version => 20131221002120) do
 
   create_table "bounces", :force => true do |t|
     t.integer  "message_id"
@@ -100,5 +100,16 @@ ActiveRecord::Schema.define(:version => 7) do
     t.datetime "updated_at",        :null => false
     t.integer  "contact_id"
   end
+
+  create_table "users", :force => true do |t|
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "email"
+    t.string   "phone"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
 
 end

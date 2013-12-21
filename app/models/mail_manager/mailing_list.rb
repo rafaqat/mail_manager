@@ -16,6 +16,8 @@ module MailManager
       :join_table => "#{MailManager.table_prefix}mailing_lists_#{MailManager.table_prefix}mailings"
   
     scope :active, {:conditions => {:status => 'active',:deleted_at => nil}}
+
+    validates :name, presence: true
   
     include StatusHistory
     before_create :set_default_status

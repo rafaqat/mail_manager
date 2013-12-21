@@ -14,7 +14,7 @@ module MailManager
       @@contactable_things.values.each do |methods|
         all_methods.merge!(methods)
       end
-      all_methods.keys.reject('edit_route')
+      all_methods.keys.reject{|key| key.to_s.eql?('edit_route')}
     end
     
     def self.valid_contactable_substitutions(classname=nil)
@@ -34,6 +34,9 @@ module MailManager
 
       #FIXME: this is NOT secure!!!!
       def update_contactable_data
+        set_contactable_data && self.contact.save
+      end
+      def set_contactable_data
         unless self.is_a?(MailManager::Contact)
           if self.contact.present?
             self.contact.update_attributes(
@@ -41,7 +44,7 @@ module MailManager
               :last_name => contactable_value(:last_name).to_s,
               :email_address => contactable_value(:email_address).to_s)
           else
-            self.contact = Contact.create(
+            self.contact = Contact.new(
               :contactable => self,
               :first_name => contactable_value(:first_name).to_s,
               :last_name => contactable_value(:last_name).to_s,
@@ -93,15 +96,15 @@ module MailManager
       end
 
       def subscribe(mailing_list)
-        MailManager::Subscription.subscribe(self,mailing_list)
+        set_contactable_data && MailManager::Subscription.subscribe(contact,mailing_list)
       end
 
       def unsubscribe(mailing_list)
-        MailManager::Subscription.unsubscribe(self,mailing_list)
+        set_contactable_data && MailManager::Subscription.unsubscribe(contact,mailing_list)
       end
 
       def change_subscription_status(mailing_list,status)
-        MailManager::Subscription.change_subscription_status(self,mailing_list,status)
+        set_contactable_data && MailManager::Subscription.change_subscription_status(contact,mailing_list,status)
       end
 
       def contactable_value(method)
@@ -114,7 +117,7 @@ module MailManager
 
       def contactable_method(method)
         begin
-          MailManager::ContactableRegistry.contactable_method(self.class,method.to_sym)
+          MailManager::ContactableRegistry.contactable_method(self.class.name,method.to_sym)
         rescue => e
           method
         end
@@ -126,7 +129,8 @@ module MailManager
       
       def subscriptions
         return @subscriptions unless @subscriptions.nil?
-        @subscriptions = self.initialize_subscriptions
+        set_contactable_data unless self.contact.present?
+        @subscriptions = contact.initialize_subscriptions
       end
       
       def active_subscriptions
