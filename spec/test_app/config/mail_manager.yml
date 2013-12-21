@@ -1,0 +1,21 @@
+---
+common:
+  site_url: http://mail_manager.lvh.me
+  unsubscribe_path: /listmgr
+  dont_include_images_domains:
+  - yahoo.com
+  - google.com
+  - hotmail.com
+  sleep_time_between_messages: 0.3
+  table_prefix: mail_manager_
+  default_from_email_address: chrisboy <chrisboy@lvh.me>
+  secret: 7a3906324erwr6254e85e4bdb80592001a
+  bounce:
+    email_address: bounce@lvh.me
+    login: bounce
+    password: secret
+    pop_server: mail.lvh.me
+    port: 11000
+    ssl: false
+    tls: false
+    enable_starttls_auto: false

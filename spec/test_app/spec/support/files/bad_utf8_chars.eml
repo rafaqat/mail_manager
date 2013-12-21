@@ -1,0 +1,32 @@
+Return-Path: <jacquejh66@yahoo.com>
+Received: from nm1-vm1.bullet.mail.bf1.yahoo.com (nm1-vm1.bullet.mail.bf1.yahoo.com [98.139.213.163])
+	by farnsworth.lnstar.com (8.13.8/8.13.8) with SMTP id rBKIYpvI016165
+	for <news@campdoublecreek.com>; Fri, 20 Dec 2013 12:34:51 -0600
+Received: from [66.196.81.171] by nm1.bullet.mail.bf1.yahoo.com with NNFMP; 20 Dec 2013 18:34:45 -0000
+Received: from [98.139.212.243] by tm17.bullet.mail.bf1.yahoo.com with NNFMP; 20 Dec 2013 18:34:45 -0000
+Received: from [127.0.0.1] by omp1052.mail.bf1.yahoo.com with NNFMP; 20 Dec 2013 18:34:45 -0000
+X-Yahoo-Newman-Property: ymail-3
+X-Yahoo-Newman-Id: 793592.41489.bm@omp1052.mail.bf1.yahoo.com
+Received: (qmail 44115 invoked by uid 0); 20 Dec 2013 18:34:45 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s1024; t=1387564485; bh=6UG8AsSMFmibtdkz4IEcBE0VLoseG+2As0McwpvPGwI=; h=Message-ID:Date:From:Subject:To:MIME-Version:Content-Type; b=d/I5svKWXJwPk81nhs0gchmcmNPTHfLjU2Je7uckgbVWtfFx9oK50ACgz2Ppz6nojAwFoi2uNtlprwumudWNsB+tfqfuQUtchxnfW5d4cI48D8fyqiwfGsZ6SaAtEOu1SpaqHIH8MAfBUqBNnxpjzfFYqsNOFOrmSrHBD94WDO8=
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws;
+  s=s1024; d=yahoo.com;
+  h=Message-ID:Date:From:Subject:To:MIME-Version:Content-Type;
+  b=boDNO+GQCsNLWGr9tAuBXIEtbjIGi26SkQbSmu/8aZmOfGqA1SPiypABnatA6JzRHiNwXtWVZX0nZdVSlJTE556ZZVVyFjz7jAaKNikQ9/ho0IWFqOmkjhUCs1KbDdDvJILFeJQ3Y60BN8jFEWEBfUWFQ8qQbJ0sk/RMgFwDK1w=;
+Message-ID: <571480.32075.qm@web162408.mail.bf1.yahoo.com>
+Date: Fri, 20 Dec 2013 10:34:45 -0800 (PST)
+From: Jacqueline Haas <jacquejh66@yahoo.com>
+Subject: Auto Response
+To: news@campdoublecreek.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,
+	RCVD_IN_DNSWL_NONE,RCVD_IN_SORBS_WEB,RP_MATCHES_RCVD autolearn=no
+	version=3.3.2
+X-Spam-Checker-Version: SpamAssassin 3.3.2 (2011-06-06) on
+	farnsworth.lnstar.com
+
+I will be out of the office until December 29, 2013.  If you need assistance, please contact 512-579-4000.
+
+Jacque Haas

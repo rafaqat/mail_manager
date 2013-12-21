@@ -17,6 +17,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency "mini_magick"
   gem.add_dependency "delayed_job", "~>4"
   gem.add_dependency "dynamic_form", "~>1.1"
+  # can't to git!
+  # gem.add_dependency "lockable", :git => 'https://github.com/LoneStarInternet/lockable.git'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

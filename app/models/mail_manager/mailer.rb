@@ -113,7 +113,7 @@ module MailManager
         # letter opener blows up!
         # Ex set options!
         #         mail.delivery_method.settings.merge!( {
-        #   user_name: 'chauboldt_lnstar.com',
+        #   user_name: 'bobo',
         #   password: 'Secret1!',
         #   address: 'mail.lnstar.com',
         #   domain: 'mail.lnstar.com',

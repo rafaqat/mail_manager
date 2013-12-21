@@ -11,9 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131221002120) do
+ActiveRecord::Schema.define(:version => 20131221064157) do
 
-  create_table "bounces", :force => true do |t|
+  create_table "mail_manager_bounces", :force => true do |t|
     t.integer  "message_id"
     t.integer  "mailing_id"
     t.string   "status"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(:version => 20131221002120) do
     t.datetime "updated_at",        :null => false
   end
 
-  create_table "contacts", :force => true do |t|
+  create_table "mail_manager_contacts", :force => true do |t|
     t.integer  "contactable_id"
     t.string   "contactable_type"
     t.string   "email_address"
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(:version => 20131221002120) do
     t.datetime "deleted_at"
   end
 
-  create_table "mailables", :force => true do |t|
+  create_table "mail_manager_mailables", :force => true do |t|
     t.string   "name",       :null => false
     t.text     "email_html"
     t.text     "email_text"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(:version => 20131221002120) do
     t.datetime "updated_at", :null => false
   end
 
-  create_table "mailing_lists", :force => true do |t|
+  create_table "mail_manager_mailing_lists", :force => true do |t|
     t.string   "name"
     t.text     "description"
     t.string   "status"
@@ -58,12 +58,12 @@ ActiveRecord::Schema.define(:version => 20131221002120) do
     t.boolean  "defaults_to_active"
   end
 
-  create_table "mailing_lists_mailings", :id => false, :force => true do |t|
+  create_table "mail_manager_mailing_lists_mail_manager_mailings", :id => false, :force => true do |t|
     t.integer "mailing_id"
     t.integer "mailing_list_id"
   end
 
-  create_table "mailings", :force => true do |t|
+  create_table "mail_manager_mailings", :force => true do |t|
     t.string   "subject"
     t.string   "from_email_address"
     t.string   "mailable_type"
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(:version => 20131221002120) do
     t.datetime "updated_at",         :null => false
   end
 
-  create_table "messages", :force => true do |t|
+  create_table "mail_manager_messages", :force => true do |t|
     t.string   "type"
     t.string   "test_email_address"
     t.integer  "subscription_id"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(:version => 20131221002120) do
     t.string   "from_email_address"
   end
 
-  create_table "subscriptions", :force => true do |t|
+  create_table "mail_manager_subscriptions", :force => true do |t|
     t.integer  "mailing_list_id"
     t.string   "status"
     t.datetime "status_changed_at"
