@@ -115,9 +115,13 @@ module MailManager
         return @mailable_parts unless @mailable_parts.nil?
         mailable_initialize_parts
       end
-    
-    end
 
+      def self.included(base)
+        base.class_eval do
+          has_many :mailings, :as => :mailable, :class_name => "MailManager::Mailing"
+        end
+      end    
+    end
   end
 end
 

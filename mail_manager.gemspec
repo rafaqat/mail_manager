@@ -10,12 +10,13 @@ Gem::Specification.new do |gem|
   gem.email         = ["biz@lone-star.net"]
   gem.description   = %q{Manages the delivery of mailable items. Handles bounces, unsubscribe, opt-in, etc.}
   gem.summary       = %q{Mailing list management tool}
-  gem.homepage      = "http://lone-star.net"
+  gem.homepage      = "http://ireach.com"
 
   gem.add_dependency "rails", "~>3.2"
   gem.add_dependency "daemons"
   gem.add_dependency "mini_magick"
   gem.add_dependency "delayed_job", "~>4"
+  gem.add_dependency 'delayed_job_active_record'
   gem.add_dependency "dynamic_form", "~>1.1"
   # can't to git!
   # gem.add_dependency "lockable", :git => 'https://github.com/LoneStarInternet/lockable.git'

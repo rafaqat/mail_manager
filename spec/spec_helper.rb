@@ -37,4 +37,11 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+  # Use color in STDOUT
+  config.color_enabled = true
+
+  # Use color not only in STDOUT but also in pagers and files
+  config.tty = true
+
+  config.formatter = :documentation # :progress, :html, :textmate
 end

@@ -1,11 +1,7 @@
 # Sets up the Rails environment for Cucumber
-ENV["Rails.env"] ||= "test"
-this_dir =  File.expand_path(File.dirname(__FILE__))
-if this_dir.include?('vendor/plugin')
-  require File.expand_path(File.dirname(__FILE__) + '/../../../../../config/environment') 
-else
-  require File.expand_path(File.dirname(__FILE__) + '/../../../config/environment') 
-end
+ENV["RAILS_ENV"] ||= "test"
+ENV["RAILS_ROOT"] ||= File.dirname(__FILE__) + "/../../spec/test_app"
+require File.expand_path(ENV['RAILS_ROOT'] + "/config/environment.rb")
 require 'cucumber/rails/world'
 require 'cucumber/formatter/unicode' # Comment out this line if you don't want Cucumber Unicode support
 Cucumber::Rails.use_transactional_fixtures

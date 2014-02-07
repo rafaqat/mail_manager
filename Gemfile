@@ -3,6 +3,10 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in mail_manager.gemspec
 gemspec
 
+
+# jquery-rails is used by the dummy application
+gem "jquery-rails"
+
 # needed git/path Gems!
 # gem 'lockable', path: '/home/chrisboy/Projects/lockable'
 gem 'lockable', git: 'https://github.com/chrisboy333/lockable.git'
@@ -18,6 +22,6 @@ gem 'database_cleaner'
 gem 'guard-rspec'
 gem 'guard-livereload'
 gem 'zeus'
-gem 'spring'
 gem 'pry-rails'
 gem 'delayed_job_active_record'
+gem 'cucumber-rails'

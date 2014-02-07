@@ -32,7 +32,7 @@
 
 <%= content_for :page_navigation do %>
 <div>
-  <%= link_to "Back", mail_manager.bounces_path(:mailing_id => @mailing.id, 
+  <%= link_to "Back", mail_manager.bounces_path(:mailing_id => @mailing.try(:id), 
       :bounce => {:status => @bounce.status}), :class => 'button' %><div class="linkbuttonEnding"></div>
 </div>
 <% end %>
