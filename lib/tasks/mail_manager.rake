@@ -82,6 +82,7 @@ namespace :mail_manager do
     Rails.logger.info "Importing  Migrations"
     seconds_offset = 1
     migrations_dir = ::MailManager::PLUGIN_ROOT+'/db/migrate'
+    FileUtils.mkdir_p(migrations_dir) unless File.exists?(migrations_dir)
     Dir.entries(migrations_dir).
       select{|filename| filename =~ /^\d+.*rb$/}.sort.each do |filename|
       migration_name = filename.gsub(/^\d+/,'')
