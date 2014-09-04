@@ -15,6 +15,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "rails", "~>3.2"
   gem.add_dependency "daemons"
   gem.add_dependency "mini_magick"
+  gem.add_dependency "will_patinate"
   gem.add_dependency "delayed_job", "~>4"
   gem.add_dependency 'delayed_job_active_record'
   gem.add_dependency "dynamic_form", "~>1.1"
