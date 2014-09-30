@@ -29,7 +29,7 @@ module MailManager
     def index
       @mailing_list = MailingList.find_by_id(params[:mailing_list_id])
       params[:status] ||= 'active'
-      @contacts = Contact.search(params).paginate(:page => params[:page])
+      @contacts = Contact.search(params).paginate(:page => params[:page], :per_page => params[:per_page])
     end
 
     def new

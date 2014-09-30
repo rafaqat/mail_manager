@@ -40,3 +40,4 @@ end
 MailManager::Engine.config.to_prepare do
   ApplicationController.helper(MailManager::SubscriptionsHelper)
 end
+require 'will_paginate'
