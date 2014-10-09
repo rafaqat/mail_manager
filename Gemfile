@@ -7,10 +7,6 @@ gemspec
 # jquery-rails is used by the dummy application
 gem "jquery-rails"
 
-# needed git/path Gems!
-# gem 'lockable', path: '/home/chrisboy/Projects/lockable'
-gem 'lockable', git: 'https://github.com/chrisboy333/lockable.git'
-
 # Testing Gems
 gem "rspec-rails", "~>2.14"
 gem "factory_girl_rails", "~>4.3"

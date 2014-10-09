@@ -64,10 +64,10 @@ namespace :mail_manager do
             'sleep_time_between_messages' => 0.3,
             'path_prefix' => '/admin',
             'table_prefix' => args.table_prefix,
-            'default_from_email_address' => 'eESI <eESINews@eesipeo.com>',
+            'default_from_email_address' => 'Contact <contact@example.com>',
             'secret' => SecureRandom.hex(15).to_s,
             'bounce' => {
-                'email_address' => 'test@example.com',
+                'email_address' => 'bounces@example.com',
                 'login' => 'test',
                 'password' => 'secret',
                 'pop_server' => 'pop.example.com'

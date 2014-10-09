@@ -1,29 +1,26 @@
-# MailManager
+=General Requirements=
+The goal of this project will be to create a plugin for use in any site which will provide an interface to manage mailing lists, scheduling of email mailings, subscribe/unsubscribe from lists by contacts, and view reports of bounces and possible track views of emails. Currently, only one list is supported for subscribe/unsubscribe by contact. An interface is available to provide mailable objects from other plugins.
 
-TODO: Write a gem description
+=Overview=
 
-## Installation
+==Rails 3.2.x Installation==
 
-Add this line to your application's Gemfile:
+=== With Bundler ===
+* Modify your Gemfile/add the following gem
+ gem 'mail_manager', git: 'git@bender.lnstar.com/var/git/mail_manager'
 
-    gem 'mail_manager'
+ bundle install # if you're using bundler
 
-And then execute:
+* generate migrations
+ rake mail_manager:import_migrations
 
-    $ bundle
+* generate delayed_jobs (this is the only job runner we support right now)
+ rails g delayed_job:active_record
 
-Or install it yourself as:
+* migrate the database
+ rake db:migrate
 
-    $ gem install mail_manager
+* add your routes to config/routes.rb (you can say where with at: '/path')
+  mount MailManager::Engine, at: '/admin/mail_manager'
 
-## Usage
 
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
