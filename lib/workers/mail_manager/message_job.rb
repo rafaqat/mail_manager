@@ -26,7 +26,7 @@ module MailManager
     end
 
     def self.get_ready
-      Lock.with_lock('mail_manager_message_ready') do |lock|
+      MailManager::Lock.with_lock('mail_manager_message_ready') do |lock|
         Rails.logger.warn "Finding ready messages"
         message = Message.ready.first
         return nil if message.nil?

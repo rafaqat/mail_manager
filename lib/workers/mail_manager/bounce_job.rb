@@ -19,7 +19,7 @@ module MailManager
   class BounceJob < Struct.new(:repeats_every)
     def perform
       found_messages = false
-      with_lock('mail_manager_bounce_job') do
+      ::MailManager::Lock.with_lock('mail_manager_bounce_job') do
         Rails.logger.info "Bounce Job Connecting to #{MailManager.bounce['pop_server']} with #{MailManager.bounce['login']}:#{MailManager.bounce['password']}"
         Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if MailManager.bounce['ssl']
         Net::POP3.start(MailManager.bounce['pop_server'],MailManager.bounce['port'],

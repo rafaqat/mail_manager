@@ -26,7 +26,7 @@ module MailManager
     end
 
     def self.get_ready
-      Lock.with_lock('mail_manager_test_message_ready') do |lock|
+      MailManager::Lock.with_lock('mail_manager_test_message_ready') do |lock|
         test_message = TestMessage.ready.first
         return nil if test_message.nil?
         test_message.change_status('processing')

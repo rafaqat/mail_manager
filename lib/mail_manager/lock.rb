@@ -1,11 +1,11 @@
-class Lock
-  class LockException < Exception
+class MailManager::Lock
+  class MailManager::LockException < Exception
   end
   def self.with_lock(name, timeout=5, max_attempts=1, &block)
     ActiveRecord::Base.connection_pool.with_connection do |connection|
       begin
         lock = get_lock(connection,name,timeout,max_attempts)
-        raise LockException.new("Failed to obtain lock #{name} in #{timeout} secs") unless lock
+        raise MailManager::LockException.new("Failed to obtain lock #{name} in #{timeout} secs") unless lock
         yield lock
       ensure
         is_released = release_lock(connection,name)

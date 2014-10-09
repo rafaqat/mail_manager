@@ -39,5 +39,7 @@ module MailManager
 end
 MailManager::Engine.config.to_prepare do
   ApplicationController.helper(MailManager::SubscriptionsHelper)
+  load File.join(MailManager::PLUGIN_ROOT,'config','initializers','delayed_job.rb')
+  load File.join(MailManager::PLUGIN_ROOT,'lib','mail_manager','lock.rb')
 end
 require 'will_paginate'

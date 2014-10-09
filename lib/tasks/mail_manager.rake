@@ -1,6 +1,8 @@
 require 'rake'
 ENV["Rails.env"] ||= "development"
-require "#{Rails.root}/config/environment"
+require File.join(Rails.root,'config','environment')
+initializer = File.join(MailManager::PLUGIN_ROOT,'config','initializers','delayed_job.rb')
+load initializer 
 
 namespace :mail_manager do
   desc "Create mlm LSI Auth Menus"

@@ -19,7 +19,7 @@ module MailManager
     end
 
     def self.get_ready
-      Lock.with_lock('mail_manager_mailing_job_ready') do |lock|
+      MailManager::Lock.with_lock('mail_manager_mailing_job_ready') do |lock|
         mailing = Mailing.ready.first
         return nil if mailing.nil?
         mailing.change_status('processing')
