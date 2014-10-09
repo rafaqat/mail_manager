@@ -107,7 +107,7 @@ namespace :mail_manager do
 
   desc "Create Delayed Jobs for Mail Mgr"
   task :create_delayed_jobs  do
-    Delayed::RepeatingJob.enqueue(MailManager::BounceJob.new(15.minutes))
+    ::Delayed::RepeatingJob.enqueue(MailManager::BounceJob.new(15.minutes))
   end
 
   desc "Create Groups and Users"

@@ -39,7 +39,13 @@ module MailManager
 end
 MailManager::Engine.config.to_prepare do
   ApplicationController.helper(MailManager::SubscriptionsHelper)
-  load File.join(MailManager::PLUGIN_ROOT,'config','initializers','delayed_job.rb')
   load File.join(MailManager::PLUGIN_ROOT,'lib','mail_manager','lock.rb')
+  begin
+    require 'delayed_job'
+    defined?(::Delayed::Job) or die "Cannot load Delayed::Job object!"
+    load File.join(MailManager::PLUGIN_ROOT,'config','initializers','delayed_job.rb')
+  rescue NameError => e
+  rescue LoadError => le
+  end
 end
 require 'will_paginate'

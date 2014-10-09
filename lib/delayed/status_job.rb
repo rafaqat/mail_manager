@@ -16,8 +16,8 @@
 #     end
 #   end
 # end
-class Delayed::StatusJob < Delayed::Job
+class ::Delayed::StatusJob < ::Delayed::Job
   def perform
-    Delayed::StatusJob.enqueue ::StatusJob.new, run_at: 1.minute.from_now
+    ::Delayed::StatusJob.enqueue ::Delayed::StatusJob.new, run_at: 1.minute.from_now
   end
 end

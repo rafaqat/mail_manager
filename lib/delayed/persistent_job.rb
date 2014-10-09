@@ -1,4 +1,4 @@
-module Delayed
+module ::Delayed
   class PersistentJob < Job
     # Try to run job. Returns true/false (work done/work failed)
     @@destroy_failed_jobs = false

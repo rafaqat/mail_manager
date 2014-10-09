@@ -1,5 +1,6 @@
-module Delayed
-  class RepeatingJob < Job
+require 'delayed_job'
+module ::Delayed
+  class RepeatingJob < ::Delayed::Job
     def repeats_every
       (@repeats_every ||= payload_object.repeats_every || 1.minutes) rescue 1.minutes
     end
