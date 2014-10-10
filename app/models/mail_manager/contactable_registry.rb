@@ -177,6 +177,7 @@ module MailManager
           model.class_eval do
             after_create :save
             attr_accessor :subscriptions_attributes
+            attr_accessible :subscriptions_attributes
           end
         end
       end
