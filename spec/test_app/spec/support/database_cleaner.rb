@@ -5,7 +5,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    DatabaseCleaner.strategy = :transaction
+    if ActiveRecord::Base.connection.adapter_name =~ /sqlite/
+      DatabaseCleaner.strategy = :truncation # sqlite3 doesn't support nested transactions :transaction
+    else
+      DatabaseCleaner.strategy = :transaction # assume a transactional database (we're using active_record)
+    end
   end
 
   config.before(:each, :js => true) do

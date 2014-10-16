@@ -14,6 +14,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "rails", "~>3.2"
   gem.add_dependency "daemons"
+  gem.add_dependency "with_lock"
   gem.add_dependency "mini_magick"
   gem.add_dependency "will_paginate"
   gem.add_dependency "delayed_job", "~>4"
