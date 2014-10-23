@@ -1,139 +1,17 @@
-CREATE TABLE `delayed_jobs` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `priority` int(11) NOT NULL DEFAULT '0',
-  `attempts` int(11) NOT NULL DEFAULT '0',
-  `handler` text NOT NULL,
-  `last_error` text,
-  `run_at` datetime DEFAULT NULL,
-  `locked_at` datetime DEFAULT NULL,
-  `failed_at` datetime DEFAULT NULL,
-  `locked_by` varchar(255) DEFAULT NULL,
-  `queue` varchar(255) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `delayed_jobs_priority` (`priority`,`run_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_bounces` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `message_id` int(11) DEFAULT NULL,
-  `mailing_id` int(11) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `status_changed_at` datetime DEFAULT NULL,
-  `bounce_message` text,
-  `comments` text,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_contacts` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `contactable_id` int(11) DEFAULT NULL,
-  `contactable_type` varchar(255) DEFAULT NULL,
-  `email_address` varchar(255) DEFAULT NULL,
-  `first_name` varchar(255) DEFAULT NULL,
-  `last_name` varchar(255) DEFAULT NULL,
-  `upated_by` int(11) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  `deleted_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_mailables` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `email_html` text,
-  `email_text` text,
-  `reusable` tinyint(1) DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_mailing_lists` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `description` text,
-  `status` varchar(255) DEFAULT NULL,
-  `status_changed_at` datetime DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  `deleted_at` datetime DEFAULT NULL,
-  `defaults_to_active` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_mailing_lists_mail_manager_mailings` (
-  `mailing_id` int(11) DEFAULT NULL,
-  `mailing_list_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_mailings` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `subject` varchar(255) DEFAULT NULL,
-  `from_email_address` varchar(255) DEFAULT NULL,
-  `mailable_type` varchar(255) DEFAULT NULL,
-  `mailable_id` int(11) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `status_changed_at` datetime DEFAULT NULL,
-  `scheduled_at` datetime DEFAULT NULL,
-  `include_images` tinyint(1) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_messages` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(255) DEFAULT NULL,
-  `test_email_address` varchar(255) DEFAULT NULL,
-  `subscription_id` int(11) DEFAULT NULL,
-  `mailing_id` int(11) DEFAULT NULL,
-  `guid` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `status_changed_at` datetime DEFAULT NULL,
-  `result` text,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  `contact_id` int(11) DEFAULT NULL,
-  `from_email_address` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `mail_manager_subscriptions` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `mailing_list_id` int(11) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  `status_changed_at` datetime DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  `contact_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `schema_migrations` (
-  `version` varchar(255) NOT NULL,
-  UNIQUE KEY `unique_schema_migrations` (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(255) DEFAULT NULL,
-  `last_name` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `phone` varchar(255) DEFAULT NULL,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `index_users_on_email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+CREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL);
+CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version");
+CREATE TABLE "delayed_jobs" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "priority" integer DEFAULT 0 NOT NULL, "attempts" integer DEFAULT 0 NOT NULL, "handler" text NOT NULL, "last_error" text, "run_at" datetime, "locked_at" datetime, "failed_at" datetime, "locked_by" varchar(255), "queue" varchar(255), "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL);
+CREATE INDEX "delayed_jobs_priority" ON "delayed_jobs" ("priority", "run_at");
+CREATE TABLE "mail_manager_bounces" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "message_id" integer, "mailing_id" integer, "status" varchar(255), "status_changed_at" datetime, "bounce_message" text, "comments" text, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL);
+CREATE TABLE "mail_manager_contacts" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "contactable_id" integer, "contactable_type" varchar(255), "email_address" varchar(255), "first_name" varchar(255), "last_name" varchar(255), "upated_by" integer, "created_by" integer, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL, "deleted_at" datetime);
+CREATE TABLE "mail_manager_mailables" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar(255) NOT NULL, "email_html" text, "email_text" text, "reusable" boolean, "updated_by" integer, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL);
+CREATE TABLE "mail_manager_mailing_lists" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar(255), "description" text, "status" varchar(255), "status_changed_at" datetime, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL, "deleted_at" datetime, "defaults_to_active" boolean);
+CREATE TABLE "mail_manager_mailing_lists_mail_manager_mailings" ("mailing_id" integer, "mailing_list_id" integer);
+CREATE TABLE "mail_manager_mailings" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "subject" varchar(255), "from_email_address" varchar(255), "mailable_type" varchar(255), "mailable_id" integer, "status" varchar(255), "status_changed_at" datetime, "scheduled_at" datetime, "include_images" boolean, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL);
+CREATE TABLE "mail_manager_messages" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "type" varchar(255), "test_email_address" varchar(255), "subscription_id" integer, "mailing_id" integer, "guid" varchar(255), "status" varchar(255), "status_changed_at" datetime, "result" text, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL, "contact_id" integer, "from_email_address" varchar(255));
+CREATE TABLE "mail_manager_subscriptions" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "mailing_list_id" integer, "status" varchar(255), "status_changed_at" datetime, "updated_by" integer, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL, "contact_id" integer);
+CREATE TABLE "users" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "first_name" varchar(255), "last_name" varchar(255), "email" varchar(255), "phone" varchar(255), "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL);
+CREATE UNIQUE INDEX "index_users_on_email" ON "users" ("email");
 INSERT INTO schema_migrations (version) VALUES ('20131217101010');
 
 INSERT INTO schema_migrations (version) VALUES ('20131221064151');

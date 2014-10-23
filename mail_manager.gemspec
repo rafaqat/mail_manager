@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "with_lock"
   gem.add_dependency "mini_magick"
   gem.add_dependency "will_paginate"
+  gem.add_dependency 'unix_utils'
   gem.add_dependency "delayed_job", "~>4"
   gem.add_dependency 'delayed_job_active_record'
   gem.add_dependency "dynamic_form", "~>1.1"

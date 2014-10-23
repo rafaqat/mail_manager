@@ -241,23 +241,31 @@ module MailManager
     
       def fetch(uri_str, limit = 10)
         # You should choose better exception.
-        # raise ArgumentError, 'HTTP redirect too deep' if limit == 0
-
-        # response = Net::HTTP.get_response(URI.parse(uri_str))
-        # case response
-        # when Net::HTTPSuccess     then response.body
-        # when Net::HTTPRedirection then fetch(response['location'], limit - 1)
-        # else
-        #   response.error!
-        # end
-        body = ''
-        Curl.get(uri_str) do |http|
-          http.follow_location = true
-          http.interface = '127.0.0.1' if request_local?(uri_str)
-          http.on_success{|response| body = response.body}
+        raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+        uri = URI.parse(uri_str)
+        request = Net::HTTP::Get.new("#{uri.path}#{"?"+uri.query if uri.query.to_s.strip != ''}")
+        
+        response = Net::HTTP.start(
+          uri.host, uri.port, 
+          :use_ssl => uri.scheme == 'https', 
+          :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+          https.request(request)
         end
-        raise Exception.new("Couldn't fetch URL: #{uri_str}") unless body.present?
-        body
+        case response
+        when Net::HTTPSuccess     then response.body
+        when Net::HTTPRedirection then fetch(response['location'], limit - 1)
+        else
+          response.error!
+        end
+        # CURB version - gem wouldn't install anymore on CentOS
+        # body = ''
+        # Curl.get(uri_str) do |http|
+        #   http.follow_location = true
+        #   http.interface = '127.0.0.1' if request_local?(uri_str)
+        #   http.on_success{|response| body = response.body}
+        # end
+        # raise Exception.new("Couldn't fetch URL: #{uri_str}") unless body.present?
+        # body
       end
     end
   end
