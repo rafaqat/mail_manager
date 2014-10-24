@@ -9,6 +9,9 @@ module MailManager
         MailManager.initialize_with_config(MailManager::Config.initialize!)
       end
     end
+    initializer "mail_manager.factories", :after => "factory_girl.set_factory_paths" do
+      FactoryGirl.definition_file_paths << File.expand_path('../../../spec/test_app/spec/factories', __FILE__) if defined?(FactoryGirl)
+    end
     config.generators do |g|
       g.test_framework :rspec, :fixture => false
       g.fixture_replacement :factory_girl, :dir => 'spec/factories'
