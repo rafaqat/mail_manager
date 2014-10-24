@@ -23,7 +23,6 @@ group :test do
   gem "factory_girl_rails", "~>4.3"
   gem "faker"
   gem 'post_office'
-  gem 'foreman'
   gem 'database_cleaner'
   gem 'cucumber-rails', require: false
 end

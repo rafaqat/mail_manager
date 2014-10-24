@@ -1,8 +1,8 @@
 credentials: &credentials
   encoding: utf8
   adapter: mysql2
-  username: root
-  password: 
+  username: mail_manager
+  password: mail_manager_pass
   host: localhost
   reconnect: true
   pool: 5
