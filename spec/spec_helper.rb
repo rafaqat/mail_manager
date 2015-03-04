@@ -3,6 +3,7 @@ ENV["RAILS_ENV"] ||= 'test'
 
 require File.expand_path("../../spec/test_app/config/environment", __FILE__)
 
+require 'database_cleaner'
 require 'rspec/rails'
 # require 'rspec/autorun'
 `rake db:schema:load`
@@ -25,7 +26,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
@@ -41,7 +42,7 @@ RSpec.configure do |config|
   config.color_enabled = true
 
   # Use color not only in STDOUT but also in pagers and files
-  config.tty = true
+  #config.tty = true
 
-  config.formatter = :documentation # :progress, :html, :textmate
+  #config.formatter = :documentation # :progress, :html, :textmate
 end

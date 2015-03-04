@@ -1,4 +1,4 @@
-if ActiveRecord::Base.connection.adapter_name =~ /mysql/
+if ActiveRecord::Base.connection.adapter_name =~ /mysql/i
   class MailManager::Lock
     class MailManager::LockException < Exception
     end

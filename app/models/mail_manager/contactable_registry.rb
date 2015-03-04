@@ -95,8 +95,8 @@ module MailManager
           subscription_attributes[:mailing_list_id].to_i == subscription.mailing_list_id.to_i} || {}
       end
 
-      def subscribe(mailing_list)
-        set_contactable_data && MailManager::Subscription.subscribe(contact,mailing_list)
+      def subscribe(mailing_list, status='active')
+        set_contactable_data && MailManager::Subscription.subscribe(contact,mailing_list, status)
       end
 
       def unsubscribe(mailing_list)

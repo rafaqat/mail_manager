@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "delayed_job", "~>4"
   gem.add_dependency 'delayed_job_active_record'
   gem.add_dependency "dynamic_form", "~>1.1"
+  gem.add_dependency 'cancancan'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

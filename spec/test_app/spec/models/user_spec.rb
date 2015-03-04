@@ -8,12 +8,12 @@ describe User do
     it "should have a uniq email" do
       @user.save
       @user2 = FactoryGirl.build(:user, {email: @user.email})
-      @user2.valid?.should be_false
+      @user2.valid?.should == false
     end
     it "should have an email" do
-      @user.valid?.should be_true
+      @user.valid?.should == true
       @user.email = nil
-      @user.valid?.should be_false
+      @user.valid?.should == false
     end
   end
   context "integrated with mail manager" do
@@ -21,10 +21,10 @@ describe User do
       @user = FactoryGirl.create(:user)
     end
     it "should respond to subscriptions" do
-      @user.respond_to?(:subscriptions).should be_true
+      @user.respond_to?(:subscriptions).should == true
     end
     it "should have a contact" do
-      @user.contact.present?.should be_true
+      @user.contact.present?.should == true
     end
     it "should have the same email as the contact" do
       @user.email.should == @user.contact.email_address

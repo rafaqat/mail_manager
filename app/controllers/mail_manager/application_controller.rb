@@ -1,4 +1,5 @@
 module MailManager
-  class ApplicationController < ActionController::Base
+  class ApplicationController < ApplicationController
+    load_and_authorize_resource if respond_to? :load_and_authorize_resource
   end
 end

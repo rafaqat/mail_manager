@@ -66,8 +66,8 @@ module MailManager
     end
 
     # subscribes the contact to the list
-    def self.subscribe(contact, mailing_list)
-      change_subscription_status(contact, mailing_list, 'active')
+    def self.subscribe(contact, mailing_list, status='active')
+      change_subscription_status(contact, mailing_list, status)
     end
 
     # unsubscribes the contact from the list
