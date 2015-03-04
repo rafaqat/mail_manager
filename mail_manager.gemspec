@@ -13,15 +13,15 @@ Gem::Specification.new do |gem|
   gem.homepage      = "http://ireach.com"
 
   gem.add_dependency "rails", "~>3.2"
-  gem.add_dependency "daemons"
-  gem.add_dependency "with_lock"
-  gem.add_dependency "mini_magick"
-  gem.add_dependency "will_paginate"
-  gem.add_dependency 'unix_utils'
+  gem.add_dependency "daemons", "~>1.1"
+  gem.add_dependency "with_lock", "~>0.1"
+  gem.add_dependency "mini_magick", "~>4.1"
+  gem.add_dependency "will_paginate", "~>3.0"
+  gem.add_dependency 'unix_utils', "~>0.0"
   gem.add_dependency "delayed_job", "~>4"
-  gem.add_dependency 'delayed_job_active_record'
+  gem.add_dependency 'delayed_job_active_record', "~>4"
   gem.add_dependency "dynamic_form", "~>1.1"
-  gem.add_dependency 'cancancan'
+  gem.add_dependency 'cancancan', "~>1.9"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
