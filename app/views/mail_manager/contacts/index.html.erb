@@ -10,7 +10,7 @@
     <label class="form">Status:</label><%= select_tag "status", options_for_select(['active','unsubscribed','failed_address','pending'].map{|status|
       [status.humanize,status]}, params[:status]) %>
   </div>    
-  <%= submit_tag "Search", :class => 'button' %><div class="buttonEnding"></div>
+  <%= submit_tag "Search", :class => 'button' %>
 <% end %>
 <% content_for :head do %>
 <script language="javascript">
@@ -46,7 +46,7 @@ function toggleStatus() {
       <td><%=h contact.email_address %></td>
       <% if params[:mailing_list_id].present? %>  <td><%= params[:status].humanize %></td> <% end %>
     <% if use_show_for_resources? %>
-      <td><%= link_to "View", contact, :class => 'button' %><div class="linkbuttonEnding"></div></td>
+      <td><%= link_to "View", contact, :class => 'button' %></td>
     <% end %>
     <% if (contactable = contact.contactable).present? %>
       <% if contactable.respond_to?(:is_deleted?) && contactable.is_deleted? %>
@@ -58,8 +58,8 @@ function toggleStatus() {
         </td>
       <% end %>
     <% else %>
-      <td><%= link_to "Edit", mail_manager.edit_contact_path(contact), :class => 'button' %><div class="linkbuttonEnding"></div></td>
-      <td><%= link_to "Delete", contact, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %><div class="linkbuttonEnding"></div>
+      <td><%= link_to "Edit", mail_manager.edit_contact_path(contact), :class => 'button' %></td>
+      <td><%= link_to "Delete", contact, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %>
       </td>
     <% end %>
 <!--
@@ -68,7 +68,7 @@ function toggleStatus() {
         <-% form_tag mail_manager.send_one_off_message_contact_path(contact), :style => 'display:inline' do |f| %>
         <-%= select_tag 'mailing_id',  
               options_for_select(@mailings.collect{|mailing| [mailing.subject, mailing.id]}) %> 
-        <-%= submit_tag "Send One Off Message", :class => 'button' %><div class="buttonEnding"></div>
+        <-%= submit_tag "Send One Off Message", :class => 'button' %>
         <-% end %>
       </td>
       <-% end %>
@@ -80,7 +80,7 @@ function toggleStatus() {
 <%= will_paginate @contacts %><br/>
 <%= content_for :page_navigation do %>
 <div>
-  <%= link_to "New Contact", mail_manager.new_contact_path, :class => 'button' %><div class="linkbuttonEnding"></div>
+  <%= link_to "New Contact", mail_manager.new_contact_path, :class => 'button' %>
 </div>
 <% end %>
 

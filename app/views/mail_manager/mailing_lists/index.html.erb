@@ -20,9 +20,9 @@
     <td align="right"> <%= link_to(mailing_list.subscriptions.unsubscribed.size, mail_manager.contacts_path(mailing_list_id: mailing_list.id, status: 'unsubscribed')) %> </td>
     <td align="right"> <%= link_to(mailing_list.subscriptions.failed_address.size, mail_manager.contacts_path(mailing_list_id: mailing_list.id, status: 'failed_address')) %> </td>
     <td align="right"> <%= link_to(mailing_list.subscriptions.pending.size, mail_manager.contacts_path(mailing_list_id: mailing_list.id, status: 'pending')) %> </td>
-    <td><%= link_to 'Edit', mail_manager.edit_mailing_list_path(mailing_list), :class => 'button'  %><div class="linkbuttonEnding"></div></td>
-    <td><%= link_to 'Delete', mailing_list, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %><div class="linkbuttonEnding"></div></td>
-    <td><%= link_to 'View Contacts', mail_manager.contacts_path(mailing_list_id: mailing_list.id), :class => 'button'  %><div class="linkbuttonEnding"></div></td>
+    <td><%= link_to 'Edit', mail_manager.edit_mailing_list_path(mailing_list), :class => 'button'  %></td>
+    <td><%= link_to 'Delete', mailing_list, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %></td>
+    <td><%= link_to 'View Contacts', mail_manager.contacts_path(mailing_list_id: mailing_list.id), :class => 'button'  %></td>
   </tr>
 <% end %>
 </table>
@@ -34,6 +34,6 @@ No mailing lists exist.
 <% @page_title = "Mailing Lists" %>
 <%= content_for :page_navigation do %>
 <div>
-  <%= link_to "New Mailing List", mail_manager.new_mailing_list_path, :class => 'button' %><div class="linkbuttonEnding"></div>
+  <%= link_to "New Mailing List", mail_manager.new_mailing_list_path, :class => 'button' %>
 </div>
 <% end %>

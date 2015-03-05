@@ -3,9 +3,9 @@
 
 <% if @bounce.status.eql?('needs_manual_intervention') %>
 <div>
-  <%= link_to "Unsubscribe", mail_manager.fail_address_bounce_path(@bounce), :class => 'button' %><div class="linkbuttonEnding"></div>
+  <%= link_to "Unsubscribe", mail_manager.fail_address_bounce_path(@bounce), :class => 'button' %>
     &nbsp;
-  <%= link_to "Dismiss", mail_manager.dismiss_bounce_path(@bounce), :class => 'button' %><div class="linkbuttonEnding"></div>
+  <%= link_to "Dismiss", mail_manager.dismiss_bounce_path(@bounce), :class => 'button' %>
 </div>
 <% end %>
 
@@ -33,6 +33,6 @@
 <%= content_for :page_navigation do %>
 <div>
   <%= link_to "Back", mail_manager.bounces_path(:mailing_id => @mailing.try(:id), 
-      :bounce => {:status => @bounce.status}), :class => 'button' %><div class="linkbuttonEnding"></div>
+      :bounce => {:status => @bounce.status}), :class => 'button' %>
 </div>
 <% end %>
