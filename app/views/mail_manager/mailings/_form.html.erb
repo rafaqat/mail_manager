@@ -2,16 +2,16 @@
   <%= f.error_messages %>
   <% if @all_mailing_lists.length == 1 %><%= hidden_field_tag 'mailing[mailing_list_ids][]', @mailing.mailing_lists.first.try(:id) %><% end %>
   <table cellspacing='1' cellpadding='0' border='0'>  
-    <tr valign="top">
+    <tr>
        <td width='150'><%= f.label :subject %></td>
        <td><%= f.text_field :subject %></td>
     </tr>
-    <tr valign="top">
+    <tr>
        <td width='150'><%= f.label :from_email_address %></td>
        <td><%= f.text_field :from_email_address %></td>
     </tr>
     <% if @mailables.length > 0 %>
-    <tr valign="top">
+    <tr>
        <td width='150'><%= f.label "Select Mailable Item" %></td>
   		 <td><%= select_tag 'mailing[mailable_class_and_id]',
   		         options_for_select(@mailables_for_select,
@@ -26,22 +26,22 @@
   	<% unless @mailable.nil? %>
   	<%= div_for @mailable, (@mailables.length == 0) ? {} : {:style => 'display:none'} do %>
       <% f.fields_for @mailable do |fm| %>
-    <tr valign="top">
+    <tr>
       <td width='150'><%= fm.label :email_html %></td>
       <td><%= fm.text_area :email_html %></td>
     </tr>
-    <tr valign="top">
+    <tr>
       <td width='150'><%= fm.label :email_text %></td>
       <td><%= fm.text_area :email_html %></td>
     </tr>
       <% end %> 
     <% end %>
     <% end %>
-    <tr valign="top">
+    <tr>
        <td width='150'><%= f.label :scheduled_at %></td>
        <td><%= f.text_field :scheduled_at, {class: 'datetime-picker', value: l(f.object.scheduled_at || Time.now)} %></td>
     </tr>
-    <tr valign="top">
+    <tr>
        <td width='150'><%= f.label :include_images %></td>
        <td><%= f.check_box :include_images %></td>
     </tr>
