@@ -41,8 +41,8 @@ class MailManager::Config
       $stderr.puts "Missing Configuration: either define ::Conf with proper values or create a config/mail_manager.yml with rake mail_manager:default_app_config"
     end
     c = ::MailManager::Config.new
-    c.use_file!("#{Rails.root}/config/mail_manager.yml")
-    c.use_file!("#{Rails.root}/config/mail_manager.local.yml")
+    c.use_file!(standard_file)
+    c.use_file!(local_file)
     c.use_section!(Rails.env)
     c
   end

@@ -1,23 +1,26 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe "users/new" do
+RSpec.describe "users/new", :type => :view do
   before(:each) do
-    assign(:user, stub_model(User,
+    assign(:user, User.new(
       :first_name => "MyString",
       :last_name => "MyString",
       :email => "MyString",
-      :phone => 1
-    ).as_new_record)
+      :phone => "MyString"
+    ))
   end
 
   it "renders new user form" do
     render
 
-    # Run the generator again with the --webrat flag if you want to use webrat matchers
     assert_select "form[action=?][method=?]", users_path, "post" do
+
       assert_select "input#user_first_name[name=?]", "user[first_name]"
+
       assert_select "input#user_last_name[name=?]", "user[last_name]"
+
       assert_select "input#user_email[name=?]", "user[email]"
+
       assert_select "input#user_phone[name=?]", "user[phone]"
     end
   end

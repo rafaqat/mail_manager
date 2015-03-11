@@ -1,15 +1,15 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe MailManager::MailingList do
+RSpec.describe MailManager::MailingList do
   context "a valid mailing list" do
     before(:each) do
       @mailing_list = FactoryGirl.build(:mailing_list)
     end
     it "must have a name" do 
-      @mailing_list.name.present?.should == true
-      @mailing_list.valid?.should == true
+      expect(@mailing_list.name.present?).to eq true
+      expect(@mailing_list.valid?).to eq true
       @mailing_list.name = nil
-      @mailing_list.valid?.should == false
+      expect(@mailing_list.valid?).to eq false
     end
   end
 end

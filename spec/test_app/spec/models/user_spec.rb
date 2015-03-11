@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe User do
+RSpec.describe User do
   context "when valid" do
     before(:each) do
       @user = FactoryGirl.build(:user)
@@ -8,12 +8,12 @@ describe User do
     it "should have a uniq email" do
       @user.save
       @user2 = FactoryGirl.build(:user, {email: @user.email})
-      @user2.valid?.should == false
+      expect(@user2.valid?).to eq false
     end
     it "should have an email" do
-      @user.valid?.should == true
+      expect(@user.valid?).to eq true
       @user.email = nil
-      @user.valid?.should == false
+      expect(@user.valid?).to eq false
     end
   end
   context "integrated with mail manager" do
@@ -21,17 +21,19 @@ describe User do
       @user = FactoryGirl.create(:user)
     end
     it "should respond to subscriptions" do
-      @user.respond_to?(:subscriptions).should == true
+      expect(@user.respond_to?(:subscriptions)).to eq true
     end
     it "should have a contact" do
-      @user.contact.present?.should == true
+      expect(@user.contact.present?).to eq true
     end
     it "should have the same email as the contact" do
-      @user.email.should == @user.contact.email_address
+      expect(@user.email).to eq @user.contact.email_address
     end
     it "should be able to subscribe to a mailing list" do 
       @mailing_list = FactoryGirl.create(:mailing_list)
       @user.subscribe(@mailing_list)
+      @user.reload
+      expect(@user.subscriptions.detect(&:active?).mailing_list).to eq(@mailing_list)
     end
   end
 end

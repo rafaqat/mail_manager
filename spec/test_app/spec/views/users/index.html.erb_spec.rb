@@ -1,29 +1,20 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe "users/index" do
+RSpec.describe "users/index", :type => :view do
   before(:each) do
     assign(:users, [
-      stub_model(User,
-        :first_name => "First Name",
-        :last_name => "Last Name",
-        :email => "Email",
-        :phone => 1
-      ),
-      stub_model(User,
-        :first_name => "First Name",
-        :last_name => "Last Name",
-        :email => "Email",
-        :phone => 1
-      )
+      @user1 = stub_model(User, FactoryGirl.attributes_for(:user)),
+      @user2 = stub_model(User, FactoryGirl.attributes_for(:user))
     ])
   end
 
   it "renders a list of users" do
     render
-    # Run the generator again with the --webrat flag if you want to use webrat matchers
-    assert_select "tr>td", :text => "First Name".to_s, :count => 2
-    assert_select "tr>td", :text => "Last Name".to_s, :count => 2
-    assert_select "tr>td", :text => "Email".to_s, :count => 2
-    assert_select "tr>td", :text => 1.to_s, :count => 2
+    User.all.each do | user |
+      assert_select "tr>td", :text => user.first_name, :count => 1
+      assert_select "tr>td", :text => user.last_name, :count => 1
+      assert_select "tr>td", :text => user.email, :count => 1
+      assert_select "tr>td", :text => user.phone, :count => 1
+    end
   end
 end

@@ -1,21 +1,20 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe "users/show" do
+RSpec.describe "users/show", :type => :view do
   before(:each) do
-    @user = assign(:user, stub_model(User,
+    @user = assign(:user, User.create!(
       :first_name => "First Name",
       :last_name => "Last Name",
       :email => "Email",
-      :phone => 1
+      :phone => "Phone"
     ))
   end
 
   it "renders attributes in <p>" do
     render
-    # Run the generator again with the --webrat flag if you want to use webrat matchers
-    rendered.should match(/First Name/)
-    rendered.should match(/Last Name/)
-    rendered.should match(/Email/)
-    rendered.should match(/1/)
+    expect(rendered).to match(/First Name/)
+    expect(rendered).to match(/Last Name/)
+    expect(rendered).to match(/Email/)
+    expect(rendered).to match(/Phone/)
   end
 end

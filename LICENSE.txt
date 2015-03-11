@@ -1,4 +1,4 @@
-Copyright (c) 2013 Braxton Beyer
+Copyright (c) 2013 Lone Star Internet, Inc.
 
 MIT License
 

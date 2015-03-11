@@ -1,7 +1,7 @@
 # encoding: utf-8
-require 'spec_helper'
+require 'rails_helper'
 
-describe MailManager::Bounce do
+RSpec.describe MailManager::Bounce do
   context "when checking pop account" do
     it "should not blow up when mail contains a bad extended char" do
       Delayed::Worker.delay_jobs = true

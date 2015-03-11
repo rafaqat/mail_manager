@@ -1,6 +1,6 @@
 ---
 common:
-  site_url: http://mail_manager.lvh.me
+  site_url: http://mail-manager.lvh.me:4460
   unsubscribe_path: /listmgr
   dont_include_images_domains:
   - yahoo.com

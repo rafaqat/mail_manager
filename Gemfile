@@ -19,8 +19,11 @@ gem 'mysql2'
 
 # Testing Gems
 group :test do
-  gem "rspec-rails", "~>2.14"
+  gem "rspec-rails", "~>3.2"
+  gem "rspec-activemodel-mocks"
   gem "factory_girl_rails", "~>4.3"
+  gem 'capybara'
+  gem 'poltergeist'
   gem "faker"
   gem 'post_office'
   gem 'database_cleaner'
