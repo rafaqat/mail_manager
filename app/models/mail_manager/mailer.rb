@@ -122,14 +122,16 @@ module MailManager
         #   port: 587
         # } )
 
-        mail.delivery_method.settings.merge!(
-          (case method
-           when :smtp then ActionMailer::Base.smtp_settings
-           when :sendmail then ActionMailer::Base.sendmail_settings
-           else
-             {}
-           end rescue {})
-        )
+        mail.delivery_method.settings.merge!(ActionMailer::Base.smtp_settings)
+
+        #mail.delivery_method.settings.merge!(
+        #  (case method
+        #   when :smtp then ActionMailer::Base.smtp_settings
+        #   when :sendmail then ActionMailer::Base.sendmail_settings
+        #   else
+        #     {}
+        #   end rescue {})
+        #)
       end
     
       def inline_attachment(params, &block)

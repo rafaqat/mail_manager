@@ -3,8 +3,9 @@
        <%= f.label :name %>
        <%= f.text_field :name %><br />
        <%= f.label :description %>
-       <%= f.text_area :description %><br />
+       <%= f.text_area :description, {:cols => 40, :rows => 10} %><br />
        <%= f.label :defaults_to_active %>
        <%= f.check_box :defaults_to_active %><br />
+       Note: If checked, the new contact form will default to checked for this mailing list.
        <div class="submit_button"><%= f.submit "Submit", :class => 'button' %></div>
 <% end %>
