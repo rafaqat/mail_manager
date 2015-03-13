@@ -109,7 +109,9 @@ module MailManager
       end
 
       def set_mail_settings(mail)
-        mail.delivery_method ActionMailer::Base.delivery_method.eql?(:letter_opener) ? :test : ActionMailer::Base.delivery_method
+        delivery_method = ActionMailer::Base.delivery_method
+        delivery_method = delivery_method.eql?(:letter_opener) ? :test : delivery_method
+        mail.delivery_method delivery_method
         # letter opener blows up!
         # Ex set options!
         #         mail.delivery_method.settings.merge!( {
@@ -123,7 +125,7 @@ module MailManager
         # } )
 
         mail.delivery_method.settings.merge!(
-          (case method
+          (case delivery_method 
            when :smtp then ActionMailer::Base.smtp_settings
            when :sendmail then ActionMailer::Base.sendmail_settings
            else
