@@ -6,4 +6,21 @@ RSpec.describe MailManager::Mailer do
     data = MailManager::Mailer.fetch(image_url)
     expect(data.to_s[0..100]).to include('JFIF')
   end
+  it "sets its delivery methods correctly" do
+    mail = Mail.new
+    ActionMailer::Base.delivery_method = :smtp
+    ActionMailer::Base.smtp_settings = smtp_settings = {
+      domain: 'example.com',
+      address: 'mail.lvh.me',
+      port: 587,
+      password: 'Secret1!',
+      username: 'bobo',
+      enable_starttls_auto: true,
+      authentication: :plain,
+    }
+    MailManager::Mailer.set_mail_settings(mail)
+    expect(mail.delivery_method.settings.values.map(&:to_s).select(&:present?).sort).to eq(
+      smtp_settings.values.select(&:present?).map(&:to_s).sort
+    )
+  end
 end

@@ -1,4 +1,4 @@
-<% title "Send Test for #{@mailing.subject}" %>
+<%= title "Send Test for #{@mailing.subject}" %>
 <%= form_tag mail_manager.send_test_mailing_path(@mailing) do %>
   <table cellpadding="1" cellspacing="0" border="0">
     <tr valign="top">

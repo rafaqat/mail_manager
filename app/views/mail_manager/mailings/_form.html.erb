@@ -1,55 +1,39 @@
 <%= form_for @mailing do |f| %>
   <%= f.error_messages %>
   <% if @all_mailing_lists.length == 1 %><%= hidden_field_tag 'mailing[mailing_list_ids][]', @mailing.mailing_lists.first.try(:id) %><% end %>
-  <table cellspacing='1' cellpadding='0' border='0'>  
-    <tr valign="top">
-       <td width='150'><%= f.label :subject %></td>
-       <td><%= f.text_field :subject %></td>
-    </tr>
-    <tr valign="top">
-       <td width='150'><%= f.label :from_email_address %></td>
-       <td><%= f.text_field :from_email_address %></td>
-    </tr>
+       <%= f.label :subject %>
+       <%= f.text_field :subject %><br />
+       <%= f.label :from_email_address %>
+       <%= f.text_field :from_email_address %><br />
     <% if @mailables.length > 0 %>
-    <tr valign="top">
-       <td width='150'><%= f.label "Select Mailable Item" %></td>
-  		 <td><%= select_tag 'mailing[mailable_class_and_id]',
+       <%= f.label "Select Mailable Item" %>
+  		 <%= select_tag 'mailing[mailable_class_and_id]',
   		         options_for_select(@mailables_for_select,
   		         @mailing.mailable_thing_and_id), :onChange => "if($('mailing_mailable')."+
   		         "getValue() == 'Mailable_new') {$('new_mailable').show();}else"+
-  		         "{$('new_mailable').hide();}" %>
-  		 </td>
-    </tr>
+  		         "{$('new_mailable').hide();}" %><br />
   	<% else %>
   	  <!-- You need to create some mailable items! -->
   	<% end %>
   	<% unless @mailable.nil? %>
   	<%= div_for @mailable, (@mailables.length == 0) ? {} : {:style => 'display:none'} do %>
       <% f.fields_for @mailable do |fm| %>
-    <tr valign="top">
-      <td width='150'><%= fm.label :email_html %></td>
-      <td><%= fm.text_area :email_html %></td>
-    </tr>
-    <tr valign="top">
-      <td width='150'><%= fm.label :email_text %></td>
-      <td><%= fm.text_area :email_html %></td>
-    </tr>
+        <%= fm.label :email_html %>
+        <%= fm.text_area :email_html %><br />
+        <%= fm.label :email_text %>
+        <%= fm.text_area :email_html %><br />
       <% end %> 
     <% end %>
     <% end %>
-    <tr valign="top">
-       <td width='150'><%= f.label :scheduled_at %></td>
-       <td><%= f.text_field :scheduled_at, {class: 'datetime-picker', value: l(f.object.scheduled_at || Time.now)} %></td>
-    </tr>
-    <tr valign="top">
-       <td width='150'><%= f.label :include_images %></td>
-       <td><%= f.check_box :include_images %></td>
-    </tr>
+       <%= f.label :scheduled_at %>
+       <%= f.text_field :scheduled_at, {class: 'datetime-picker', value: l(f.object.scheduled_at || Time.now)} %><br />
+       <%= f.label :include_images %>
+       <%= f.check_box :include_images %><br />
+       Note: If checked, images are encoded and attached to the email (except for contacts with yahoo.com, gmail.com and
+           hotmail.com emails).  If unchecked, remote image references are used for all contacts.
     <% if @all_mailing_lists.length > 1 %>
-  	<tr>
-  	  <td colspan="2">
-  	    <div class='newsletter_parts_group' style='margin-top: 10px; padding: 0 5px 5px 15px; border: thin dashed black; background-color: #eee'>
-           <h2 style='padding-bottom: 0; margin-bottom: 0; font-size: 10pt; '>Available Lists</h2>
+  	    <div class='mailing_lists_group'>
+           <h2 class='list_group'>Available Lists</h2>
            <p>
   		<% @all_mailing_lists.each do |mailing_list| %>
   				<%= check_box_tag 'mailing[mailing_list_ids][]', mailing_list.id, @mailing.mailing_lists.include?(mailing_list) %>
@@ -57,15 +41,9 @@
   		<% end %>
   		    </p>
   		  </div>
-  		</td>
     <% end %>
-    <tr>
-      <td align="right" colspan="2"><%= f.submit "Submit", :class => 'button' %></td>
-    </tr>
-  </table>
-    
+      <div class="submit_button"><%= f.submit "Submit", :class => 'button' %></div>
 <% end %>
-
 
 <%= content_for :head do %>
 <script>

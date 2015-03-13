@@ -1,7 +1,5 @@
 module MailManager
-  class MailingListsController < BaseController
-    before_filter :find_mailing_list, :except => [:new,:create,:index]
-
+  class MailingListsController < MailManager::ApplicationController
     def index
       @mailing_lists = MailingList.active.order("name asc").paginate(:page => params[:page])
     end
@@ -38,12 +36,6 @@ module MailManager
     def destroy
       @mailing_list.destroy
       redirect_to(mail_manager.mailing_lists_url)
-    end
-  
-    protected 
-  
-    def find_mailing_list
-      @mailing_list = MailingList.find(params[:id])
     end
   end
 end

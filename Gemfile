@@ -5,6 +5,7 @@ gemspec
 
 
 # jquery-rails is used by the dummy application
+gem "devise"
 gem "jquery-rails"
 gem 'spring'
 gem "spring-commands-rspec"
@@ -16,6 +17,7 @@ gem 'guard-livereload'
 gem 'delayed_job_active_record'
 gem 'sqlite3'
 gem 'mysql2'
+gem 'quiet_assets'
 
 # Testing Gems
 group :test do

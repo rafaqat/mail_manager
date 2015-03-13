@@ -1,5 +1,5 @@
 module MailManager
-  class ContactsController < BaseController
+  class ContactsController < ApplicationController
 
     include DeleteableActions
 

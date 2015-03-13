@@ -1,4 +1,4 @@
-<% title "Listing Mailings" %>
+<%= title "Listing Mailings" %>
 
 <% if @mailings.length > 0 %>
 
@@ -9,34 +9,25 @@
       <td>Status</td>
       <td colspan="6"> </td>
     </tr>
-		<% @mailings.each do |mailing| 
-         dynamic_tds_left = 5 %>
+		<% @mailings.each do |mailing| %>
 		<tr class="<%= cycle('odd','even') %>">
 			<td><%=h mailing.subject %></td>
 			<td><%=l mailing.scheduled_at %></td>
 			<td><b><%=h mailing.status %></b></td>
 			<td align="center"><nobr><%= link_to 'Send Test', mail_manager.test_mailing_path(mailing), :id => 'Send_Test', :class => 'button' %></nobr></td>
-      <% if mailing.can_edit? 
-          dynamic_tds_left -= 1 %>
-			<td align="center"><%= link_to 'Edit', mail_manager.edit_mailing_path(mailing), :class => 'button' %></td>
-			<% if mailing.can_schedule? 
-           dynamic_tds_left -= 1 %>
-			<td align="center"><%= link_to 'Schedule', mail_manager.schedule_mailing_path(mailing), :class => 'button' %></td>
-			<% elsif mailing.can_cancel? 
-           dynamic_tds_left -= 1 %>
-			<td align="center"><%= link_to 'Cancel', mail_manager.cancel_mailing_path(mailing), :class => 'button' %>     </td>
+      <% if mailing.can_edit? %>
+			<td><%= link_to 'Edit', mail_manager.edit_mailing_path(mailing), :class => 'button' %>
+			<% if mailing.can_schedule? %>
+			<%= link_to 'Schedule', mail_manager.schedule_mailing_path(mailing), :class => 'button' %>
+			<% elsif mailing.can_cancel? %>
+			<%= link_to 'Cancel', mail_manager.cancel_mailing_path(mailing), :class => 'button' %>
           <% end %>
 			<% end %>
-      <% if mailing.messages.length > 0 
-           dynamic_tds_left -= 1 %>
-			<td align="center"><%= link_to 'Messages', mail_manager.mailing_messages_path(mailing), :class => 'button' %></td>
+      <% if mailing.messages.length > 0 %>
+			<%= link_to 'Messages', mail_manager.mailing_messages_path(mailing), :class => 'button' %>
       <% end %>
-      <% if mailing.bounces.length > 0 
-           dynamic_tds_left -= 1 %>
-			<td align="center"><%= link_to 'Bounces', mail_manager.bounces_path(:mailing_id => mailing.id), :class => 'button' %></td>
-      <% end %>
-      <% 1.upto( dynamic_tds_left ) do %>
-      <td align="center"></td>
+      <% if mailing.bounces.length > 0 %>
+			<%= link_to 'Bounces', mail_manager.bounces_path(:mailing_id => mailing.id), :class => 'button' %>
       <% end %>
 		</tr>
 		<% end %>
