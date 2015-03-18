@@ -8,6 +8,7 @@ Gem::Specification.new do |gem|
   gem.version       = MailManager::VERSION
   gem.authors       = ["Lone Star Internet"]
   gem.email         = ["biz@lone-star.net"]
+  gem.licenses      = ["MIT"]
   gem.description   = %q{Manages the delivery of mailable items. Handles bounces, unsubscribe, opt-in, etc.}
   gem.summary       = %q{Mailing list management tool}
   gem.homepage      = "http://ireach.com"

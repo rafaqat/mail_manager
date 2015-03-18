@@ -11,6 +11,9 @@ The goal of this project will be to create a plugin for use in any site which wi
 
  bundle install # if you're using bundler
 
+* generate a yml configuration file
+ 
+
 * generate migrations
  rake mail_manager:import_migrations
 

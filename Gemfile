@@ -21,6 +21,7 @@ gem 'quiet_assets'
 
 # Testing Gems
 group :test do
+  gem 'simplecov', require: false
   gem "rspec-rails", "~>3.2"
   gem "rspec-activemodel-mocks"
   gem "factory_girl_rails", "~>4.3"

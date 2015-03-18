@@ -1,7 +1,20 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
-require 'spec_helper'
+require 'simplecov'
 pwd = File.expand_path( File.dirname(__FILE__) )
+SimpleCov.root(File.join(pwd,'..','..','..'))
+SimpleCov.command_name 'rspec'
+SimpleCov.start('rails') do
+  adapters.delete(:root_filter)
+  filters.clear
+  add_filter do |src|
+    !(src.filename =~ /^#{SimpleCov.root}/)
+  end
+  add_filter do |src|
+    src.filename =~ /test_app/
+  end
+end
+require 'spec_helper'
 require File.join(pwd, '..','config','environment')
 require 'rspec/rails'
 require 'capybara/rails'

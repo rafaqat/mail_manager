@@ -34,4 +34,17 @@ TestApp::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  config.action_mailer.smtp_settings = {
+    :address=>"mail.lvh.me",
+    :port=>25000,
+    :domain=>"mail.lvh.me",
+    :user_name=>nil,
+    :password=>nil,
+    :authentication=>nil,
+    :enable_starttls_auto=>false,
+    :openssl_verify_mode=>nil,
+    :ssl=>false,
+    :tls=>false
+  }
 end
