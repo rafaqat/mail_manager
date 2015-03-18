@@ -3,7 +3,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'simplecov'
 pwd = File.expand_path( File.dirname(__FILE__) )
 SimpleCov.root(File.join(pwd,'..','..','..'))
-SimpleCov.command_name 'rspec'
+SimpleCov.command_name 'rspec-'+ENV['DBADAPTER']
 SimpleCov.start('rails') do
   adapters.delete(:root_filter)
   filters.clear
@@ -18,6 +18,7 @@ require 'spec_helper'
 require File.join(pwd, '..','config','environment')
 require 'rspec/rails'
 require 'capybara/rails'
+require 'database_cleaner'
 
 require 'capybara/poltergeist'
 require 'capybara/rspec'
@@ -55,7 +56,8 @@ require 'factory_girl_rails'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
- Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+# Dir[Rails.root.join('spec/support/*.rb')].each { |f| require f }
+require File.join("support",'database_cleaner')
 
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

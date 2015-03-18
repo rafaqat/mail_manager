@@ -11,10 +11,11 @@ RSpec.describe MailManager::Bounce do
     end
   end
   def send_bounce(filename)
-    PostOffice.start_post_office
     mail = Mail.new(File.read(File.join(Rails.root,'spec','support','files',filename)))
     mail.delivery_method :smtp
     mail.delivery_method.settings.merge!(ActionMailer::Base.smtp_settings)
     mail.deliver
+  rescue => e
+    binding.pry
   end
 end

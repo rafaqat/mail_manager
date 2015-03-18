@@ -38,6 +38,7 @@ RSpec.configure do |config|
     # a real object. This is generally recommended, and will default to
     # `true` in RSpec 4.
     mocks.verify_partial_doubles = true
+  end
 
     # The settings below are suggested to provide a good initial experience
     # with RSpec, but feel free to customize to your heart's content.
@@ -81,5 +82,4 @@ RSpec.configure do |config|
     # test failures related to randomization by passing the same `--seed` value
     # as the one that triggered the failure.
     Kernel.srand config.seed
-  end
 end

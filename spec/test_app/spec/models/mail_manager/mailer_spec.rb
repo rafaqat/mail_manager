@@ -9,12 +9,13 @@ RSpec.describe MailManager::Mailer do
   it "sets its delivery methods correctly" do
     mail = Mail.new
     ActionMailer::Base.delivery_method = :smtp
+    previous_settings = ActionMailer::Base.smtp_settings
     ActionMailer::Base.smtp_settings = smtp_settings = {
       domain: 'example.com',
       address: 'mail.lvh.me',
       port: 587,
       password: 'Secret1!',
-      username: 'bobo',
+      user_name: 'bobo',
       enable_starttls_auto: true,
       authentication: :plain,
     }
@@ -22,5 +23,6 @@ RSpec.describe MailManager::Mailer do
     expect(mail.delivery_method.settings.values.map(&:to_s).select(&:present?).sort).to eq(
       smtp_settings.values.select(&:present?).map(&:to_s).sort
     )
+    ActionMailer::Base.smtp_settings = previous_settings
   end
-end
+end 
