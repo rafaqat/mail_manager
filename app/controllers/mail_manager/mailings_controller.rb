@@ -1,5 +1,5 @@
 module MailManager
-  class MailingsController < ApplicationController
+  class MailingsController < ::MailManager::ApplicationController
     before_filter :find_mailing, :except => [:new,:create,:index]
     before_filter :find_all_mailing_lists, :only => [:new,:create,:edit,:update]
     before_filter :find_mailables, :only => [:new,:create,:edit,:update]

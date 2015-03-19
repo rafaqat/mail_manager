@@ -6,7 +6,6 @@ SimpleCov.root(File.join(pwd,'..','..','..'))
 SimpleCov.command_name 'rspec-' + ENV['DBADAPTER'].to_s
 SimpleCov.start('rails') do
   adapters.delete(:root_filter)
-  filters.clear
   add_filter do |src|
     !(src.filename =~ /^#{SimpleCov.root}/)
   end

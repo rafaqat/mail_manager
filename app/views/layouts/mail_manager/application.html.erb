@@ -14,16 +14,13 @@
 <div style="background-color: #fff;">
   <div id="menu">
     <ul>
-      <li><a href="/admin">Home</a></li>
-      <li><a href="#">Setup</a>
-        <ul>
-          <li>Admin Menus</a></li>
-          <li>Admin Users</a></li>
-          <li><a href="/admin/newsletter/designs?menu_id=11">Newsletter Designs</a></li>
+      <li><span onClick="$('#mailings_submenu').toggle();return false">Mailings</span>
+        <ul id='mailings_submenu' <%= ' style="display:none"' unless request.path =~ %r|/mail_manager| %>>
+          <%= content_tag(:li, link_to('Contacts', mail_manager.contacts_path)) if can?(:manage, MailManager::Contact) %>
+          <%= content_tag(:li, link_to('Mailings', mail_manager.mailings_path)) if can?(:manage, MailManager::Mailing) %>
+          <%= content_tag(:li, link_to('Mailing Lists', mail_manager.mailing_lists_path)) if can?(:manage, MailManager::MailingList) %>
+          <%= content_tag(:li, link_to('Bounces', mail_manager.bounces_path)) if can?(:manage, MailManager::Bounce) %>
         </ul>
-      </li>
-      <li><a href="/admin/newsletter/newsletters">Newsletters</a></li>
-      <li>Mailings
       </li>
     </ul>
   </div>

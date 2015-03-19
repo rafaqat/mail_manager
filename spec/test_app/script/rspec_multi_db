@@ -11,7 +11,7 @@ spring rake db:schema:load
 
 export SQLITE_SUCCESS=0
 
-DBADAPTER=sqlite spring rspec spec && export SQLITE_SUCCESS=1
+DBADAPTER=sqlite bundle exec rspec spec && export SQLITE_SUCCESS=1
 
 ./script/with_lock stop
 
@@ -24,7 +24,7 @@ spring rake db:schema:load
 
 export MYSQL_SUCCESS=0
 
-DBADAPTER=mysql spring rspec spec && export MYSQL_SUCCESS=1
+DBADAPTER=mysql bundle exec rspec spec && export MYSQL_SUCCESS=1
 
 ./script/post_office stop
 

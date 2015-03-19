@@ -1,4 +1,5 @@
 require 'cancan'
+require 'dynamic_form'
 module MailManager
   class ApplicationController < ::ApplicationController
     layout MailManager.layout
