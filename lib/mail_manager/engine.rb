@@ -6,9 +6,7 @@ module MailManager
   mattr_accessor :requires_authentication
   mattr_accessor :authorized_roles
   class Engine < ::Rails::Engine
-    isolate_namespace MailManager
-    initializer "MailManager.config" do |app|
-      if File.exist?(File.join(Rails.root,'config','mail_manager.yml'))
+    isolate_namespace MailManager initializer "MailManager.config" do |app| if File.exist?(File.join(Rails.root,'config','mail_manager.yml'))
         require 'mail_manager/config'
         MailManager.initialize_with_config(MailManager::Config.initialize!)
       end
@@ -25,18 +23,27 @@ module MailManager
   # used to easily know where the mail manager gem files are
   PLUGIN_ROOT = File.expand_path(File.join(File.dirname(__FILE__),'..','..'))
 
-  # logic for authorization mail manager
-  # * 
-  def self.authorized?(user)
-    if ::MailManager.requires_authentication
-      if ::MailManager.authorized_roles.present?
-        ::MailManager.authorized_roles.include?(user.try(:role))
-      else
-        user.present?
-      end
+  # checks if the given 'user' has a role
+  def self.authorized_for_roles?(user,roles=[])
+    user_roles = if ::Newsletter.roles_method.present?
+      user.send(::Newsletter.roles_method)
+    elsif user.respond_to?(:roles)
+      user.roles 
+    elsif user.respond_to?(:role)
+      [user.role]
     else
-      true
+      []
     end
+    user_roles = [user_roles] unless user_roles.is_a?(Array)
+    roles.detect{|role| user_role.include?(role)}.present?
+  end
+
+  # logic for authorization mail manager
+  def self.authorized?(user)
+    return true unless ::MailManager.requires_authentication
+    return false if user.blank?
+    return true unless ::MailManager.authorized_roles.present?
+    authorized_for_roles?(user, ::MailManager.authorized_roles)
   end
 
   # can be used to inject cancan abilities into your application
