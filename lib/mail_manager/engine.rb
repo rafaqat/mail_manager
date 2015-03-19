@@ -6,7 +6,9 @@ module MailManager
   mattr_accessor :requires_authentication
   mattr_accessor :authorized_roles
   class Engine < ::Rails::Engine
-    isolate_namespace MailManager initializer "MailManager.config" do |app| if File.exist?(File.join(Rails.root,'config','mail_manager.yml'))
+    isolate_namespace MailManager 
+    initializer "MailManager.config" do |app| 
+      if File.exist?(File.join(Rails.root,'config','mail_manager.yml'))
         require 'mail_manager/config'
         MailManager.initialize_with_config(MailManager::Config.initialize!)
       end
