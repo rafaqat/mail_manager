@@ -1,2 +1,3 @@
-post_office: script/post_office run
-delayed_job: script/delayed_job run
+post_office: bundle exec script/post_office run
+delayed_job: bundle exec script/delayed_job run
+web:         spring rails s WEBrick

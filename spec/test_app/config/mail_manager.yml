@@ -15,7 +15,7 @@ common:
     login: bounce
     password: secret
     pop_server: mail.lvh.me
-    port: 11000
+    port: <%= ENV['POST_OFFICE_POP_PORT'] %>
     ssl: false
     tls: false
     enable_starttls_auto: false

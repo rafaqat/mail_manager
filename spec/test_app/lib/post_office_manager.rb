@@ -1,32 +1,41 @@
 class PostOfficeManager
   @@post_office_pipe = nil
-  @@smtp = 25000
-  @@pop = 11000
+  @@smtp_port = nil
+  @@pop_port = nil
+
+  def self.smtp_port
+    @@smtp_port ||= ENV['POST_OFFICE_SMTP_PORT'] || 25000
+  end
+
+  def self.pop_port
+    @@pop_port ||= ENV['POST_OFFICE_POP_PORT'] || 11000
+  end
 
   def self.post_office_pipe
     @@post_office_pipe
   end
-  def self.start_post_office(smtp=25000, pop=11000, kill_existing=true)
-    @@smtp ||= smtp 
-    @@pop ||= pop 
+
+  def self.start_post_office(smtp=nil, pop=nil, kill_existing=true)
+    @@smtp_port = smtp if smtp
+    @@pop_port = pop if pop
     stop_post_office if kill_existing && running?
     if(@@post_office_pipe.nil? && !running?)
-      @@post_office_pipe = IO.popen("post_office -s #{@@smtp} -p #{@@pop}")
+      @@post_office_pipe = IO.popen("post_office -s #{smtp_port} -p #{pop_port}")
     end
   end
 
-  def self.run_post_office(smtp=25000, pop=11000, kill_existing=true)
-    @@smtp ||= smtp 
-    @@pop ||= pop 
+  def self.run_post_office(smtp=nil, pop=nil, kill_existing=true)
+    @@smtp_port = smtp if smtp
+    @@pop_port = pop if pop
     stop_post_office if kill_existing && running?
     if(@@post_office_pipe.nil? && !running?)
-      @@post_office_pipe = IO.popen("post_office -s #{@@smtp} -p #{@@pop}")
+      @@post_office_pipe = IO.popen("post_office -s #{smtp_port} -p #{pop_port}")
     end
     Process.wait(@@post_office_pipe.pid)
   end
 
   def self.running?
-    `lsof -i TCP:#{@@smtp} | grep LISTEN | wc -l`.to_i == 1
+    `lsof -i TCP:#{smtp_port} | grep LISTEN | wc -l`.to_i == 1
   end
 
   def self.stop_post_office
@@ -40,7 +49,7 @@ class PostOfficeManager
   end
 
   def self.find_post_office_pid
-    commands = `lsof -i TCP:#{@@smtp} | grep LISTEN`
+    commands = `lsof -i TCP:#{smtp_port} | grep LISTEN`
     pids = []
     commands.split("\n").each do |command|
       pid = command.split(/\s+/)[1]

@@ -4,8 +4,12 @@ $:.push File.expand_path(File.join('..','..','lib'), __FILE__)
 
 require "rubygems"
 require "bundler"
-require 'post_office_manager'
 Bundler.setup(:post_office)
+require 'post_office_manager'
+require 'dotenv'
+
+ENV['RAILS_ENV'] ||= 'development'
+Dotenv.load(".env.#{ENV['RAILS_ENV']}")
 
 FileUtils.mkdir_p('tmp/pids') unless File.exists?('tmp/pids')
 
