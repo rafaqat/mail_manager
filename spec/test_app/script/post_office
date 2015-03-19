@@ -4,8 +4,8 @@ $:.push File.expand_path(File.join('..','..','lib'), __FILE__)
 
 require "rubygems"
 require "bundler"
+require 'post_office_manager'
 Bundler.setup(:post_office)
-load 'spec/support/post_office.rb'
 
 FileUtils.mkdir_p('tmp/pids') unless File.exists?('tmp/pids')
 

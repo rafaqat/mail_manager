@@ -2,8 +2,8 @@ require 'cancan'
 module MailManager
   class ApplicationController < ::ApplicationController
     layout MailManager.layout
+    helper_method :title, :current_user, :use_show_for_resources?, :show_title?
     load_and_authorize_resource
-    helper_method :title, :current_user, :use_show_for_resources?
 
 
     def title(value=nil)
@@ -19,6 +19,11 @@ module MailManager
       ::MailManager.use_show_for_resources
     rescue 
       false
+    end
+
+    def show_title?
+      return @show_title if defined? @show_title
+      true
     end
 
     def site_url

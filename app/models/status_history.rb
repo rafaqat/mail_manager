@@ -37,7 +37,8 @@ module StatusHistory
 
   def status
     return self[:status].to_s unless self[:status].blank?
-    self[:status] = default_status
+    set_default_status
+    self[:status]
   end
   
   def status=(new_status)
@@ -50,7 +51,7 @@ module StatusHistory
   end
   
   def set_default_status
-    return unless status.blank?
+    return unless self[:status].blank?
     self[:status_changed_at] = Time.now.utc
     self[:status] = default_status
     Rails.logger.debug "Setting Default Status to #{default_status} #{self.name rescue "Not a class?"} #{self.class.name}"

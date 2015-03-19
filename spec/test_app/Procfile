@@ -1,0 +1,2 @@
+post_office: script/post_office run
+delayed_job: script/delayed_job run

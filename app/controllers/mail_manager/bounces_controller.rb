@@ -1,6 +1,5 @@
 module MailManager
-  class BouncesController < ApplicationController
-    before_filter :find_bounce, :except => [:new, :create, :index]
+  class BouncesController < ::MailManager::ApplicationController
     before_filter :find_mailing
   
     def index
@@ -18,10 +17,6 @@ module MailManager
   
     protected 
   
-    def find_bounce
-      @bounce = Bounce.find(params[:id])
-    end
-
     def find_mailing
       return @mailing = Mailing.find_by_id(params[:mailing_id]) if params[:mailing_id]
       return @mailing = @bounce.mailing if @bounce
