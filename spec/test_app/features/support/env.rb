@@ -6,7 +6,7 @@
 
 require 'simplecov'
 pwd = File.expand_path( File.dirname(__FILE__) )
-SimpleCov.root(File.join(pwd,'..','..','..'))
+SimpleCov.root(File.join(pwd,'..','..','..','..'))
 SimpleCov.command_name 'cucumber-' + ENV['DBADAPTER'].to_s
 SimpleCov.start('rails') do
   adapters.delete(:root_filter)

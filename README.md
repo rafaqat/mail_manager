@@ -48,11 +48,11 @@ config/mail_manager.yml
 -----------------------
 This is where amost all of your configuration options are for this gem... current generator will add documentation to it (preserving your current settings) .. we'll probably want to upgrade to something like: [AppConfig](https://github.com/Oshuma/app_config) gem
 
-* you can generate this file like above(where table_prefix is for prefixing table names):
+You can generate this file like above(where table_prefix is for prefixing table names):
 
-      rake mail_manager:default_app_config[table_prefix]
+    rake mail_manager:default_app_config[table_prefix]
 
-* you can override values with a config/mail_manager.local.yml
+You can override values with a config/mail_manager.local.yml
 
 Securing your App
 -----------------
