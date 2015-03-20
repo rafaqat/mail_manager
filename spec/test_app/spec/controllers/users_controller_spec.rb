@@ -24,11 +24,11 @@ RSpec.describe UsersController, :type => :controller do
   # User. As you add validations to User, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    FactoryGirl.attributes_for(:user)
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    FactoryGirl.attributes_for(:user, email: nil)
   }
 
   # This should return the minimal set of values that should be in the session
@@ -103,14 +103,16 @@ RSpec.describe UsersController, :type => :controller do
   describe "PUT #update" do
     context "with valid params" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        FactoryGirl.attributes_for(:user) 
       }
 
       it "updates the requested user" do
         user = User.create! valid_attributes
         put :update, {:id => user.to_param, :user => new_attributes}, valid_session
-        user.reload
-        skip("Add assertions for updated state")
+        user = User.find(user.id)
+        new_attributes.each_pair do |key,value|
+          expect(user.send(key)).to eq(value)
+        end
       end
 
       it "assigns the requested user as @user" do

@@ -4,11 +4,11 @@ module MailManager
   
     def index
       params[:bounce] = Hash.new unless params[:bounce]
-      @mailings = Mailing.with_bounces(params[:bounce][:status])
-      @bounces = []
+      status = params[:bounce][:status] || nil
+      @mailings = Mailing.with_bounces(status)
       @bounces = Bounce.scoped
       @bounces = @bounces.by_mailing_id(@mailing.id) if @mailing.present?
-      @bounces = @bounces.by_status(params[:bounce][:status]) if params[:bounce][:status].present?
+      @bounces = @bounces.by_status(status) if status.present?
       @bounces = @bounces.paginate(:page => params[:page])
     end
 

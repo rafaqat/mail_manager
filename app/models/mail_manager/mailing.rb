@@ -37,7 +37,13 @@ module MailManager
     def self.with_bounces(bounce_status=nil)
       bounce_status_condition = bounce_status.present? ? ActiveRecord::Base.send(:sanitize_sql_array,[" WHERE status=?", bounce_status]) : ''
       bounce_query = "SELECT mailing_id, COUNT(id) AS count from #{MailManager.table_prefix}bounces #{bounce_status_condition} group by mailing_id"
-      bounce_data = Bounce.connection.execute(bounce_query).inject({}){|hash,(mailing_id,count)| hash.merge(mailing_id => count)}
+      bounce_data = Bounce.connection.execute(bounce_query).inject({}) do |hash,row| 
+        if row.is_a?(Hash)
+          hash.merge(row['mailing_id'] => row['count'])
+        elsif row.is_a?(Array)
+          hash.merge(row[0] => row[1])
+        end
+      end
       mailings = scoped
       mailings = mailings.where("id in (#{bounce_data.keys.select(&:present?).join(',')})") if bounce_data.keys.select(&:present?).present?
       mailings.order("created_at desc").map{|mailing| mailing.bounce_count = bounce_data[mailing.id]; mailing}

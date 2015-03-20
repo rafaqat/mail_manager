@@ -19,10 +19,8 @@ require 'rails_helper'
 # that an instance is receiving a specific message.
 
 RSpec.describe MailManager::BouncesController, :type => :controller do
-
-  before(:each) do 
-    pending "Messed up rountes... what's up?"
-  end
+  render_views
+  routes {MailManager::Engine.routes}
 
   # This should return the minimal set of attributes required to create a valid
   # MailManager::Bounce. As you add validations to MailManager::Bounce, be sure to
@@ -45,6 +43,7 @@ RSpec.describe MailManager::BouncesController, :type => :controller do
       bounce = MailManager::Bounce.create! valid_attributes
       get :index, {}, valid_session
       expect(assigns(:bounces)).to eq([bounce])
+      expect(response.body).to match /Listing Bounces/
     end
   end
 
@@ -53,6 +52,7 @@ RSpec.describe MailManager::BouncesController, :type => :controller do
       bounce = MailManager::Bounce.create! valid_attributes
       get :show, {:id => bounce.to_param}, valid_session
       expect(assigns(:bounce)).to eq(bounce)
+      expect(response.body).to match /Viewing Bounce/
     end
   end
 

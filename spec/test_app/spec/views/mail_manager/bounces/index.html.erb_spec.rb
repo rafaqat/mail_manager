@@ -1,17 +1,21 @@
 require 'rails_helper'
+require 'will_paginate/array'
 
 RSpec.describe "mail_manager/bounces/index", :type => :view do
   before(:each) do
-    pending "None of this works since it doesnm't pull in helpers... and I can't figure it out right now"
-    allow(view).to receive(:title).with("Listing Bounces for ").and_return(
-      "<h1>Listing Bounces for </h1>"
+    assign(:mailings, [])
+    params[:bounce] = {}
+    allow(view).to receive(:title).with("Listing Bounces").and_return(
+      "<h1>Listing Bounces</h1>"
     )
   end
   it "renders a list of mail_manager/bounces" do
-    assign(:bounces, [
-      FactoryGirl.create(:bounce ),
-      FactoryGirl.create(:bounce )
-    ])
+    pending " currently this crap isn't able to use routing to allow use of url_helpers"
+    assign(:routes, MailManager::Engine.routes)
+    bounces = [stub_model(MailManager::Bounce, FactoryGirl.attributes_for(:bounce )),
+      stub_model(MailManager::Bounce, FactoryGirl.attributes_for(:bounce ))
+    ]
+    assign(:bounces,bounces.paginate(page: 1, per_page: 2))
     render
     expect(response.body).to match /Listing Bounces/
     MailManager::Bounce.each do |bounce|
@@ -20,8 +24,9 @@ RSpec.describe "mail_manager/bounces/index", :type => :view do
   end
 
   it "renders a page with a message that no bounces exist" do
+    assign(:bounces, [])
     render
     expect(response.body).to match /Listing Bounces/
-    expect(response.body).to match /No bounces exist!/
+    expect(response.body).to match /No bounces found for the Mailing with given status/
   end
 end

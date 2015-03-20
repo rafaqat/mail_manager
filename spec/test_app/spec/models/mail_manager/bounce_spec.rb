@@ -15,7 +15,5 @@ RSpec.describe MailManager::Bounce do
     mail.delivery_method :smtp
     mail.delivery_method.settings.merge!(ActionMailer::Base.smtp_settings)
     mail.deliver
-  rescue => e
-    binding.pry
   end
 end
