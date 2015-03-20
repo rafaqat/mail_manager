@@ -5,8 +5,20 @@
 # files.
 
 require 'simplecov'
-SimpleCov.start
+pwd = File.expand_path( File.dirname(__FILE__) )
+SimpleCov.root(File.join(pwd,'..','..','..'))
+SimpleCov.command_name 'cucumber-' + ENV['DBADAPTER'].to_s
+SimpleCov.start('rails') do
+  adapters.delete(:root_filter)
+  add_filter do |src|
+    !(src.filename =~ /^#{SimpleCov.root}/)
+  end
+  add_filter do |src|
+    src.filename =~ /test_app/
+  end
+end
 require 'cucumber/rails'
+require 'factory_girl_rails'
 
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any

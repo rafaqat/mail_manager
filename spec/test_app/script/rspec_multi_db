@@ -28,5 +28,7 @@ DBADAPTER=mysql bundle exec rspec spec && export MYSQL_SUCCESS=1
 
 ./script/post_office stop
 
+unset RAILS_ENV
+
 if [ $MYSQL_SUCCESS -eq 0 ] ; then exit 1; fi
 if [ $SQLITE_SUCCESS -eq 0 ] ; then exit 1; fi

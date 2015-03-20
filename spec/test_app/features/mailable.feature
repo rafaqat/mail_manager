@@ -3,7 +3,8 @@ Feature: Mailable Registration
 	As an object
 	I want be able to register as a mailable object
 	
-	Scenario: reusable mailables will be available when I create a new mailing
+  @wip	
+  Scenario: reusable mailables will be available when I create a new mailing
 	  Given the following mlm mailable records
 	    | name            | email_html                                                              | email_text      | reusable |
 	    | June Newsletter | <head><title>June Newsletter</title><body>June Newsletter</body></html> | June Newsletter | true     |
@@ -13,6 +14,7 @@ Feature: Mailable Registration
 	  Then I should see "June Newsletter"
 	  And I should not see "July Newsletter"
 	  
+  @wip
 	Scenario: a new raw mailable can be created when creating a new mailing
 	  When I go to the new mlm mailing page 
 	  And I select "New Mailable" from "mailing[mailable]"

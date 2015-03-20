@@ -44,6 +44,16 @@ Installation
 
       mount MailManager::Engine, at: '/admin/mail_manager'
 
+config/mail_manager.yml
+-----------------------
+This is where amost all of your configuration options are for this gem... current generator will add documentation to it (preserving your current settings) .. we'll probably want to upgrade to something like: [AppConfig](https://github.com/Oshuma/app_config) gem
+
+* you can generate this file like above(where table_prefix is for prefixing table names):
+
+      rake mail_manager:default_app_config[table_prefix]
+
+* you can override values with a config/mail_manager.local.yml
+
 Securing your App
 -----------------
 We implemented [CanCan](https://github.com/CanCanCommunity/cancancan). If you'd like to secure your actions to certain users and don't currently have any authorization in your app, you can follow the following steps if you want an easy config.. or you could make it more finely grained.. currently its all or nothing:

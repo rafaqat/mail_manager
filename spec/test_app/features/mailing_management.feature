@@ -4,14 +4,15 @@ Feature: Mailing Management
 	I want to create, modify, schedule and cancel mailings
 	
 	Background:
-	  Given the following mlm mailable records
-      | name            | email_html                                                              | email_text      | reusable |
-      | June Newsletter | <head><title>June Newsletter</title><body>June Newsletter</body></html> | June Newsletter | false    |
-      | July Newsletter | <head><title>July Newsletter</title><body>July Newsletter</body></html> | July Newsletter | true     |
-    And the following mlm mailing list records
-      | name             |
-      | The Mailing List |
+	  #Given the following mlm mailable records
+    #  | name            | email_html                                                              | email_text      | reusable |
+    #  | June Newsletter | <head><title>June Newsletter</title><body>June Newsletter</body></html> | June Newsletter | false    |
+    #  | July Newsletter | <head><title>July Newsletter</title><body>July Newsletter</body></html> | July Newsletter | true     |
+    #And the following mlm mailing list records
+    #  | name             |
+    #  | The Mailing List |
 	
+  @wip
 	Scenario: mailings are created by a valid user
 	  When I go to the mlm mailings page
 	  And I follow "New Mailing"
@@ -26,6 +27,7 @@ Feature: Mailing Management
 	  And I should see "Edit"
 	  And an mlm mailing should exist with subject: "Fun Fun Fun July 2009"
 	  
+  @wip
 	Scenario: edit a mailing
 	  Given the following mlm mailing records
 	    | subject               |
@@ -40,6 +42,7 @@ Feature: Mailing Management
 	  And I should see "Schedule"
 	  And I should see "Edit"
 	  
+  @wip
 	Scenario: schedule a mailing
 	  Given the following mlm mailing records
 	    | subject               |
@@ -52,6 +55,7 @@ Feature: Mailing Management
 	  And I should see "Edit"
 	  And I should see "Cancel"
 
+  @wip
   Scenario: Cancel a mailing
     Given the following mlm mailing records
       | subject               | status    |
@@ -62,7 +66,8 @@ Feature: Mailing Management
     And I should see "pending"
     And I should see "Send Test"
     And I should see "Edit"
-    
+  
+  @wip
   Scenario: send a test message for mailing
     Given the following mlm mailing records
       | subject               | status    | scheduled_at |

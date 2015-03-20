@@ -4,11 +4,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 # http://github.com/brynary/webrat
 
 Given /^I am on (.+)$/ do |page_name|
-  visit path_to(page_name)
+  visit path_to(page_name,mail_manager)
 end
 
 When /^I go to (.+)$/ do |page_name|
-  visit path_to(page_name)
+  visit path_to(page_name,mail_manager)
 end
 
 When /^I press "([^\"]*)"$/ do |button|
@@ -91,11 +91,11 @@ When /^I attach the file at "([^\"]*)" to "([^\"]*)"$/ do |path, field|
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  response.should contain(text)
+  expect(page.body).to have_content(text)
 end
 
 Then /^I should not see "([^\"]*)"$/ do |text|
-  response.should_not contain(text)
+  expect(page.body).not_to have_content(text)
 end
 
 Then /^the "([^\"]*)" field should contain "([^\"]*)"$/ do |field, value|
@@ -111,5 +111,5 @@ Then /^the "([^\"]*)" checkbox should be checked$/ do |label|
 end
 
 Then /^I should be on (.+)$/ do |page_name|
-  URI.parse(current_url).path.should == path_to(page_name)
+  URI.parse(current_url).path.should == path_to(page_name,mail_manager)
 end
