@@ -116,16 +116,7 @@ RSpec.describe MailManager::MailingsController, :type => :controller do
         mailing = MailManager::Mailing.create! valid_attributes
         put :update, {:id => mailing.to_param, :mailing => new_attributes}, valid_session
         mailing = MailManager::Mailing.find(mailing.id)
-        new_attributes.each_pair do |key,value|
-          # check if its a boolean
-          if !!mailing.send(key) == mailing.send(key)
-            expect(mailing.send(key)).to eq(value != 0)
-          elsif mailing.send(key).is_a?(Time)
-            expect(mailing.send(key).utc.to_i).to eq(value.utc.to_i)
-          else
-            expect(mailing.send(key)).to eq(value) 
-          end
-        end
+        expect(mailing).to match_attributes(new_attributes)
       end
 
       it "assigns the requested mailing as @mailing" do

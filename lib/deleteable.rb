@@ -27,6 +27,16 @@ module Deleteable
         end
       end
     end
+    def count(*args)
+      if args[0] == (:exclusive_scope)
+        args.shift
+        super
+      else
+        with_scope(:find => {:conditions => ["#{table_name}.deleted_at is null"]}) do
+          super
+        end
+      end
+    end
   end
 
 end
