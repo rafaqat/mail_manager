@@ -3,9 +3,9 @@ MailManager::Engine.routes.draw do
     member do
       post :send_test
       get :test
-      get :schedule
-      get :pause
-      get :cancel
+      put :schedule
+      put :pause
+      put :cancel
     end
     resources :messages, only: [:index]
   end

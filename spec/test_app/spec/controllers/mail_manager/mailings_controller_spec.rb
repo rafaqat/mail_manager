@@ -38,6 +38,24 @@ RSpec.describe MailManager::MailingsController, :type => :controller do
   # MailManager::MailingsController. Be sure to keep this updated too.
   let(:valid_session) { {} }
 
+  describe "PUT #schedule" do
+    #FIXME: it's not recognizing non-crud routing!
+    #it "sets the mailing's scheduled_at and creates its job" do
+    #  Delayed::Job.delete_all
+    #  Delayed::Worker.delay_jobs = true
+    #  mailing = MailManager::Mailing.create! valid_attributes
+    #  put :schedule, {}, valid_session
+    #  expect(assigns(:mailing)).to eq(mailing)
+    #  mailing = MailManager::Mailing.find(mailing.id)
+    #  expect(mailing.scheduled_at).not_to be nil
+    #  expect(Delayed::Job.count).to eq(1)
+    #  expect(Delayed::Job.first.handler).to match /MailMgr::Mailing/
+    #  expect(response).to redirect_to(mailings_path)
+    #  Delayed::Job.delete_all
+    #  Delayed::Worker.delay_jobs = false
+    #end
+  end
+
   describe "GET #index" do
     it "assigns all mailings as @mailings" do
       mailing = MailManager::Mailing.create! valid_attributes

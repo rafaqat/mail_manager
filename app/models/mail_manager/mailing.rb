@@ -243,20 +243,27 @@ module MailManager
       change_status('scheduled')
       delay(run_at: scheduled_at).deliver
     end
+
+    def scheduled?
+      status.to_s.eql?('scheduled')
+    end
+
+    def job
+      mailing_jobs.first
+    end
   
+    def mailing_jobs
+      Delayed::Job.where("handler like ?","%MailManager::Mailing%#{subject}%")
+    end
+
     def cancel
       raise "Unable to cancel" unless can_cancel?
       change_status('pending')
-      # Delayed::Job.active.find(:all, :conditions => ["handler like ?","MailMgr::Mailing"])
+      mailing_jobs.delete_all
+    end
 
-      #Changing this to return only the jobs that match the id so I don't have to parse with YAML ... seems logical
-      mailing_jobs = Delayed::Job.find(:all, :conditions => ["handler like ?","%MailMgr::Mailing%"] || ["handler like ?", "%id: {job_mailing_id.to_i}\n%"])
-      #mailing_jobs = Delayed::Job.active.find(:all, :conditions => ["handler like ?","%MailMgr::Mailing%"])
-      mailing_jobs.each do |job|
-        #job_mailing_id = YAML::load(job.handler).object.split(':').last
-        #logger.debug "Job mailing id: #{job_mailing_id} - This mailing id: #{self.id} - do they match: #{job_mailing_id.to_i == self.id.to_i}"
-        job.destroy #if job_mailing_id.to_i == self.id.to_i
-      end
+    def pending?
+      status.to_s.eql?('pending')
     end
   
     def resume

@@ -20,7 +20,6 @@ module NavigationHelpers
 
     when /^the (.+?) page$/                                         # translate to named route
       routing.send("#{$1.downcase.gsub(' ','_')}_path")
-  
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
         "Now, go and add a mapping in #{__FILE__}"

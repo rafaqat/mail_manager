@@ -18,9 +18,9 @@
       <% if mailing.can_edit? %>
 			<td><%= link_to 'Edit', mail_manager.edit_mailing_path(mailing), :class => 'button' %>
 			<% if mailing.can_schedule? %>
-			<%= link_to 'Schedule', mail_manager.schedule_mailing_path(mailing), :class => 'button' %>
+			<%= link_to 'Schedule', mail_manager.schedule_mailing_path(mailing), :method => :put, :class => 'button' %>
 			<% elsif mailing.can_cancel? %>
-			<%= link_to 'Cancel', mail_manager.cancel_mailing_path(mailing), :class => 'button' %>
+			<%= link_to 'Cancel', mail_manager.cancel_mailing_path(mailing), :method => :put, :class => 'button' %>
           <% end %>
 			<% end %>
       <% if mailing.messages.length > 0 %>
