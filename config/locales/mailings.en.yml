@@ -42,6 +42,6 @@ en:
     new:
       title: "New Mailing"
     edit:
-      title: "Edit Mailing"
+      title: "Edit %{subject}"
     show:
       title: "Mailing" 

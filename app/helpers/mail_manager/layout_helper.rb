@@ -1,11 +1,11 @@
 module MailManager
   module LayoutHelper
-    def title(value=nil)
+    def title(value=nil, locals={})
       if value.nil?
-        @page_title
+        t @page_title, locals
       else
         @page_title = value
-        "<h1>#{@page_title}</h1>".html_safe
+        "<h1>#{t @page_title, locals}</h1>".html_safe
       end
     end
 
