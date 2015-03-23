@@ -1,3 +1,8 @@
+# Rails Guides: http://guides.rubyonrails.org/i18n.html
+# see (available from page) for some activemodel/support defaults
+# https://github.com/rails/rails/blob/master/activemodel/lib/active_model/locale/en.yml
+# https://github.com/rails/rails/blob/master/activesupport/lib/active_support/locale/en.yml
+
 en:
   date:
     formats:
@@ -5,3 +10,4 @@ en:
   time:
     formats:
       default: "%b %d, %Y %I:%M %P"
+
