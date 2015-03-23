@@ -14,3 +14,7 @@
 //= require jquery_ujs
 //= require jquery-ui
 //= require mail_manager/jquery-ui-timepicker-addon
+//
+jQuery(document).ready(function(){
+  jQuery(document).tooltip();
+});
