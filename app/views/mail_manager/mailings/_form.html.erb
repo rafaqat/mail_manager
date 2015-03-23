@@ -4,7 +4,7 @@
        <%= f.label :subject %>
        <%= f.text_field :subject, placeholder: "Email Subject", title: "Subject is good!" %><br />
        <%= f.label :from_email_address %>
-       <%= f.text_field :from_email_address, title: "The from email address the users sees!", palceholder: "<Bobo Clown> bobo@example.com"  %><br />
+       <%= f.text_field :from_email_address, title: "The from email address the users sees!", palceholder: "Bobo Clown <bobo@example.com>"  %><br />
     <% if @mailables.length > 0 %>
        <%= f.label "Select Mailable Item" %>
   		 <%= select_tag 'mailing[mailable_class_and_id]',
