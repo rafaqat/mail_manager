@@ -1,25 +1,25 @@
 en:
   activerecord:
     models:
-      mailings: "Mailing"
+      mail_manager/mailing: "Mailing"
 
     attributes:
-      mailings:
-        subject: "Subject"
+      mail_manager/mailing:
+        subject: "Subject Yo!"
 
     errors:
       models:
-        mailings:
+        mail_manager/mailing:
           attributes:
             subject: "Subject"
 
   navigation:
-    mailings: "Mailings"
+    mail_manager/mailing: "Mailings"
 
   helpers:
 
     submit:
-      mailing:
+      mail_manager/mailing:
         create: "Add Mailing"
         update: "Update Mailing"
 
@@ -27,12 +27,12 @@ en:
       campaign:
 
   messages:
-    mailings:
+    mail_manager/mailing:
       created: "Mailing has been created."
       updated: "Mailing has been updated."
       none: "There are no Mailings yet. Click 'New Mailing' to get started."
 
-  mailings:
+  mail_manager/mailing:
 
     links:
       back_to_index: "Back to Mailing"
@@ -42,6 +42,6 @@ en:
     new:
       title: "New Mailing"
     edit:
-      title: "Edit %{subject}"
+      title: "Editing %{subject}"
     show:
       title: "Mailing" 
