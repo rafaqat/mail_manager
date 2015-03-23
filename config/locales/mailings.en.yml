@@ -1,11 +1,16 @@
 en:
   activerecord:
     models:
-      mailings: "Mailing"
+      mail_manager/mailing:
+        one: "Mailing"
+        other: "Mailings"
 
     attributes:
-      mailings:
-        subject: "Subject"
+      mail_manager/mailing:
+        subject: "Email subject"
+        from_email_address: "From email address"
+        scheduled_at: "Send emails at"
+        include_images: "Include images?"
 
     errors:
       models:
