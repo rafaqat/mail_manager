@@ -1,11 +1,13 @@
 *.gem
 *.rbc
 *.swp
+*.local.yml
+db/structure.sql
 .bundle
 .config
 .yardoc
 .DS_Store
-database.local.yml
+*.local.yml
 Gemfile.lock
 InstalledFiles
 _yardoc

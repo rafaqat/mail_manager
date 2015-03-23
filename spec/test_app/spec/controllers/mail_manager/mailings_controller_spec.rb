@@ -39,6 +39,7 @@ RSpec.describe MailManager::MailingsController, :type => :controller do
   let(:valid_session) { {} }
 
   describe "PUT #schedule" do
+    pending "FIXME:? its it's not recognizing non-crud routing!"
     #FIXME: it's not recognizing non-crud routing!
     #it "sets the mailing's scheduled_at and creates its job" do
     #  Delayed::Job.delete_all
