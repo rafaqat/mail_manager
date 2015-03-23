@@ -1,0 +1,47 @@
+en:
+  activerecord:
+    models:
+      mailings: "Mailing"
+
+    attributes:
+      mailings:
+        subject: "Subject"
+
+    errors:
+      models:
+        mailings:
+          attributes:
+            subject: "Subject"
+
+  navigation:
+    mailings: "Mailings"
+
+  helpers:
+
+    submit:
+      mailing:
+        create: "Add Mailing"
+        update: "Update Mailing"
+
+    button:
+      campaign:
+
+  messages:
+    mailings:
+      created: "Mailing has been created."
+      updated: "Mailing has been updated."
+      none: "There are no Mailings yet. Click 'New Mailing' to get started."
+
+  mailings:
+
+    links:
+      back_to_index: "Back to Mailing"
+
+    index:
+      title: "Listing Mailings"
+    new:
+      title: "New Mailing"
+    edit:
+      title: "Edit Mailing"
+    show:
+      title: "Mailing" 
