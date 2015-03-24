@@ -31,13 +31,13 @@
        <%= f.check_box :include_images %><br />
        Note: If checked, images are encoded and attached to the email (except for contacts with yahoo.com, gmail.com and
            hotmail.com emails).  If unchecked, remote image references are used for all contacts.
-    <% if @all_mailing_lists.length > 1 %>
+    <% if @all_mailing_lists.length > 0 %>
   	    <div class='mailing_lists_group'>
            <h2 class='list_group'>Send to these mailing lists:</h2>
            <p>
   		<% @all_mailing_lists.each do |mailing_list| %>
   				<%= check_box_tag 'mailing[mailing_list_ids][]', mailing_list.id, @mailing.mailing_lists.include?(mailing_list) %>
-  				<%= label_tag :mailing_mailing_list_id, "#{mailing_list.name}" %><br/>
+  				<%= label_tag :mailing_mailing_list_ids_, "#{mailing_list.name}" %><br/>
   		<% end %>
   		    </p>
   		  </div>

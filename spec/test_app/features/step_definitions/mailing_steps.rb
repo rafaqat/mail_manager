@@ -20,3 +20,12 @@ Then(/^the mailing with subject "([^"]*?)" should be canceled$/) do |subject|
   expect(mailing.job).to be nil
 end
 
+Then(/^the mailing with subject "(.*?)" should be sending to lists "(.*?)"$/) do |subject, list_names|
+  mailing = MailManager::Mailing.where(subject: subject).first
+  names = mailing.mailing_lists.map(&:name)
+  list_names.split(/\s*,\s*/).each do |name|
+    expect(names).to include (name)
+  end
+end
+
+
