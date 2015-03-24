@@ -17,3 +17,11 @@ end
 def random_value(values)
   values[random_int(0,(values.length-1))]
 end
+
+def generate_plain_text_from_html(html)
+  IO.popen('lynx -stdin --dump','w+') do |lynx|
+    lynx.write html
+    lynx.close_write
+    lynx.readlines.join
+  end
+end

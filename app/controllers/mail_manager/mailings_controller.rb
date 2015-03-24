@@ -36,16 +36,6 @@ module MailManager
       redirect_to mail_manager.mailings_path
     end
   
-    def resume
-      @mailing.resume
-      redirect_to mail_manager.mailings_path
-    end
-  
-    def pause
-      @mailing.pause
-      redirect_to mail_manager.mailings_path
-    end
-  
     def send_test
       @mailing.send_test_message(params[:test_email_addresses])
       flash[:notice] = "Test messages sent to #{params[:test_email_addresses]}."

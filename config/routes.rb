@@ -4,7 +4,6 @@ MailManager::Engine.routes.draw do
       post :send_test
       get :test
       put :schedule
-      put :pause
       put :cancel
     end
     resources :messages, only: [:index]

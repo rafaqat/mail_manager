@@ -31,7 +31,7 @@ module MailManager
     validates_presence_of :subject
     #validates_presence_of :mailable
   
-    scope :ready, lambda {{:conditions => ["(status='scheduled' AND scheduled_at < ?) OR status='resumed'",Time.now.utc]}}
+    scope :ready, lambda {{:conditions => ["(status='scheduled' AND scheduled_at < ?)",Time.now.utc]}}
     scope :by_statuses, lambda {|*statuses| {:conditions => ["status in (#{statuses.collect{|bindings,status| '?'}.join(",")})",statuses].flatten}}
   
     def self.with_bounces(bounce_status=nil)
@@ -50,7 +50,7 @@ module MailManager
     end
 
     include StatusHistory
-    override_statuses(['pending','scheduled','processing','paused','resumed','cancelled','completed'],'pending')
+    override_statuses(['pending','scheduled','processing','cancelled','completed'],'pending')
     before_create :set_default_status
 
     attr_protected :id
@@ -218,20 +218,12 @@ module MailManager
       self.mailing_lists = mailing_list_ids.collect{|mailing_list_id| MailingList.find_by_id(mailing_list_id)}
     end
   
-    def can_pause?
-      ['processing'].include?(status.to_s)
-    end
-
     def can_edit?
-      ['pending','scheduled','paused'].include?(status.to_s)
+      ['pending','scheduled'].include?(status.to_s)
     end
   
     def can_cancel?
-       ['pending','scheduled','processing','paused','resumed'].include?(status.to_s)
-    end
-  
-    def can_resume?
-      ['paused'].include?(status.to_s)
+       ['pending','scheduled','processing'].include?(status.to_s)
     end
   
     def can_schedule?
@@ -266,14 +258,5 @@ module MailManager
       status.to_s.eql?('pending')
     end
   
-    def resume
-      raise "Unable to resume" unless can_resume?
-      change_status('resumed')
-    end
-  
-    def pause
-      raise "Unable to pause" unless can_pause?
-      change_status('paused')
-    end
   end
 end
