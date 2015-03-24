@@ -20,6 +20,27 @@ end
 require 'cucumber/rails'
 require 'factory_girl_rails'
 
+require 'capybara/poltergeist'
+require 'capybara/rspec'
+require 'capybara/rails'
+require File.join(pwd,'..','..',"lib","debugging")
+#require 'rack_session_access/capybara'
+Capybara.server_port = MailManager.site_url.split(/:/).last
+Capybara.app_host = MailManager.site_url
+
+Capybara.default_driver = :rack_test
+Capybara.register_driver :poltergeist do |app|
+  options = {
+    inspector: 'open',
+    debug: false,
+    phantomjs_options: ['--load-images=no', '--ignore-ssl-errors=yes'],
+    js_errors: false
+  }
+  Capybara::Poltergeist::Driver.new(app, options)
+end
+Capybara.javascript_driver = :poltergeist
+
+
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any
 # selectors in your step definitions to use the XPath syntax.

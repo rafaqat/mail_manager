@@ -2,6 +2,10 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "support", "pat
 
 # Commonly used webrat steps
 # http://github.com/brynary/webrat
+When(/^the "(.*?)" link has a confirmation that includes "(.*?)"$/) do |link, confirmation_text|
+  expect(find_link("Schedule", match: :first)['data-confirm']).to match /#{confirmation_text}/
+end
+
 
 Given /^I am on (.+)$/ do |page_name|
   visit path_to(page_name,mail_manager)

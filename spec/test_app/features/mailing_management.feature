@@ -11,6 +11,7 @@ Feature: Mailing Management
 	
 	Scenario: schedule a mailing
 	  When I go to the mailings page
+     And the "Schedule" link has a confirmation that includes "Are you sure you want to start the mailing at"
 	   And I follow "Schedule"
 	  Then I should see "Buy my junk!"
      And the mailing with subject "Buy my junk!" should be scheduled
