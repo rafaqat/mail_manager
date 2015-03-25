@@ -10,7 +10,7 @@ alias and_by by
 
 def and_it(message)
   if block_given?
-    puts "#{message},"
+    $stdout.puts "#{message},"
     yield
   else
     pending message

@@ -18,6 +18,7 @@ gem 'sqlite3'
 gem 'mysql2'
 group :test, :development do
   gem 'foreman'
+  gem 'timecop'
   gem 'quiet_assets'
   gem "factory_girl_rails", "~>4.3"
   gem "faker"
