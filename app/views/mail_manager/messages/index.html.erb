@@ -1,4 +1,4 @@
-<%= title "Listing Messages for #{@mailing.subject} " %>
+<%= title "Listing Messages for #{@mailing.subject}" %>
 
 <%= content_for :subnav do %>
 <ul>
@@ -8,7 +8,7 @@
 
     <%= will_paginate @messages %>
     <%= form_tag mail_manager.mailing_messages_path(@mailing), :id => 'search_form', :method => 'GET' do %>
-      Status:<%= select_tag "message[status]", options_for_select(@valid_statuses,params[:message][:status]), :onChange => "$('#search_form').submit()" %>
+      <%= label_tag :message_status, "Status:" %><%= select_tag "message[status]", options_for_select(@valid_statuses,params[:message][:status]), :onChange => "$('#search_form').submit()" %>
     <% end %>
     <% if @messages.length == 0 %>
       <h3>No messages found for your query.</h3>

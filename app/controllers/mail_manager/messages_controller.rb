@@ -1,14 +1,11 @@
 module MailManager
-  class MessagesController < ApplicationController
-    layout 'admin'
-    before_filter :find_message, :except => [:new,:create,:index]
+  class MessagesController < ::MailManager::ApplicationController
     before_filter :find_mailing
 
     def index
       params[:message] = Hash.new unless params[:message]
-      params[:message][:status] = 'failed' if params[:message][:status].nil?
       search_params = params[:message].merge(:mailing_id => params[:mailing_id]) 
-      @valid_statuses = Message.valid_statuses
+      @valid_statuses = [['Any Status','']] + Message.valid_statuses.map{|s| [s.capitalize,s]}
       @messages = Message.search(search_params).paginate(:page => params[:page])
     end
 
@@ -17,10 +14,6 @@ module MailManager
   
     protected
   
-    def find_message
-      @message = Message.find(params[:id])
-    end
-
     def find_mailing
       return @mailing = Mailing.find_by_id(params[:mailing_id]) if params[:mailing_id]
       return @mailing = @message.message.try(:mailing) if @message
