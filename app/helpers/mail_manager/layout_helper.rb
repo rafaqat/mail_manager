@@ -12,18 +12,26 @@ module MailManager
     def use_show_for_resources?
       ::MailManager.use_show_for_resources
     rescue 
+      # :nocov: shouldn't happen
       false
+      # :nocov:
     end
 
     def show_title?
       return @show_title if defined? @show_title
       true
+    rescue 
+      # :nocov: shouldn't happen
+      false
+      # :nocov:
     end
 
     def site_url
       ::MailManager.site_url
     rescue
+      # :nocov: shouldn't happen
       "#{default_url_options[:protocol]||'http'}://#{default_url_options[:domain]}"
+      # :nocov:
     end
 
     def translate(key, options={})

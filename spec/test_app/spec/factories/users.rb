@@ -6,6 +6,15 @@ begin
       last_name {Faker::Name.last_name}
       email {Faker::Internet.email}
       phone {Faker::PhoneNumber.phone_number}
+      factory :admin_user do
+        last_name 'admin'
+      end
+    end
+    factory :admin_user_with_role, class: UserWithRole do
+      first_name {Faker::Name.first_name}
+      last_name 'admin'
+      email {Faker::Internet.email}
+      phone {Faker::PhoneNumber.phone_number}
     end
   end
 rescue FactoryGirl::DuplicateDefinitionError => e

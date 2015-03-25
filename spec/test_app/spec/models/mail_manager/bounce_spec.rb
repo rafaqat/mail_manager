@@ -26,6 +26,7 @@ RSpec.describe MailManager::Bounce do
       expect(Delayed::Job.first.run_at.utc.to_i).to be_within(5).of(
         120.minutes.from_now.utc.to_i
       )
+      Delayed::Worker.delay_jobs = false
     end
   end
   def send_bounce(filename)

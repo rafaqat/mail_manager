@@ -5,6 +5,8 @@ module MailManager
     :bounce, :unsubscribe_path, :site_path, :layout, :use_show_for_resources
   mattr_accessor :requires_authentication
   mattr_accessor :authorized_roles
+  mattr_accessor :show_title
+  mattr_accessor :roles_method
   class Engine < ::Rails::Engine
     isolate_namespace MailManager 
     initializer "MailManager.config" do |app| 
@@ -27,8 +29,12 @@ module MailManager
 
   # checks if the given 'user' has a role
   def self.authorized_for_roles?(user,roles=[])
-    user_roles = if ::Newsletter.roles_method.present?
-      user.send(::Newsletter.roles_method)
+    user_roles = if ::MailManager.roles_method.present?
+      if user.respond_to? ::MailManager.roles_method
+        user.send(::MailManager.roles_method)
+      else
+        false
+      end
     elsif user.respond_to?(:roles)
       user.roles 
     elsif user.respond_to?(:role)
@@ -37,7 +43,7 @@ module MailManager
       []
     end
     user_roles = [user_roles] unless user_roles.is_a?(Array)
-    roles.detect{|role| user_role.include?(role)}.present?
+    roles.detect{|role| user_roles.include?(role)}.present?
   end
 
   # logic for authorization mail manager
@@ -92,8 +98,10 @@ module MailManager
     MailManager.site_path ||= conf.site_path || "/" rescue "/"
     MailManager.layout ||= conf.layout || "mail_manager/application" rescue "mail_manager/application"
     MailManager.use_show_for_resources ||= conf.use_show_for_resources || false rescue false
+    MailManager.show_title ||= conf.show_title || true rescue true
     MailManager.requires_authentication ||= conf.requires_authentication || false rescue false
     MailManager.authorized_roles ||= conf.authorized_roles || [] rescue []
+    MailManager.roles_method ||= conf.roles_method || nil rescue nil
   end
 end
 
