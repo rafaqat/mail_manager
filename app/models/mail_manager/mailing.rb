@@ -84,9 +84,7 @@ module MailManager
 	        begin
             # use the cached mailing parts, set messages mailing to self
             message.mailing=self
-	          message.change_status(:processing)
             message.deliver
-	          message.change_status(:sent)
 	        rescue => e
 	          message.result = "Error: #{e.message} - #{e.backtrace.join("\n")}"
 	          message.change_status(:failed)

@@ -38,4 +38,5 @@ if ActiveRecord::Base.connection.adapter_name =~ /mysql/i
 else
   require 'with_lock'
   MailManager::Lock = WithLock::Client
+  MailManager::LockException = WithLock::LockException
 end

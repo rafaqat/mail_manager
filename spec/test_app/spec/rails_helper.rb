@@ -58,6 +58,7 @@ require 'factory_girl_rails'
 # Dir[Rails.root.join('spec/support/*.rb')].each { |f| require f }
 require File.join("support",'database_cleaner')
 require File.join("support",'custom_matchers')
+require File.join("support",'continuance')
 
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

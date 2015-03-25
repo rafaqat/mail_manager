@@ -56,6 +56,9 @@ module MailManager
     before_create :set_default_status
     after_create :generate_guid
 
+    # returns a string in the form of "contact name" <email@example.com> if 
+    # the contact's full name returns anything ... or simply email@example.com if
+    # there is no name at all
     def email_address_with_name
       return %Q|"#{full_name}" <#{email_address}>|.gsub(/\s+/,' ') unless full_name.eql?('')
       email_address
@@ -63,22 +66,44 @@ module MailManager
 
     # sends the message through Mailer
     def deliver
+      # lock only needed until status is updated
+      Lock.with_lock("deliver_message_#{self.id}") do
+        reload
+        if can_deliver?
+          change_status(:processing)
+        else
+          Rails.logger.warn "Message(#{self.id})'s is no longer suitable to deliver.. staus: #{status}"
+        end
+      end
       MailManager::Mailer.deliver_message(self)
       change_status(:sent)
+    # allow other errors to bubble up
+    rescue MailManager::LockException => e
+      Rails.logger.warn "Locking error while trying to send MailManager::Message(#{id}) leaving in #{statua} status"
+    end
+
+    # whether or not you can deliver a message
+    def can_deliver?
+      ['ready','pending'].include?(status) 
     end
   
+    # returns the contact's full name
     def full_name
       contact.full_name
     end
 
+    # returns the contact's email address
     def email_address
       contact.email_address
     end
 
+    # returns the mailings subject
     def subject
       mailing.subject
     end
 
+    # the "From: " email address for the email
+    # lazy sets the from email addres if not present from the mailing 
     def from_email_address
       return self[:from_email_address] if self[:from_email_address].present?
       self.update_attribute(:from_email_address,mailing.from_email_address)
@@ -90,10 +115,12 @@ module MailManager
       @parts ||= mailing.parts(substitutions)
     end
     
+    # returns the contact's 'contactable' object tied to the contact
     def contactable
       contact.try(:contactable)
     end
 
+    # returns a hash of substitutions to be used to modify the mailable's html/plaing text
     def substitutions
       substitutions_hash = {}
       MailManager::ContactableRegistry.registered_methods.each do |method|
@@ -109,6 +136,7 @@ module MailManager
       substitutions_hash.merge('UNSUBSCRIBE_URL' => unsubscribe_url)
     end
 
+    # the full url to unsubscribe based on this message; including site url & guid
     def unsubscribe_url
       "#{MailManager.site_url}#{MailManager.unsubscribe_path}/#{guid}"
     end
@@ -120,6 +148,7 @@ module MailManager
     end
 
     protected
+    # nodoc: set the type on create
     def set_type
       self[:type] = self.class.name
     end
