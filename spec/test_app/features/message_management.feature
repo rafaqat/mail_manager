@@ -10,6 +10,7 @@ Feature: view messages for mailings
       And the mailing with subject "Buy my junk!" is set to send to "Funk" 
       And a contact named "Bobo Clown" exists with email_address "bobo@example.com"
       And contact "Bobo Clown" is subscribed to "Funk"
+      And I set jobs to run immediately
       And the mailing with subject "Buy my junk!" is scheduled
   
   @javascript

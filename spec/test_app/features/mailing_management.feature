@@ -39,8 +39,6 @@ Feature: Mailing Management
      And I should see "Send Test"
      And I should see "Edit"
   
-  # need to create a valid mailable
-  @wip
   Scenario: send a test message for mailing
     When I go to the mailings page
      And I follow "Send Test"
@@ -49,4 +47,6 @@ Feature: Mailing Management
     Then I should see "Buy my junk!"
      And I should see "Send Test"
      And I should see "Edit"
-     And an email is sent to "test@example.com" with subject "Buy my junk!"
+     And a test email job should exist for mailing with subject "Buy my junk!" and email "test@example.com"
+    When I run all jobs
+    Then an email is sent to "test@example.com" with subject "Buy my junk!"
