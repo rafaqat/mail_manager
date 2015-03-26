@@ -27,8 +27,13 @@ module MailManager
     end
 
     def index
-      @mailing_list = MailingList.find_by_id(params[:mailing_list_id])
+      @mailing_lists = MailingList.order('name').map{|mailing_list| [mailing_list.name,
+        mailing_list.id]
+      }
       params[:status] ||= 'active'
+      @statuses = [["Any", ""], ["Active", "active"], ["Unsubscribed", "unsubscribed"], 
+        ["Failed Address", "failed_address"], ["Pending", "pending"]
+      ]
       @contacts = Contact.search(params).paginate(:page => params[:page], :per_page => params[:per_page])
     end
 
