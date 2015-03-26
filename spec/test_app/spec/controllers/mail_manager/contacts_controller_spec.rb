@@ -48,7 +48,7 @@ RSpec.describe MailManager::ContactsController, :type => :controller do
     it "assigns all mailing lists as @mailing_lists" do
       mailing_list = FactoryGirl.create(:mailing_list)
       get :index, {}, valid_session
-      expect(assigns(:mailing_lists)).to eq([mailing_list])
+      expect(assigns(:mailing_lists)).to eq([[mailing_list.name,mailing_list.id]])
       expect(response.body).to have_content 'Listing Contacts'
     end
     it "assigns all statuses as @statuses" do
