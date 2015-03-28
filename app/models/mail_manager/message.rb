@@ -36,7 +36,7 @@ module MailManager
     end
 
     scope :search, lambda{|params| 
-      conditions = ["1"]
+      conditions = ["1=1"]
       if params[:mailing_id]
         conditions[0] += " AND #{MailManager.table_prefix}messages.mailing_id=?"
         conditions << params[:mailing_id]

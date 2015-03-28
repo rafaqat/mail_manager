@@ -38,3 +38,47 @@ Feature: Manage Contacts
      And I press "Search"
     Then I should not see "babs@example.com"
      And I should not see "bob@example.com"
+
+  Scenario: New contact
+   Given a mailing list named "Peeps" exists
+     And a mailing list named "Others" exists
+    When I go to the new contact page
+     And I fill in "First name" with "Bobo"
+     And I fill in "Last name" with "Clown"
+     And I fill in "Email address" with "bobo@example.com" 
+     And I check "Peeps"
+     And I press "Submit"
+    Then contact "Bobo Clown" should exist with email_address "bobo@example.com"
+     And contact "Bobo Clown" should be subscribed to "Peeps" with the "active" status
+
+  Scenario: Soft Delete a contact
+    When I go to the contacts page
+     And I follow "Delete"
+    Then I should be on the contacts page
+     And the contact "Bob Dole" should be soft deleted
+     And I should not see "Bob Dole"
+    When I undelete contact "Bob Dole"
+     And I go to the contacts page
+    Then I should see "Bob Dole"
+     
+
+  Scenario: Edit contact
+   Given a mailing list named "Peeps" exists
+     And a mailing list named "Others" exists
+    When I go to the contacts page
+     And I follow "Edit"
+     And I fill in "First name" with "Bobo"
+     And I fill in "Last name" with "Clown"
+     And I fill in "Email address" with "bobo@example.com" 
+     And I check "Peeps"
+     And I press "Submit"
+    Then contact "Bobo Clown" should exist with email_address "bobo@example.com"
+     And contact "Bobo Clown" should be subscribed to "Peeps" with the "active" status
+
+  # need to reincorproate double-opt-in subscribe
+  @wip 
+  Scenario: Subscribe to a list by email address(site form) with no redirect defined
+   Given a mailing list named "Peeps" exists
+    When I submit a static subscribe form for "Bobo Clown" with email address "bobo@example.com" and the mailing list named "Peeps"
+    Then I should be on the mail manager thank you page
+     And contact "Bobo Clown" should be subscribed to "Peeps" with the "pending" status 

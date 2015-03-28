@@ -42,7 +42,6 @@ module MailManager
     end
     
     def edit
-      find_contact
     end
     
     def create
@@ -56,7 +55,6 @@ module MailManager
     end
 
     def update
-      find_contact
       if @contact.update_attributes(params[:contact])
         flash[:notice] = 'Contact was successfully updated.'
         redirect_to(mail_manager.contacts_path)
@@ -65,16 +63,5 @@ module MailManager
       end
     end
 
-    def destroy
-      find_contact
-      @contact.delete
-      redirect_to(mail_manager.contacts_url)
-    end
-  
-    protected 
-  
-    def find_contact
-      @contact = Contact.find(params[:id])
-    end
   end
 end

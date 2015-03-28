@@ -16,13 +16,14 @@ MailManager::Engine.routes.draw do
     end
   end
 
-  resources :mailing_lists do
-    resources :subscriptions, only: [:index,:new]
-  end
+  resources :mailing_lists
 
   resources :contacts do
     member do
-      get :send_one_off_message
+      get     :send_one_off_message
+      put     :subscribe
+      delete  :delete
+      put     :undelete
     end
   end
 end

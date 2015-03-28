@@ -1,17 +1,8 @@
 module MailManager
   class SubscriptionsController < ApplicationController
-    before_filter :find_subscription, :except => [:new,:create,:index,:unsubscribe,:unsubscribe_by_email_address]
-    before_filter :find_mailing_list
-    before_filter :find_contact, :except => [:new,:create,:index,:unsubscribe,:unsubscribe_by_email_address]
-    skip_before_filter :authorize, :only => [:unsubscribe,:unsubscribe_by_email_address]
+    skip_before_filter :authorize_resource
+    skip_before_filter :load_resource
 
-    def index
-      params[:search] = Hash.new unless params[:search]
-      search_params = params[:search].merge(:mailing_list_id => params[:mailing_list_id]) 
-      @valid_statuses = Subscription.valid_statuses
-      @subscriptions = Subscription.search(search_params).paginate(:all, :page => params[:page])
-    end
-  
     def unsubscribe
       raise "Empty id for#{params[:guid]}" if params[:guid].blank?
       if params[:guid] =~ /^test/
@@ -42,63 +33,6 @@ module MailManager
         return render('unsubscribe', :layout => 'layout')
       end
       render :layout => 'layout'
-    end
-
-    def show
-    end
-
-    def new
-      @subscription = Subscription.new
-      @subscription.mailing_list = @mailing_list
-      @contact = @subscription
-    end
-
-    def edit
-    end
-
-    def create
-      @subscription = Subscription.new(params[:subscription])
-      @subscription.mailing_list_id = @mailing_list.id
-      if @subscription.save
-        flash[:notice] = 'Subscription was successfully created.'
-        return redirect_to(mail_manager.mailing_list_subscriptions_path(@mailing_list))
-      else
-        @contact = @subscription
-        render :action => "new"
-      end
-    end
-
-    def update
-      if @subscription.update_attributes(params[:subscription])
-        @subscription.change_status(params[:subscription][:status])
-        flash[:notice] = 'Subscription was successfully updated.'
-        redirect_to(mail_manager.mailing_list_subscriptions_path(@mailing_list))
-      else
-        render :action => "edit"
-      end
-    end
-
-    def destroy
-      @subscription.destroy
-      redirect_to(mail_manager.subscriptions_url)
-    end
-  
-    protected 
-  
-    def find_subscription
-      @subscription = Subscription.find(params[:id])
-    end
-
-    def find_mailing_list
-      return @mailing_list = @subscription.mailing_list if @subscription
-      return @mailing_list = MailingList.find_by_id(params[:mailing_list_id]) if params[:mailing_list_id]
-      return @mailing_list = MailingList.find_by_id(params[:subscription][:mailing_list_id]) if
-        params[:subscription]
-      nil
-    end
-  
-    def find_contact
-      @contact = @subscription.contact
     end
   end
 end

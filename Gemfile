@@ -16,6 +16,7 @@ gem 'thor', '0.19.1'
 gem 'delayed_job_active_record'
 gem 'sqlite3'
 gem 'mysql2'
+gem 'pg'
 group :test, :development do
   gem 'foreman'
   gem 'timecop'

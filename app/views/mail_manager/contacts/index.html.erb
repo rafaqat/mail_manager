@@ -1,5 +1,4 @@
-<%= title "Contacts" %>
-
+<%= title "Listing Contacts" %>
 
 <%= form_tag mail_manager.contacts_path(), :id => 'search_form', :method => 'get' do %>
   <label class="form" for="term">Contact Search:</label> <%= text_field_tag "term","", title: "First or last name or email" ,  :class => "text", :style => "width: 400px;" %><br />
@@ -22,10 +21,10 @@ function toggleStatus() {
 <% end %>
 
 <br/>
-<b>Listing Contacts </b>
     
-<%= will_paginate @contacts %>
-
+<% if @contacts.length <= 0 %>
+   <p>No contacts exist.</p>
+<% else %>
 <table class="list" cellpadding="1" cellspacing="0">
   <tr class="title">
     <td>First Name</td>
@@ -73,10 +72,11 @@ function toggleStatus() {
     </tr>
   <% end %>
 </table>
+<% end %>
 
-<%= will_paginate @contacts %><br/>
 <%= content_for :page_navigation do %>
 <div>
+  <%= will_paginate @contacts %><br/>
   <%= link_to "New Contact", mail_manager.new_contact_path, :class => 'button' %>
 </div>
 <% end %>
