@@ -79,7 +79,7 @@ module MailManager
       change_status(:sent)
     # allow other errors to bubble up
     rescue MailManager::LockException => e
-      Rails.logger.warn "Locking error while trying to send MailManager::Message(#{id}) leaving in #{statua} status"
+      Rails.logger.warn "Locking error while trying to send MailManager::Message(#{id}) leaving in #{status} status"
     end
 
     # whether or not you can deliver a message

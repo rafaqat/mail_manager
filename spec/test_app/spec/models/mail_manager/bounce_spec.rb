@@ -22,6 +22,8 @@ RSpec.describe MailManager::Bounce do
     it "should run every 120 minutes when there is no mail on the current check" do
       Delayed::Worker.delay_jobs = true
       MailManager::BounceJob.new.perform
+      Delayed::Job.delete_all
+      MailManager::BounceJob.new.perform
       expect(Delayed::Job.count).to eq(1)
       expect(Delayed::Job.first.run_at.utc.to_i).to be_within(5).of(
         120.minutes.from_now.utc.to_i

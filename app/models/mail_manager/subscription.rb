@@ -91,10 +91,10 @@ module MailManager
       contact = message.contact
       if message
         begin
-          unsubscribed_subscriptions = self.unsubscribe_by_email_address(message.contact.email_address)
-          Mailer.deliver_unsubscribed(message,unsubscribed_subscriptions) unless unsubscribed_subscriptions.empty?
+          unsubscribed_subscriptions = self.unsubscribe_by_email_address(message.contact.email_address, message)
           return unsubscribed_subscriptions
         rescue => e
+          binding.pry
           Rails.logger.warn "Error Unsubscribing email: #{message.contact.email_address}\n#{e.message}\n #{e.backtrace.join("\n ")}"
           raise "An error occured."
         end
@@ -112,13 +112,16 @@ module MailManager
       end
     end
     
-    def self.unsubscribe_by_email_address(email_address)
+    def self.unsubscribe_by_email_address(email_address,message=nil)
       subscriptions = []
       Contact.find_all_by_email_address(email_address).each do |contact|
         subscriptions += contact.active_subscriptions.each do |subscription|
           subscription.change_status(:unsubscribed)
         end
       end
+      Mailer.delay.unsubscribed(subscriptions,email_address,
+        subscriptions.first.contact, message) if \
+        subscriptions.present?
       subscriptions
     end
   end

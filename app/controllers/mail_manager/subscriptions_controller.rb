@@ -4,10 +4,11 @@ module MailManager
     skip_before_filter :load_resource
 
     def unsubscribe
-      raise "Empty id for#{params[:guid]}" if params[:guid].blank?
+      raise "Empty id for #{params[:guid]}" if params[:guid].blank?
       if params[:guid] =~ /^test/
         @message = TestMessage.find_by_guid(params[:guid])
         @mailing_lists = ['Test Mailing List'] 
+        @email_address = @message.test_email_address
         @contact = Contact.new(:first_name => 'Test', :last_name => 'Guy', 
           :email_address => @message.test_email_address)
       else
@@ -16,12 +17,13 @@ module MailManager
           subscription.mailing_list.nil?}.collect{|subscription| subscription.mailing_list.name}
         @contact = Message.find_by_guid(params[:guid]).try(:contact)
         raise "Could not find your subscription. Please try unsubscribing with your email address." if @contact.nil?
+        @email_address = @contact.email_address
       end
-      render 'unsubscribe', :layout => 'layout'
+      render 'unsubscribe', :layout => MailManager.public_layout
     rescue => e
       Rails.logger.warn "Error unsubscribing: #{e.message}\n #{e.backtrace.join("\n ")}"
       flash[:error] = e.message
-      redirect_to mail_manager.unsubscribe_by_email_address_path
+      redirect_to unsubscribe_by_email_address_path
     end
     
     def unsubscribe_by_email_address
@@ -32,7 +34,7 @@ module MailManager
         @contact = Contact.new(:email_address => params[:email_address])
         return render('unsubscribe', :layout => 'layout')
       end
-      render :layout => 'layout'
+      render :layout => MailManger.public_layout
     end
   end
 end

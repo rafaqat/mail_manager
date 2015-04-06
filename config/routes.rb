@@ -27,7 +27,6 @@ MailManager::Engine.routes.draw do
     end
   end
 end
-
 Rails.application.routes.draw do  # NOT MyEngineName::Engine.routes.draw
   begin
     unsubscribe_path = "#{MailManager.site_path}#{MailManager.unsubscribe_path}"
@@ -36,8 +35,6 @@ Rails.application.routes.draw do  # NOT MyEngineName::Engine.routes.draw
   end
   unsubscribe_path = '/listmgr' if unsubscribe_path.blank?
 
-  match "#{unsubscribe_path}/:guid", :controller => 'mail_manager/subscriptions', 
-    :action => 'unsubscribe'
-  match '/unsubscribe_by_email_address' => 'mail_manager/subscriptions#unsubscribe_by_email_address', as: 'unsubscribe_by_email_address'
-
+  get "#{unsubscribe_path}/:guid", to: 'mail_manager/subscriptions#unsubscribe'
+  get '/unsubscribe_by_email_address', to: 'mail_manager/subscriptions#unsubscribe_by_email_address', as: 'unsubscribe_by_email_address'
 end

@@ -10,6 +10,12 @@ common:
   table_prefix: mail_manager_
   default_from_email_address: chrisboy <chrisboy@lvh.me>
   secret: 7a3906324erwr6254e85e4bdb80592001a
+  exception_notification:
+    to_addresses:
+      - chauboldt@lone-star.net
+      - chauboldt@lnstar.com
+    from_address:
+      errors@example.net
   bounce:
     email_address: bounce@lvh.me
     login: bounce

@@ -50,3 +50,10 @@ Then(/^contact "(.*?)" should be subscribed to "(.*?)" with the "(.*?)" status$/
   expect(subscription.status).to eq(status)
 end
 
+Then(/^contact "(.*?)" should be unsubscribed from "(.*?)"$/) do |name, list|
+  first_name, last_name = name.split(/\s+/,2)
+  contact = MailManager::Contact.where(first_name: first_name, last_name: last_name).first 
+  subscription = contact.subscriptions.detect{|s| s.mailing_list.name.eql?(list)}
+  expect(subscription.status).to eq('unsubscribed')
+end
+

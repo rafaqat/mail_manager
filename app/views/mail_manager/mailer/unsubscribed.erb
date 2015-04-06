@@ -1,5 +1,5 @@
 Hi <%= @contact.full_name %>,
 
-You have successfully unsubscribed '<%= @contact.email_address %>' from '<%= @mailing_list.name %>'. This is merely a confirmation that the subscription has been ended.
+You have successfully unsubscribed '<%= @contact.email_address %>' from '<%= @mailing_lists.join(', ') %>'. This is merely a confirmation that the subscription has been ended.
 
 Thank you.

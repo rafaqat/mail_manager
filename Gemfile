@@ -16,19 +16,18 @@ gem 'thor', '0.19.1'
 gem 'delayed_job_active_record'
 gem 'sqlite3'
 gem 'mysql2'
-#gem 'pg'
+gem 'pg'
 group :test, :development do
   gem 'foreman'
   gem 'timecop'
   gem 'quiet_assets'
   gem "factory_girl_rails", "~>4.3"
   gem "faker"
-  gem 'post_office'
 end
 
-group :post_office do
+group :test, :development, :post_office do
   gem 'dotenv'
-  gem 'post_office'
+  gem 'post_office', "~>0.3"
 end
 
 

@@ -12,27 +12,28 @@ mail - knows how to send any message based on the different "mime" parts its giv
 
 =end
 
-require 'net/http'
-require 'uri'
+require 'open-uri'
 require "base64"
 begin
   require "mini_magick" 
 rescue => e
+  # :nocov:
   require 'rmagick' rescue nil
+  # :nocov:
 end
 
 
 module MailManager
   class Mailer < ActionMailer::Base
-    def unsubscribed(message,subscriptions)
-      @contact = message.contact
-      @recipients = @contact.email_address
-      @from = message.from_email_address
-      @message = message
+    def unsubscribed(subscriptions,email_address,contact=nil,message=nil)
+      @contact = contact
+      @email_address = email_address
+      @recipients = @email_address
+      @from = message.try(:from_email_address) || MailManager.default_from_email_address
       @mailing_lists = subscriptions.reject{|subscription| subscription.mailing_list.nil?}.
         collect{|subscription| subscription.mailing_list.name}
       @subject = "Unsubscribed from #{@mailing_lists.join(',')} at #{MailManager.site_url}"
-      Rails.logger.debug "Really Sending Unsubscribed from #{@mailing_lists.first} to #{@contact.email_address}"
+      Rails.logger.debug "Really Sending Unsubscribed from #{@mailing_lists.first} to #{@email_address}"
       mail(to: @recipients, from: @from, subject: @subject)
     end
 
@@ -127,7 +128,9 @@ module MailManager
         mail.delivery_method.settings.merge!(
           (case delivery_method 
            when :smtp then ActionMailer::Base.smtp_settings
+           # :nocov:
            when :sendmail then ActionMailer::Base.sendmail_settings
+           # :nocov:
            else
              {}
            end rescue {})
@@ -144,6 +147,7 @@ module MailManager
       end
 
       def image_mime_types(extension)
+        # :nocov:
         case extension.downcase
           when 'bmp' then 'image/bmp'
           when 'cod' then 'image/cis-cod'
@@ -158,13 +162,16 @@ module MailManager
           when 'tif' then 'image/tiff'
           when 'tiff' then 'image/tiff'
         end
+        # :nocov:
       end
       
       def get_extension_from_data(image_data)
         if defined?(MiniMagick)
           MiniMagick::Image.read(image_data)[:format] || ''
         elsif defined?(Magick)
+          # :nocov: currently on ly mini_magick is tested
           Magick::Image.from_blob(image_data).first.format || ''
+          # :nocov:
         else
           ''
         end
@@ -229,45 +236,26 @@ module MailManager
 
       end
 
-      def local_ips
-        `/sbin/ifconfig`
-      end
+      # the following may be useful someday... but curb stopped working ... sooooo...
+      #def local_ips
+      #  `/sbin/ifconfig`
+      #end
 
-      def request_local?(uri_str)
-        uri = URI.parse(uri_str)
-        ip_address = `host #{uri.host}`.gsub(/.*has address ([\d\.]+)\s.*/m,"\\1")
-        local_ips.include?(ip_address)
-      rescue => e
-        false
-      end
+      #def request_local?(uri_str)
+      #  uri = URI.parse(uri_str)
+      #  ip_address = `host #{uri.host}`.gsub(/.*has address ([\d\.]+)\s.*/m,"\\1")
+      #  local_ips.include?(ip_address)
+      #rescue => e
+      #  false
+      #end
     
       def fetch(uri_str, limit = 10)
-        # You should choose better exception.
-        raise ArgumentError, 'HTTP redirect too deep' if limit == 0
         uri = URI.parse(uri_str)
-        request = Net::HTTP::Get.new("#{uri.path}#{"?"+uri.query if uri.query.to_s.strip != ''}")
-        
-        response = Net::HTTP.start(
-          uri.host, uri.port, 
-          :use_ssl => uri.scheme == 'https', 
-          :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
-          https.request(request)
-        end
-        case response
-        when Net::HTTPSuccess     then response.body
-        when Net::HTTPRedirection then fetch(response['location'], limit - 1)
+        if uri.scheme.eql?('file')
+          File.read(uri_str.gsub(%r#^file://#,''))
         else
-          response.error!
+          uri.read
         end
-        # CURB version - gem wouldn't install anymore on CentOS
-        # body = ''
-        # Curl.get(uri_str) do |http|
-        #   http.follow_location = true
-        #   http.interface = '127.0.0.1' if request_local?(uri_str)
-        #   http.on_success{|response| body = response.body}
-        # end
-        # raise Exception.new("Couldn't fetch URL: #{uri_str}") unless body.present?
-        # body
       end
     end
   end

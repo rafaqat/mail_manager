@@ -14,6 +14,16 @@ export CUC_SQLITE_SUCCESS=0
 DBADAPTER=sqlite bundle exec rspec spec && export SQLITE_SUCCESS=1
 DBADAPTER=sqlite bundle exec cucumber features && export CUC_SQLITE_SUCCESS=1
 
+#RUN FOR Postgresql
+cp config/database.postgres.local.yml config/database.yml
+
+spring rake db:schema:load
+
+export PGSQL_SUCCESS=0
+export CUCPGSQL_SUCCESS=0
+
+DBADAPTER=pg bundle exec rspec spec && export PGSQL_SUCCESS=1
+DBADAPTER=pg bundle exec cucumber features && export CUC_PGSQL_SUCCESS=1
 
 #RUN FOR MYSQL
 cp config/database.mysql.local.yml config/database.yml
@@ -25,17 +35,6 @@ export CUCMYSQL_SUCCESS=0
 
 DBADAPTER=mysql bundle exec rspec spec && export MYSQL_SUCCESS=1
 DBADAPTER=mysql bundle exec cucumber features && export CUC_MYSQL_SUCCESS=1
-
-#RUN FOR Postgresql
-cp config/database.postgres.local.yml config/database.yml
-
-spring rake db:schema:load
-
-export PGSQL_SUCCESS=0
-export CUCPGSQL_SUCCESS=0
-
-DBADAPTER=pg bundle exec rspec spec && export PGSQL_SUCCESS=1
-DBADAPTER=pg bundle exec cucumber features && export CUC_PGSQL_SUCCESS=1
 
 ./script/post_office stop
 ./script/with_lock stop

@@ -3,7 +3,9 @@ module MailManager
   mattr_accessor :secret, :site_url, :dont_include_images_domains, 
     :sleep_time_between_messages, :table_prefix, :default_from_email_address, 
     :bounce, :unsubscribe_path, :site_path, :layout, :use_show_for_resources
+  mattr_accessor :public_layout
   mattr_accessor :requires_authentication
+  mattr_accessor :exception_notification
   mattr_accessor :authorized_roles
   mattr_accessor :show_title
   mattr_accessor :roles_method
@@ -97,18 +99,24 @@ module MailManager
     MailManager.unsubscribe_path ||= conf.unsubscribe_path || "/listmgr" rescue "/listmgr"
     MailManager.site_path ||= conf.site_path || "/" rescue "/"
     MailManager.layout ||= conf.layout || "mail_manager/application" rescue "mail_manager/application"
+    MailManager.public_layout ||= conf.public_layout || "mail_manager/application" rescue "mail_manager/application"
     MailManager.use_show_for_resources ||= conf.use_show_for_resources || false rescue false
     MailManager.show_title ||= conf.show_title || true rescue true
     MailManager.requires_authentication ||= conf.requires_authentication || false rescue false
     MailManager.authorized_roles ||= conf.authorized_roles || [] rescue []
     MailManager.roles_method ||= conf.roles_method || nil rescue nil
+    MailManager.exception_notification = {}
+    MailManager.exception_notification[:to_addresses] ||= conf.exception_notification['to_addresses'] || [] rescue []
+    MailManager.exception_notification[:from_address] ||= conf.exception_notification['from_address'] || nil rescue nil
   end
 end
 
 # load needed libraries for locking and delaying work
 MailManager::Engine.config.to_prepare do
   ApplicationController.helper(MailManager::SubscriptionsHelper)
-  load File.join(MailManager::PLUGIN_ROOT,'lib','mail_manager','lock.rb')
+  unless defined? MailManager::Lock
+    load File.join(MailManager::PLUGIN_ROOT,'lib','mail_manager','lock.rb')
+  end
   begin
     require 'delayed_job'
     defined?(::Delayed::Job) or die "Cannot load Delayed::Job object!"
@@ -116,6 +124,7 @@ MailManager::Engine.config.to_prepare do
   rescue NameError => e
   rescue LoadError => le
   end
+  load File.join(MailManager::PLUGIN_ROOT,'lib','delayed_overrides','worker.rb')
 end
 
 require 'will_paginate'
