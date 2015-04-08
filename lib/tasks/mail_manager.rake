@@ -20,13 +20,13 @@ namespace :mail_manager do
           'public_layout' => 'layout',
           'site_path' => '/',
           'use_show_for_resources' => false,
-          'requires_authentication' => false,
-          'authorized_roles' => {
+          'exception_notification' => {
             'to_addresses' => ['bobo@example.com'],
             'from_addresss' => 'admin@example.com'
           },
+          'requires_authentication' => false,
           'roles_method' => nil,
-          'exception_notification' => [],
+          'authorized_roles' => [],
           'unsubscribe_path' => '/listmgr',
           'dont_include_images_domains' => [
             'yahoo.com', 'google.com', 'hotmail.com', 'aol.com', 'gmail.com',
