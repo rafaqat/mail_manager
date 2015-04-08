@@ -1,12 +1,11 @@
 export RAILS_ENV=test
-spring stop
 ./script/post_office start
 
 ./script/with_lock start
 # RUN FOR SQLITE
 cp config/database.sqlite.yml config/database.yml
 
-spring rake db:schema:load
+bundle exec rake db:schema:load
 
 export SQLITE_SUCCESS=0
 export CUC_SQLITE_SUCCESS=0
@@ -18,7 +17,7 @@ if [ $POSTGRES -eq 1 ]; then
   #RUN FOR Postgresql
   cp config/database.postgres.local.yml config/database.yml
 
-  spring rake db:schema:load
+  bundle exec rake db:schema:load
   
   export PGSQL_SUCCESS=0
   export CUCPGSQL_SUCCESS=0
@@ -30,7 +29,7 @@ fi
 #RUN FOR MYSQL
 cp config/database.mysql.local.yml config/database.yml
 
-spring rake db:schema:load
+bundle exec rake db:schema:load
 
 export MYSQL_SUCCESS=0
 export CUCMYSQL_SUCCESS=0
