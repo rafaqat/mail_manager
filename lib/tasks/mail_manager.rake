@@ -47,7 +47,7 @@ namespace :mail_manager do
         'development' => {
           'site_url' => 'http://example.dev',
           'secret' => SecureRandom.hex(15).to_s
-        }
+        },
         'test' => {
           'site_url' => 'http://example.lvh.me:4000',
           'secret' => SecureRandom.hex(15).to_s
