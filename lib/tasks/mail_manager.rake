@@ -5,47 +5,6 @@ initializer = File.join(MailManager::PLUGIN_ROOT,'config','initializers','delaye
 load initializer 
 
 namespace :mail_manager do
-  desc "Create mlm LSI Auth Menus"
-  task :create_auth_menus, :parent_menu do |t,args|
-    Rails.logger.warn "Creating mlm LSI Auth Menus"
-    parent_menu = args.parent_menu
-     AdminMenu.create_or_find(
-       :description=>'Mailings',
-       :path=>'admin/mail_manager/mailings',
-       :admin_menu_id=>AdminMenu.find_by_description(parent_menu).id,
-       :menu_order=>15,
-       :is_visible=>1,
-       :auth_all=>1)
-     AdminMenu.create_or_find(
-       :description=>'Mailing Lists',
-       :path=>'admin/mail_manager/mailing_lists',
-       :admin_menu_id=>AdminMenu.find_by_description(parent_menu).id,
-       :menu_order=>20,
-       :is_visible=>1,
-       :auth_all=>1)
-     AdminMenu.create_or_find(
-       :description=>'Bounces',
-       :path=>'admin/mail_manager/bounces',
-       :admin_menu_id=>AdminMenu.find_by_description(parent_menu).id,
-       :menu_order=>30,
-       :is_visible=>1,
-       :auth_all=>1)
-     AdminMenu.create_or_find(
-       :description=>'Contacts',
-       :path=>'admin/mail_manager/contacts',
-       :admin_menu_id=>AdminMenu.find_by_description('Newsletter').id,
-       :menu_order=>10,
-       :is_visible=>1,
-       :auth_all=>1)
-     AdminMenu.create_or_find(
-       :description=>'MLM General Auth',
-       :path=>'admin/mail_manager',
-       :admin_menu_id=>nil,
-       :menu_order=>0,
-       :is_visible=>0,
-       :auth_all=>1)
-  end
-
   desc "Add mlm defaults to config/mail_manager.yml"
   task :default_app_config, :table_prefix do |t,args|
     Rails.logger.warn "Adding defaults to config/mail_manager.yml"
@@ -58,23 +17,40 @@ namespace :mail_manager do
       file.write YAML.dump({
         'common' => {
           'site_url' => 'http://example.com',
-          'mail_manager' => {
-            'unsubscribe_path' => '/listmgr',
-            'dont_include_images_domains' => [
-              'yahoo.com', 'google.com', 'hotmail.com'
-            ],
-            'sleep_time_between_messages' => 0.3,
-            'path_prefix' => '/admin',
-            'table_prefix' => args.table_prefix,
-            'default_from_email_address' => 'Contact <contact@example.com>',
-            'secret' => SecureRandom.hex(15).to_s,
-            'bounce' => {
-                'email_address' => 'bounces@example.com',
-                'login' => 'test',
-                'password' => 'secret',
-                'pop_server' => 'pop.example.com'
-            }
+          'public_layout' => 'layout',
+          'site_path' => '/',
+          'use_show_for_resources' => false,
+          'requires_authentication' => false,
+          'authorized_roles' => {
+            'to_addresses' => ['bobo@example.com'],
+            'from_addresss' => 'admin@example.com'
+          },
+          'roles_method' => nil,
+          'exception_notification' => [],
+          'unsubscribe_path' => '/listmgr',
+          'dont_include_images_domains' => [
+            'yahoo.com', 'google.com', 'hotmail.com', 'aol.com', 'gmail.com',
+            'outlook.com'
+          ],
+          'sleep_time_between_messages' => 0.3,
+          'path_prefix' => '/admin',
+          'table_prefix' => args.table_prefix,
+          'default_from_email_address' => 'Contact <contact@example.com>',
+          'secret' => SecureRandom.hex(15).to_s,
+          'bounce' => {
+              'email_address' => 'bounces@example.com',
+              'login' => 'test',
+              'password' => 'secret',
+              'pop_server' => 'pop.example.com'
           }
+        },
+        'development' => {
+          'site_url' => 'http://example.dev',
+          'secret' => SecureRandom.hex(15).to_s
+        }
+        'test' => {
+          'site_url' => 'http://example.lvh.me:4000',
+          'secret' => SecureRandom.hex(15).to_s
         }
       }.deep_merge(app_config))
     end
