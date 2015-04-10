@@ -6,7 +6,7 @@ TestApp::Application.initialize!
 
 ActionMailer::Base.smtp_settings = {  
   :address              => "mail.lvh.me",  
-  :port                 => 25000,  
+  :port                 => ENV['POST_OFFICE_SMTP_PORT'],  
   :domain               => "mail.lvh.me",
   :enable_starttls_auto => false,
   :ssl => false,

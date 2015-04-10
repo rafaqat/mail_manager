@@ -45,7 +45,7 @@ module MailManager
       []
     end
     user_roles = [user_roles] unless user_roles.is_a?(Array)
-    roles.detect{|role| user_roles.include?(role)}.present?
+    roles.detect{|role| user_roles.map(&:to_sym).map(&:to_s).include?(role.to_s)}.present?
   end
 
   # logic for authorization mail manager
