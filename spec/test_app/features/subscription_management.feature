@@ -56,3 +56,7 @@ Feature: Manage Subscriptions
     And contact "Bob Dole" should be unsubscribed from "List3"
     And contact "Bob Dole" should be subscribed to "List4" with the "pending" status
 
+  Scenario: Unsubscribe with invalid guid
+   When I try to unsubscribe with an invalid guid
+   Then I should be on the unsubscribe by email address page
+    And I should see "We did not recognize that unsubscribe url! Please try unsubscribing with your email address." 

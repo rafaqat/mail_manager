@@ -19,3 +19,8 @@ When(/^I use the test email's unsubscribe link$/) do
   path = URI.parse(unsubscribe_url).path
   visit path
 end
+
+When(/^I try to unsubscribe with an invalid guid$/) do
+  visit MailManager.unsubscribe_path + '/boboisaclown'
+end
+

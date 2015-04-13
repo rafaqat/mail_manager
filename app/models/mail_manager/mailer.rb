@@ -25,6 +25,7 @@ end
 
 module MailManager
   class Mailer < ActionMailer::Base
+    # send a confirmation email for unsubscribing
     def unsubscribed(subscriptions,email_address,contact=nil,message=nil)
       @contact = contact
       @email_address = email_address
@@ -37,13 +38,14 @@ module MailManager
       mail(to: @recipients, from: @from, subject: @subject)
     end
 
-    # we do special junk ... so lets make them class methods
     class << self
+      # send a mailing related to the message's data
       def deliver_message(message)
         self.send_mail(message.subject,message.email_address_with_name,message.from_email_address,
           message.parts,message.guid,message.mailing.include_images?)
       end
 
+      # create mailing; parsing html sources for images to attach/include
       def multipart_with_inline_images(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
         text_source = the_parts.first[1];nil
         original_html_source = the_parts.last[1];nil
@@ -73,6 +75,7 @@ module MailManager
         mail
       end
 
+      # create mailing without fetching image data
       def multipart_alternative_without_images(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
         text_source = the_parts.first[1];nil
         original_html_source = the_parts.last[1];nil
@@ -93,6 +96,7 @@ module MailManager
         mail
       end
     
+      # send the mailing with the given subject, addresses, and parts
       def send_mail(subject,to_email_address,from_email_address,the_parts,message_id=nil,include_images=true)
         include_images = (include_images and !MailManager.dont_include_images_domains.detect{|domain| 
           to_email_address.strip =~ /#{domain}>?$/})
@@ -109,6 +113,7 @@ module MailManager
         Rails.logger.debug mail.to_s
       end
 
+      # set mail delivery settings
       def set_mail_settings(mail)
         delivery_method = ActionMailer::Base.delivery_method
         delivery_method = delivery_method.eql?(:letter_opener) ? :test : delivery_method
@@ -137,15 +142,7 @@ module MailManager
         )
       end
     
-      def inline_attachment(params, &block)
-        params = { :content_type => params } if String === params
-        params = { :disposition => "inline",
-                   :transfer_encoding => "base64" }.merge(params)
-        params[:headers] ||= {}
-        params[:headers]['Content-ID'] = params[:cid]
-        params
-      end
-
+      # return mime type for images by extension
       def image_mime_types(extension)
         # :nocov:
         case extension.downcase
@@ -165,9 +162,14 @@ module MailManager
         # :nocov:
       end
       
+      # find the extension for images by inspecting their data
       def get_extension_from_data(image_data)
         if defined?(MiniMagick)
-          MiniMagick::Image.read(image_data)[:format] || ''
+          format = ''
+          file = Tempfile.new('get-extension','tmp')
+          file.close
+          File.open(file.path,'wb'){|binfile| binfile.write(image_data)}
+          MiniMagick::Image.open(file.path)[:format] || ''
         elsif defined?(Magick)
           # :nocov: currently on ly mini_magick is tested
           Magick::Image.from_blob(image_data).first.format || ''
@@ -179,6 +181,8 @@ module MailManager
         ''
       end
     
+
+      # parses html and retrieves images and inserts them with CID/attachments
       def inline_html_with_images(html_source)
         parsed_data = html_source.split(/(<\s*img[^>]+src\s*=\s*["'])([^"']*)(["'])/i)
         images = Array.new
@@ -209,50 +213,13 @@ module MailManager
         end
         raise image_errors unless image_errors.eql?('')
         [final_html,images]
-        # related_part = Mail::Part.new do 
-        #   body final_html
-        # end
-        # images.each do |image|
-        #   related_part.part inline_attachment(image)
-        # end
-        # related_part.content_type = 'multipart/related'
-        # related_part
-
-        # related_part = Mail::Part.new do
-        #   content_type 'multipart/related'
-        #   # content_type 'text/html; charset=UTF-8'
-        #   # body final_html
-        # end
-        # related_part.parts << Mail::Part.new do
-        #   content_type 'text/html; charset=UTF-8'
-        #   body final_html
-        # end
-        # images.each do |image|
-        #   related_part.attachments[image[:filename]] = image[:body]
-        # end
-        # related_part.content_type = 'multipart/related'
-        # related_part.parts.first.content_type = 'text/html; charset=UTF-8'
-        # related_part.parts.first.header['Content-Disposition'] = 'inline'
-
       end
 
-      # the following may be useful someday... but curb stopped working ... sooooo...
-      #def local_ips
-      #  `/sbin/ifconfig`
-      #end
-
-      #def request_local?(uri_str)
-      #  uri = URI.parse(uri_str)
-      #  ip_address = `host #{uri.host}`.gsub(/.*has address ([\d\.]+)\s.*/m,"\\1")
-      #  local_ips.include?(ip_address)
-      #rescue => e
-      #  false
-      #end
-    
+      # fetch the data from a url (used for images) 
       def fetch(uri_str, limit = 10)
         uri = URI.parse(uri_str)
         if uri.scheme.eql?('file')
-          File.read(uri_str.gsub(%r#^file://#,''))
+          File.binread(uri_str.gsub(%r#^file://#,''))
         else
           uri.read
         end

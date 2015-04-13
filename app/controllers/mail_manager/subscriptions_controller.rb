@@ -24,7 +24,7 @@ module MailManager
     rescue => e
       # :nocov: catastrophic failure... shouldn't happen
       Rails.logger.warn "Error unsubscribing: #{e.message}\n #{e.backtrace.join("\n ")}"
-      flash[:error] = e.message
+      flash[:error] = "We did not recognize that unsubscribe url! Please try unsubscribing with your email address."
       redirect_to main_app.unsubscribe_by_email_address_path
       # :nocov:
     end

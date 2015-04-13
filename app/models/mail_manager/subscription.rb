@@ -94,7 +94,6 @@ module MailManager
           unsubscribed_subscriptions = self.unsubscribe_by_email_address(message.contact.email_address, message)
           return unsubscribed_subscriptions
         rescue => e
-          binding.pry
           Rails.logger.warn "Error Unsubscribing email: #{message.contact.email_address}\n#{e.message}\n #{e.backtrace.join("\n ")}"
           raise "An error occured."
         end
