@@ -31,6 +31,7 @@ module MailManager
 
   # checks if the given 'user' has a role
   def self.authorized_for_roles?(user,roles=[])
+    return true unless roles.present?
     user_roles = if ::MailManager.roles_method.present?
       if user.respond_to? ::MailManager.roles_method
         user.send(::MailManager.roles_method)
@@ -44,6 +45,7 @@ module MailManager
     else
       []
     end
+    return false unless user_roles.present?
     user_roles = [user_roles] unless user_roles.is_a?(Array)
     roles.detect{|role| user_roles.map(&:to_sym).map(&:to_s).include?(role.to_s)}.present?
   end
