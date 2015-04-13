@@ -1,8 +1,9 @@
 module MailManager
-  class SubscriptionsController < ApplicationController
+  class SubscriptionsController < ::MailManager::ApplicationController
     skip_before_filter :authorize_resource
     skip_before_filter :load_resource
 
+    # unsubscribes an email adress by a message's guid(sent in the link)
     def unsubscribe
       raise "Empty id for #{params[:guid]}" if params[:guid].blank?
       if params[:guid] =~ /^test/
@@ -21,20 +22,24 @@ module MailManager
       end
       render 'unsubscribe', :layout => MailManager.public_layout
     rescue => e
+      # :nocov: catastrophic failure... shouldn't happen
       Rails.logger.warn "Error unsubscribing: #{e.message}\n #{e.backtrace.join("\n ")}"
       flash[:error] = e.message
-      redirect_to unsubscribe_by_email_address_path
+      redirect_to main_app.unsubscribe_by_email_address_path
+      # :nocov:
     end
     
+    # prints/executes form for unsubscribing by email address
     def unsubscribe_by_email_address
       unless params[:email_address].blank?
         unsubscribed_subscriptions = Subscription.unsubscribe_by_email_address(params[:email_address])
+        @email_address = params[:email_address]
         @mailing_lists = unsubscribed_subscriptions.reject{|subscription|
           subscription.mailing_list.nil?}.collect{|subscription| subscription.mailing_list.name}
         @contact = Contact.new(:email_address => params[:email_address])
-        return render('unsubscribe', :layout => 'layout')
+        return render('unsubscribe', :layout => MailManager.public_layout)
       end
-      render :layout => MailManger.public_layout
+      render :layout => MailManager.public_layout
     end
   end
 end

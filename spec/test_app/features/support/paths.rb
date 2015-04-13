@@ -17,9 +17,15 @@ module NavigationHelpers
     #   when /^(.*)'s profile page$/i
     #     user_profile_path(User.find_by_login($1))
     # added by script/generate pickle path
-
+    when /the unsubscribe by email address page/
+      '/unsubscribe_by_email_address'
     when /^the (.+?) page$/                                         # translate to named route
-      routing.send("#{$1.downcase.gsub(' ','_')}_path")
+      path_words = $1
+      begin
+        routing.send("#{path_words.downcase.gsub(' ','_')}_path")
+      rescue => e
+        mail_manager.send("#{path_words.downcase.gsub(' ','_')}_path")
+      end
     else
       raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
         "Now, go and add a mapping in #{__FILE__}"

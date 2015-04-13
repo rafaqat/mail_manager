@@ -44,3 +44,15 @@ Feature: Manage Subscriptions
    Then I should see "unsubscribed"
     And I should see "bobo@example.com"
     And I should see "Test Mailing List"
+
+  Scenario: Unsubscribe by email address
+   When I go to the unsubscribe by email address page
+    And I fill in "Email Address" with "bob@example.com"
+    And I press "Unsubscribe"
+   Then I should see "Unsubscribed"
+    And I should see "bob@example.com"
+    And contact "Bob Dole" should be unsubscribed from "List1"
+    And contact "Bob Dole" should be subscribed to "List2" with the "pending" status
+    And contact "Bob Dole" should be unsubscribed from "List3"
+    And contact "Bob Dole" should be subscribed to "List4" with the "pending" status
+

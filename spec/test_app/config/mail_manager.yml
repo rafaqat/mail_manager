@@ -7,6 +7,7 @@ common:
   - google.com
   - hotmail.com
   sleep_time_between_messages: 0.3
+  public_layout: mail_manager/layout
   table_prefix: mail_manager_
   default_from_email_address: chrisboy <chrisboy@lvh.me>
   secret: 7a3906324erwr6254e85e4bdb80592001a
