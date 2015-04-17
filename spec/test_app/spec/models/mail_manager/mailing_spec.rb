@@ -5,6 +5,10 @@ RSpec.describe MailManager::Mailing do
   let(:invalid_attributes) {FactoryGirl.attributes_for(:mailing).delete(
     'from_email_address')
   }
+  before(:each) do
+    ActionMailer::Base.delivery_method = :test
+    ActionMailer::Base.deliveries.clear
+  end
   it "sets its initial status properly" do
     attributes = valid_attributes
     attributes.delete('status')
