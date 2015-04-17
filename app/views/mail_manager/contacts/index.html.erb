@@ -58,17 +58,6 @@ function toggleStatus() {
       <td><%= link_to "Delete", contact, :confirm => 'Are you sure?', :method => :delete, :class => 'button' %>
       </td>
     <% end %>
-<!--
-      <-% if @mailings.length > 0 %>
-      <td>
-        <-% form_tag mail_manager.send_one_off_message_contact_path(contact), :style => 'display:inline' do |f| %>
-        <-%= select_tag 'mailing_id',  
-              options_for_select(@mailings.collect{|mailing| [mailing.subject, mailing.id]}) %> 
-        <-%= submit_tag "Send One Off Message", :class => 'button' %>
-        <-% end %>
-      </td>
-      <-% end %>
--->
     </tr>
   <% end %>
 </table>
