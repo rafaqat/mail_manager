@@ -5,6 +5,7 @@
 	<table class="list" border="0" cellpadding="0" cellspacing="0">
 	  <tr class="title">
       <td>Subject</td>
+      <td>Mailable Name</td>
       <td>Scheduled At</td>
       <td>Status</td>
       <td colspan="6"> </td>
@@ -12,6 +13,7 @@
 		<% @mailings.each do |mailing| %>
 		<tr class="<%= cycle('odd','even') %>">
 			<td><%=h mailing.subject %></td>
+			<td><%=h mailing.mailable.name rescue 'N/A' %></td>
 			<td><%=l mailing.scheduled_at %></td>
 			<td><b><%=h mailing.status %></b></td>
 			<td align="center"><nobr><%= link_to 'Send Test', mail_manager.test_mailing_path(mailing), :id => 'Send_Test', :class => 'button' %></nobr></td>
