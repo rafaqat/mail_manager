@@ -45,4 +45,7 @@ Then(/^the mailing with subject "(.*?)" should be sending to lists "(.*?)"$/) do
   end
 end
 
+Given(/^(\d+) mailings exist$/) do |count|
+  count.to_i.times {FactoryGirl.create(:mailing)} 
+end
 

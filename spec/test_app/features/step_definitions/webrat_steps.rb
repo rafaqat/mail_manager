@@ -20,7 +20,7 @@ When /^I press "([^\"]*)"$/ do |button|
 end
 
 When /^I follow "([^\"]*)"$/ do |link|
-  click_link(link)
+  click_link(link, match: :first)
 end
 
 When /^I fill in "([^\"]*)" with "([^\"]*)"$/ do |field, value|

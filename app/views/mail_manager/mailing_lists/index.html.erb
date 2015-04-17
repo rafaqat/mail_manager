@@ -34,6 +34,7 @@ No mailing lists exist.
 <% @page_title = "Mailing Lists" %>
 <%= content_for :page_navigation do %>
 <div>
+  <%= will_paginate @mailing_lists %>
   <%= link_to "New Mailing List", mail_manager.new_mailing_list_path, :class => 'button' %>
 </div>
 <% end %>

@@ -74,6 +74,13 @@ Feature: Manage Contacts
      And I press "Submit"
     Then contact "Bobo Clown" should exist with email_address "bobo@example.com"
      And contact "Bobo Clown" should be subscribed to "Peeps" with the "active" status
+  
+  Scenario: Many contacts existing will show pagination
+   Given 50 contacts exist
+    When I go to the contacts page
+    Then I should see "Previous"
+     And I should see "Next"
+    When I follow "Next"
 
   # need to reincorproate double-opt-in subscribe
   @wip 

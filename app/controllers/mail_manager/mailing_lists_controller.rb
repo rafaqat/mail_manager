@@ -17,7 +17,7 @@ module MailManager
     def create
       @mailing_list = MailingList.new(params[:mailing_list])
       if @mailing_list.save
-        flash[:notice] = 'MailingList was successfully created.'
+        flash[:notice] = 'Mailing List was successfully created.'
         redirect_to(mail_manager.mailing_lists_path)
       else
         render :action => "new"
@@ -26,7 +26,7 @@ module MailManager
 
     def update
       if @mailing_list.update_attributes(params[:mailing_list])
-        flash[:notice] = 'MailingList was successfully updated.'
+        flash[:notice] = 'Mailing List was successfully updated.'
         redirect_to(mail_manager.mailing_lists_path)
       else
         render :action => "edit"
@@ -35,6 +35,7 @@ module MailManager
 
     def destroy
       @mailing_list.destroy
+      flash[:notice] = "Mailing List was deleted."
       redirect_to(mail_manager.mailing_lists_url)
     end
   end

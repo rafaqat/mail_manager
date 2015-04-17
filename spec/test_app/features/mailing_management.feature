@@ -50,3 +50,11 @@ Feature: Mailing Management
      And a test email job should exist for mailing with subject "Buy my junk!" and email "test@example.com"
     When I run all jobs
     Then an email is sent to "test@example.com" with subject "Buy my junk!"
+
+  Scenario: Many mailings existing will show pagination
+   Given 50 mailings exist
+    When I go to the mailings page
+    Then I should see "Previous"
+     And I should see "Next"
+    When I follow "Next"
+

@@ -6,7 +6,8 @@ module MailManager
     before_filter :get_mailables_for_select, :only => [:new,:create,:edit,:update]
 
     def index
-      @mailings = Mailing.all.sort_by{|mailing| mailing.created_at}.reverse
+      @mailings = Mailing.order("created_at desc").paginate(page: (params[:page] || 1),
+        per_page: (params[:per_page] || 10))
     end
 
     def show

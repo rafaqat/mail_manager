@@ -5,6 +5,10 @@ Given(/^a contact named "(.*?)" exists with email(?: |_)address "(.*?)"$/) do |c
   )
 end
 
+Given(/^(\d+) contacts exist$/) do |count|
+  count.to_i.times {FactoryGirl.create(:contact)}
+end
+
 Then(/^the contact "(.*?)" should be soft deleted$/) do |name|
   first_name, last_name = name.split(/\s+/,2)
   contact = MailManager::Contact.deleted.where(first_name: first_name, last_name: last_name).first 
