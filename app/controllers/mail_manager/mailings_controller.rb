@@ -28,7 +28,17 @@ module MailManager
     end
   
     def schedule
-      @mailing.schedule
+      if @mailing.can_schedule? 
+        @mailing.schedule
+      else
+        flash[:warning] = ""
+        if @mailing.scheduled_at.nil?
+          flash[:warning] += "Error! You must edit your mailing and set a time for your mailing to run.<br/>"
+        end
+        if @mailing.status != 'pending'
+          flash[:warning] += "Error! Your mailing must be pending in order to schedule it."
+        end
+      end
       redirect_to mail_manager.mailings_path
     end
   

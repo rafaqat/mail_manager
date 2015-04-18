@@ -225,7 +225,7 @@ module MailManager
     end
   
     def can_schedule?
-      ['pending'].include?(status.to_s)
+      ['pending'].include?(status.to_s) && scheduled_at.present?
     end
   
     def schedule

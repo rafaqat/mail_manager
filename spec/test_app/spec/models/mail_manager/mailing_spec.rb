@@ -7,6 +7,7 @@ RSpec.describe MailManager::Mailing do
   }
   before(:each) do
     ActionMailer::Base.delivery_method = :test
+    Delayed::Worker.delay_jobs = false
     ActionMailer::Base.deliveries.clear
   end
   it "sets its initial status properly" do
