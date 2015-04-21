@@ -1,6 +1,6 @@
 Hello <%= @contact.full_name %>,
 
-To complete your subscription to <%= @mailing_list_names %> at <%= site_url %> please follow the link below:
+To complete your subscription to <%= @mailing_list_names %> at <%= ::MailManager.site_url %> please follow the link below:
 
 <%= @contact.double_opt_in_url %>
 

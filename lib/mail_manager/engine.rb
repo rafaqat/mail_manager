@@ -4,6 +4,10 @@ module MailManager
     :sleep_time_between_messages, :table_prefix, :default_from_email_address, 
     :bounce, :unsubscribe_path, :site_path, :layout, :use_show_for_resources
   mattr_accessor :public_layout
+  mattr_accessor :subscribe_path
+  mattr_accessor :honey_pot_field
+  mattr_accessor :double_opt_in_path
+  mattr_accessor :signup_email_address
   mattr_accessor :requires_authentication
   mattr_accessor :exception_notification
   mattr_accessor :authorized_roles
@@ -97,8 +101,13 @@ module MailManager
     MailManager.sleep_time_between_messages ||= conf.sleep_time_between_messages || 0.3 rescue 0.3
     MailManager.table_prefix ||= conf.table_prefix || 'mail_manager_' rescue 'mail_manager_'
     MailManager.default_from_email_address ||= conf.default_from_email_address rescue nil
+    MailManager.signup_email_address ||= conf.signup_email_address rescue nil
     MailManager.bounce ||= conf.bounce || {} rescue {}
     MailManager.unsubscribe_path ||= conf.unsubscribe_path || "/listmgr" rescue "/listmgr"
+    MailManager.subscribe_path ||= conf.subscribe_path || "/listmgr/subscribe" rescue "/listmgr/subscribe"
+    MailManager.double_opt_in_path ||= conf.double_opt_in_path || "/listmgr/confirm" rescue "/listmgr/confirm"
+    MailManager.honey_pot_field ||= conf.honey_pot_field || "company_name" rescue "company_name"
+    MailManager.subscribe_thank_you_path ||= conf.subscribe_thank_you_path || "/listmgr/subscribe_thank_you" rescue "/listmgr/subscribe_thank_you"
     MailManager.site_path ||= conf.site_path || "/" rescue "/"
     MailManager.layout ||= conf.layout || "mail_manager/application" rescue "mail_manager/application"
     MailManager.public_layout ||= conf.public_layout || "mail_manager/application" rescue "mail_manager/application"

@@ -15,7 +15,7 @@ failed - either the message couldn't be handed to the Email Server or it has bee
 module MailManager
   class Message < ActiveRecord::Base
     self.table_name =  "#{MailManager.table_prefix}messages"
-    belongs_to :mailing, :class_name => 'MailManager::Mailing'
+    belongs_to :mailing, :class_name => 'MailManager::Mailing', counter_cache: true
     belongs_to :subscription, :class_name => 'MailManager::Subscription'
     has_many :bounces, :class_name => 'MailManager::Bounce'
     belongs_to :contact, :class_name => 'MailManager::Contact'
@@ -27,6 +27,10 @@ module MailManager
     scope :ready, :conditions => ["status=?", 'ready']
     scope :sent, :conditions => ["status=?", 'sent']
     scope :processing, :conditions => ["status=?", 'processing']
+
+    before_save :fix_counter_cache, if: lambda {|message| !message.new_record? && 
+      message.mailing_id_changed?
+    }
 
     attr_protected :id
 
@@ -151,6 +155,11 @@ module MailManager
     # nodoc: set the type on create
     def set_type
       self[:type] = self.class.name
+    end
+
+    def fix_counter_cache
+        MailManager::Mailing.decrement_counter(:messages_count, self.mailing_id_was) if self.mailing_id_was.present?
+        MailManager::Mailing.increment_counter(:messages_count, self.mailing_id)
     end
   end
 end

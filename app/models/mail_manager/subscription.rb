@@ -83,6 +83,10 @@ module MailManager
       status.eql?('active')
     end
 
+    def pending?
+      status.eql?('pending')
+    end
+
     # unsubscribes a contact from all lists by looking them up through a messages GUID
     # FIXME: when we add more lists and the ability to have multiple subscriptions, this should 
     # remove only the list that is tied in the GUID and they should be linked to their options

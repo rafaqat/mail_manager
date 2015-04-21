@@ -2,8 +2,8 @@
 
 
 <%= form_tag mail_manager.bounces_path, :id => 'search_form', :method => 'GET' do %>
- <label>Mailing:</label><%= select_tag "mailing_id", options_for_select(@mailings.collect{|mailing| ["#{mailing.subject} (#{l mailing.status_changed_at if mailing.status_changed_at.present?}) (#{mailing.bounce_count})",mailing.id.to_s]},params[:mailing_id].to_i), :include_blank => true, :onChange => "$('#search_form').submit()" %><br />
-  <label>Status:</label><%= select_tag "bounce[status]", options_for_select([['Needs Attention','needs_manual_intervention'],['Resolved','resolved']],params[:bounce][:status]), :include_blank => true,  :onChange => "$('#search_form').submit()" %><br />
+ <label for="mailing_id">Mailing:</label><%= select_tag "mailing_id", options_for_select(@mailings.collect{|mailing| ["#{mailing.subject} (#{l mailing.status_changed_at if mailing.status_changed_at.present?}) (#{mailing.bounces.size})",mailing.id.to_s]},params[:mailing_id].to_i), :include_blank => true, :onChange => "$('#search_form').submit()" %><br />
+  <label for="bounce_status">Status:</label><%= select_tag "bounce[status]", options_for_select([['Needs Attention','needs_manual_intervention'],['Resolved','resolved']],params[:bounce][:status]), :include_blank => true,  :onChange => "$('#search_form').submit()" %><br />
 <% end %>
 <% if @bounces.length == 0 %>
   <h3>No bounces found for the Mailing with given status.</h3>
@@ -14,6 +14,7 @@
 <table class="list" cellpadding="1" cellspacing="0">
   <tr class="title">
     <td>Contact</td>
+    <td>Status</td>
     <td>Status changed at</td>
     <td>Comments</td>
     <td>&nbsp;</td>
@@ -21,9 +22,10 @@
   <% for bounce in @bounces %>
     <tr class="<%= cycle('odd','even') %>">
       <td><%=h bounce.contact_full_name %>  <%=h bounce.contact_email_address %></td>
+      <td><%=h bounce.status rescue 'N/A' %></td>
       <td><%=l bounce.status_changed_at rescue nil %></td>
       <td><%=h bounce.comments %></td>
-      <td><%= link_to "View", bounce, :class => 'button' %></td>
+      <td><%= link_to "View", bounce, :id => "view_bounce_#{bounce.id}", :class => 'button' %></td>
     </tr>
   <% end %>
 </table>

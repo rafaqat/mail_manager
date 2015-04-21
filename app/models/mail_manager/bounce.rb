@@ -20,19 +20,24 @@ module MailManager
   class Bounce < ActiveRecord::Base
     self.table_name = "#{MailManager.table_prefix}bounces"
     belongs_to :message, :class_name => 'MailManager::Message'
-    belongs_to :mailing, :class_name => 'MailManager::Mailing'
+    belongs_to :mailing, :class_name => 'MailManager::Mailing', counter_cache: true
     include StatusHistory
     override_statuses(['needs_manual_intervention','unprocessed','dismissed','resolved','invalid'],'unprocessed')
     before_create :set_default_status
-    default_scope :order => "#{MailManager.table_prefix}contacts.last_name, #{MailManager.table_prefix}contacts.first_name, #{MailManager.table_prefix}contacts.email_address",
-        :joins => 
-        "LEFT OUTER JOIN #{MailManager.table_prefix}messages on #{MailManager.table_prefix}bounces.message_id=#{MailManager.table_prefix}messages.id "+
-        " LEFT OUTER JOIN #{MailManager.table_prefix}contacts on #{MailManager.table_prefix}messages.contact_id=#{MailManager.table_prefix}contacts.id"
+    #default_scope :order => "#{MailManager.table_prefix}contacts.last_name, #{MailManager.table_prefix}contacts.first_name, #{MailManager.table_prefix}contacts.email_address",
+    #    :joins => 
+    #    "LEFT OUTER JOIN #{MailManager.table_prefix}messages on #{MailManager.table_prefix}bounces.message_id=#{MailManager.table_prefix}messages.id "+
+    #    " LEFT OUTER JOIN #{MailManager.table_prefix}contacts on #{MailManager.table_prefix}messages.contact_id=#{MailManager.table_prefix}contacts.id"
 #
     scope :by_mailing_id, lambda {|mailing_id| where(:mailing_id => mailing_id)}
     scope :by_status, lambda {|status| where(:status => status.to_s)}
 
+    before_save :fix_counter_cache, if: lambda {|bounce| !bounce.new_record? && 
+      bounce.mailing_id_changed?
+    }
+
     attr_protected :id
+
     #Parses email contents for bounce resolution
     def process(force=false)
       if status.eql?('unprocessed') || force
@@ -128,6 +133,12 @@ module MailManager
     def email
       return @email if @email
       @email = Mail.new(bounce_message)
+    end
+  
+   protected
+    def fix_counter_cache
+        MailManager::Mailing.decrement_counter(:bounces_count, self.mailing_id_was) if self.mailing_id_was.present?
+        MailManager::Mailing.increment_counter(:bounces_count, self.mailing_id)
     end
   end
 end

@@ -38,6 +38,16 @@ module MailManager
       mail(to: @recipients, from: @from, subject: @subject)
     end
 
+    def double_opt_in(contact)
+      @contact = contact
+      @recipients = @contact.email_address
+      @subject = "Confirm Newsletter Subscription at #{::MailManager.site_url}"
+      @from = ::MailManager.signup_email_address
+      @mailing_list_names = contact.subscriptions.map(&:mailing_list).map(&:name).join(', ')
+      @headers    = {'Return-Path' => ::MailManager.bounce['email_address']}
+      mail(to: @recipients, from: @from, subject: @subject)
+    end
+
     class << self
       # send a mailing related to the message's data
       def deliver_message(message)

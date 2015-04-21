@@ -2,6 +2,8 @@
 common:
   site_url: http://mail-manager.dev
   unsubscribe_path: /listmgr
+  subscribe_path: /subscribe
+  double_opt_in_path: /listmgr/confirm
   dont_include_images_domains:
   - yahoo.com
   - google.com
@@ -10,6 +12,7 @@ common:
   public_layout: mail_manager/layout
   table_prefix: mail_manager_
   default_from_email_address: chrisboy <chrisboy@lvh.me>
+  signup_email_address: chrisboy <chrisboy@lvh.me>
   secret: 7a3906324erwr6254e85e4bdb80592001a
   exception_notification:
     to_addresses:

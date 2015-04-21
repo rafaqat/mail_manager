@@ -66,11 +66,64 @@ module MailManager
     end
 
     def self.signup(params)
-      contact = MailManager::Contact.active.find_by_email_address(params['email_address']) 
+      contact = Contact.active.find_by_email_address(params['email_address']) 
       contact ||= Contact.new
       Rails.logger.debug "Updating contact(#{contact.new_record? ? "New" : contact.id}) params: #{params.inspect}"
       contact.update_attributes(params)
       contact
+    end
+
+    def double_opt_in(mailing_list_ids)
+      previously_active_subscriptions = subscriptions.select(&:"active?")
+      new_subscriptions = subscriptions.select do |s| 
+        mailing_list_ids.include?(s.mailing_list_id.to_s)
+      end
+      if new_subscriptions.present?
+        new_subscriptions.each{|subscription| subscription.change_status(:pending)}
+        self.delay.deliver_double_opt_in
+      end
+      nil
+    end
+
+    def deliver_double_opt_in
+      Mailer.double_opt_in(self).deliver
+    end
+
+    def double_opt_in_url
+      "#{MailManager.site_url}#{MailManager.double_opt_in_path}/#{login_token}"
+    end
+
+    def self.inject_contact_id(token,id)
+      token = token.split('')
+      id_string = id.to_s.split('')
+      new_token = ""
+      0.upto(39) do |index|
+        new_token << token.pop
+        new_token << id_string.shift unless id_string.blank?
+      end
+      new_token
+    end
+
+    def self.extract_contact_id(token)
+      token = token.split('')
+      id_string = ""
+      0.upto(token.length - 41) do |index|
+        token.shift 
+        id_string << token.shift
+      end
+      id_string.to_i
+    end
+
+    def self.find_by_token(token)
+      Contact.find_by_id(Contact::extract_contact_id(token))
+    end
+      
+    def login_token
+      self[:login_token] ||= generate_login_token
+    end
+
+    def authorized?(token)
+      login_token.eql?(token) and login_token_created_at > 2.days.ago
     end
         
     def initialize_subscriptions
@@ -86,6 +139,16 @@ module MailManager
       @subscriptions = subscriptions.reject{|subscription| subscription.mailing_list.try(:inactive?) or
         subscription.mailing_list.nil?}.sort_by{|subscription|
         subscription.mailing_list.name.downcase}
+    end
+    
+    # generated the token for which an opt-in is emailed
+    def generate_login_token
+      time = Time.now
+      token = Contact::inject_contact_id("#{Digest::SHA1.hexdigest(
+        "#{self.id}#{::MailManager.secret}#{time}")}", self.id)
+      self.update_attribute(:login_token, token)
+      self.update_attribute(:login_token_created_at, time)
+      token
     end
   end
 end

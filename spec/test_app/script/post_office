@@ -9,7 +9,8 @@ require 'post_office_manager'
 require 'dotenv'
 
 ENV['RAILS_ENV'] ||= 'development'
-Dotenv.load(".env.#{ENV['RAILS_ENV']}")
+Dotenv.overload(".env.#{ENV['RAILS_ENV']}")
+Dotenv.overload(".env.#{ENV['RAILS_ENV']}.local")
 
 FileUtils.mkdir_p('tmp/pids') unless File.exists?('tmp/pids')
 

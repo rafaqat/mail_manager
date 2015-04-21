@@ -5,7 +5,7 @@ module MailManager
     def index
       params[:bounce] = Hash.new unless params[:bounce]
       status = params[:bounce][:status] || nil
-      @mailings = Mailing.with_bounces(status)
+      @mailings = Mailing.order("created_at desc")
       @bounces = Bounce.scoped
       @bounces = @bounces.by_mailing_id(@mailing.id) if @mailing.present?
       @bounces = @bounces.by_status(status) if status.present?

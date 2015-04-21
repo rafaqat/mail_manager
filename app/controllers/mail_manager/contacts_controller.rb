@@ -1,21 +1,41 @@
 module MailManager
   class ContactsController < ::MailManager::ApplicationController
 
+    skip_before_filter :authorize, only: [:subscribe,:double_opt_in,:thank_you]
+
     include DeleteableActions
 
     def subscribe
-      if params[:contact].present? and params[:contact][:email_address].present?
-        @contact = MailManager::Contact.find_by_email_address(params[:contact][:email_address])
-        @contact = MailManager::Contact.new if @contact.nil?
-        @contact.update_attributes(params[:contact])
-        #check to see what list we subscribed to, if Austin local redirect, if San Antonio, redirect to their thank you page
+      if valid_subscribe_submission?
+        @contact = Contact.signup(params[:contact])
+        @contact.double_opt_in(params[:mailing_list_ids])
       end
 
-      if params[:redirect_url].present? #check to see if it came from SA
+      if params[:redirect_url].present?
         redirect_to params[:redirect_url]
       else
-        redirect_to mail_manager.thank_you_path #uncomment after testing...
+        redirect_to main_app.subscribe_thank_you_path
       end
+    end
+
+    def thank_you
+    end
+
+    def double_opt_in
+      @contact = Contact.find_by_token(params[:login_token])
+      if @contact.authorized?(params[:login_token])
+        @mailing_list_names = []
+        @contact.subscriptions.select(&:"pending?").reject(&:new_record?).each do |subscription|
+          subscription.change_status(:active)
+          @mailing_list_names << subscription.mailing_list_name
+        end
+        @message = "You have successfully subscribed to #{@mailing_list_names.join(',')}!"
+      else
+        @contact.generate_login_token
+        @contact.delay.deliver_double_opt_in
+        @message = "Your token has expired! Please check your email for a new one."
+      end
+      render :layout => ::MailManager.public_layout
     end
     
     def send_one_off_message
@@ -63,5 +83,15 @@ module MailManager
       end
     end
 
+    protected
+
+    def honey_pot_violated?
+      params[MailManager.honey_pot_field].present?
+    end
+
+    def valid_subscribe_submission? 
+      params[:contact].present? && params[:contact][:email_address].present? &&
+        !honey_pot_violated?
+    end
   end
 end
