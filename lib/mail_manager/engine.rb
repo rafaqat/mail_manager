@@ -1,5 +1,6 @@
 module MailManager
   # set up accessors for configuration options from config/mail_manager.yml
+  # table_prefix: prefix for database table names to avoid collisions within another app
   mattr_accessor :table_prefix
   # secret: a secret for encrypting tokens and guids
   mattr_accessor :secret
