@@ -19,6 +19,12 @@ RSpec.describe MailManager::Mailing do
     expect(mailing.status.to_s).to eq('pending')
     expect(mailing.status_changed_at).not_to be nil
   end
+  it "will soft delete a mailing" do
+    mailing = MailManager::Mailing.create(valid_attributes)
+    mailing.delete
+    expect(MailManager::Mailing.count).to eq 0
+    expect(MailManager::Mailing.deleted.count).to eq 1
+  end
   it "doesn't include images when configured to not do so for a domain" do
     # should be in config
     image_url = "http://www.lone-star.net/graphics/lst_header_logo.png"

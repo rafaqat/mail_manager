@@ -5,6 +5,8 @@ module MailManager
     before_filter :find_mailables, :only => [:new,:create,:edit,:update]
     before_filter :get_mailables_for_select, :only => [:new,:create,:edit,:update]
 
+    include DeleteableActions
+
     def index
       @mailings = Mailing.order("created_at desc").paginate(page: (params[:page] || 1),
         per_page: (params[:per_page] || 10))
@@ -73,11 +75,6 @@ module MailManager
       end
     end
 
-    def destroy
-      @mailing.destroy
-      redirect_to(mail_manager.mailings_url)
-    end
-  
     protected
   
     def find_mailing

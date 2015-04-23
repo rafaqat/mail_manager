@@ -31,6 +31,7 @@
       <% if mailing.bounces.size > 0 %>
 			<%= link_to 'Bounces', mail_manager.bounces_path(:mailing_id => mailing.id), :class => 'button' %>
       <% end %>
+			<%= link_to 'Delete', mail_manager.mailing_path(mailing), :method => :delete, :confirm => "Are you sure?", :class => 'button' %>
       </td>
 		</tr>
 		<% end %>

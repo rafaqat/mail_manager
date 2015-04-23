@@ -35,6 +35,7 @@ module DeleteableActions
   def destroy
     thing = self.class.name.gsub(/s?Controller$/,'').constantize.find(params[:id])
     thing.delete
+    flash[:info] = "#{thing.class.name.gsub(/^.*::/,'').humanize} successfully deleted."
     redirect_to(action: :index)
   end
 

@@ -10,4 +10,13 @@ RSpec.feature MailManager::Mailing, type: :feature do
     visit page.response_headers['Location']
     expect(page.body).to have_content "Error! You must edit your mailing and set a time for your mailing to run."
   end
+  it "soft deletes from the index page" do
+    mailing = FactoryGirl.create(:mailing)
+    visit "/mail_manager/mailings"
+    click_link "Delete"
+    expect(page).to have_content "Mailing successfully deleted"
+    expect(MailManager::Mailing.count).to eq 0
+    expect(MailManager::Mailing.deleted.count).to eq 1
+  end
 end
+

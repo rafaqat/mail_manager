@@ -26,6 +26,8 @@ module MailManager
   
     accepts_nested_attributes_for :mailable
 
+    include Deleteable if column_names.include?('deleted_at')
+
     attr_accessor :bounce_count
 
     validates_presence_of :subject

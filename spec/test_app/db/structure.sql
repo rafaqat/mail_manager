@@ -89,6 +89,7 @@ CREATE TABLE `mail_manager_mailings` (
   `updated_at` datetime NOT NULL,
   `bounces_count` int(11) DEFAULT '0',
   `messages_count` int(11) DEFAULT '0',
+  `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
@@ -161,3 +162,5 @@ INSERT INTO schema_migrations (version) VALUES ('20150420163235');
 INSERT INTO schema_migrations (version) VALUES ('20150420163804');
 
 INSERT INTO schema_migrations (version) VALUES ('20150421151457');
+
+INSERT INTO schema_migrations (version) VALUES ('20150423143754');

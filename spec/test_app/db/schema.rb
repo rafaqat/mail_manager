@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150421151457) do
+ActiveRecord::Schema.define(:version => 20150423143754) do
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0, :null => false
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(:version => 20150421151457) do
     t.datetime "updated_at",                        :null => false
     t.integer  "bounces_count",      :default => 0
     t.integer  "messages_count",     :default => 0
+    t.datetime "deleted_at"
   end
 
   create_table "mail_manager_messages", :force => true do |t|
