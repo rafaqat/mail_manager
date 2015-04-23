@@ -32,6 +32,7 @@ module MailManager
     def schedule
       if @mailing.can_schedule? 
         @mailing.schedule
+        flash[:info] = "Mailing scheduled."
       else
         flash[:warning] = ""
         if @mailing.scheduled_at.nil?
@@ -46,6 +47,7 @@ module MailManager
   
     def cancel
       @mailing.cancel
+      flash[:notice] = "Mailing cancelled."
       redirect_to mail_manager.mailings_path
     end
   
