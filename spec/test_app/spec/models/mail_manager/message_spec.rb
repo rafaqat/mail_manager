@@ -1,7 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe MailManager::Message do
-  let(:message){FactoryGirl.build(:message)}
+  def message
+    @message
+  end
+  before(:each) do 
+    @message = FactoryGirl.create(:message)
+  end
   describe "concerning statuses" do
     it "starts in :pending" do
       expect(message.status).to eq('pending')
@@ -61,6 +66,33 @@ RSpec.describe MailManager::Message do
 
   it "knows its contact's full name" do
     expect(message.full_name).to eq(message.contact.full_name)
+  end
+
+  context "concerning a deleted contact" do
+    before(:each) do
+      @contact = MailManager::Contact.find(message.contact_id)
+      @contact.delete
+      @message = MailManager::Message.find(message.id)
+    end
+    it "doesn't blow up when asking for full_name" do
+      expect(message.full_name).to eq @contact.full_name
+    end
+    it "doesn't blow up when asking for email_address" do
+      expect(message.email_address).to eq @contact.email_address
+    end
+  end
+
+  context "concerning a nil contact" do
+    before(:each) do
+      MailManager::Contact.where(id: message.contact_id).delete_all
+      @message = MailManager::Message.find(message.id)
+    end
+    it "doesn't blow up when asking for full_name" do
+      expect(message.full_name).to eq nil
+    end
+    it "doesn't blow up when asking for email_address" do
+      expect(message.email_address).to eq nil
+    end
   end
 
   describe "concerning a contact's data" do 

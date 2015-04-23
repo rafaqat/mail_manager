@@ -90,15 +90,21 @@ module MailManager
     def can_deliver?
       ['ready','pending'].include?(status) 
     end
+
+    # return a contact whether its deleted or not
+    def active_or_deleted_contact
+      @active_or_deleted_contact ||= self.contact || MailManager::Contact.unscoped.
+        where(id: self.contact_id).first
+    end
   
     # returns the contact's full name
     def full_name
-      contact.full_name
+      active_or_deleted_contact.try(:full_name)
     end
 
     # returns the contact's email address
     def email_address
-      contact.email_address
+      active_or_deleted_contact.try(:email_address)
     end
 
     # returns the mailings subject
@@ -121,7 +127,7 @@ module MailManager
     
     # returns the contact's 'contactable' object tied to the contact
     def contactable
-      contact.try(:contactable)
+      active_or_deleted_contact.try(:contactable)
     end
 
     # returns a hash of substitutions to be used to modify the mailable's html/plaing text
@@ -129,8 +135,8 @@ module MailManager
       substitutions_hash = {}
       MailManager::ContactableRegistry.registered_methods.each do |method|
         method_key = method.to_s.upcase
-        if contact.respond_to?(method)
-          substitutions_hash[method_key] = contact.send(method)
+        if active_or_deleted_contact.respond_to?(method)
+          substitutions_hash[method_key] = active_or_deleted_contact.send(method)
         elsif contactable.respond_to?(method)
           substitutions_hash[method_key] = contactable.send(method)
         else
@@ -148,7 +154,7 @@ module MailManager
     # generated the guid for which the message is identified by in transit
     def generate_guid
       update_attribute(:guid,       
-        "#{contact.id}-#{subscription.try(:id)}-#{self.id}-#{Digest::SHA1.hexdigest("#{contact.id}-#{subscription.try(:id)}-#{self.id}-#{MailManager.secret}")}")
+        "#{active_or_deleted_contact.try(:id)}-#{subscription.try(:id)}-#{self.id}-#{Digest::SHA1.hexdigest("#{active_or_deleted_contact.try(:id)}-#{subscription.try(:id)}-#{self.id}-#{MailManager.secret}")}")
     end
 
     protected
