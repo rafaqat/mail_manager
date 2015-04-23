@@ -1,18 +1,59 @@
 module MailManager
   # set up accessors for configuration options from config/mail_manager.yml
-  mattr_accessor :secret, :site_url, :dont_include_images_domains, 
-    :sleep_time_between_messages, :table_prefix, :default_from_email_address, 
-    :bounce, :unsubscribe_path, :site_path, :layout, :use_show_for_resources
+  mattr_accessor :table_prefix
+  # secret: a secret for encrypting tokens and guids
+  mattr_accessor :secret
+  # site_url: used in various places to get the url of the site (such as in mailings templates)
+  mattr_accessor :site_url
+  # dont_include_images_domains: a list of domains that won't include images in the email, whether or not the mailing is set to include them
+  mattr_accessor :dont_include_images_domains
+  # sleep_time_between_messages: a timeout between messages to slow the output of emails to your email server; you should probably limit with your mail server itself if possible
+  mattr_accessor :sleep_time_between_messages
+  # default_from_email_address: where any public messages from the app default to for the "FROM:" header
+  mattr_accessor :default_from_email_address 
+  # bounce: (a grouping for 'POP' settings for bounce messages and the RETURN_PATH: header)
+  #   email_address: the account for POPing bounces and RETURN_PATH
+  #   login: login for account for POPing
+  #   password: password for account for POPing
+  #   pop_server: POP server
+  #   port: PORT of pop server
+  #   ssl: true/false whether you want to enable ssl for pop
+  mattr_accessor :bounce
+  # unsubscribe_path: public url for unsubscribing ... this is a prefix and is followed by a message 'guid', defaults to '/listmgr' and routes as '/listmgr/:guid'
+  mattr_accessor :unsubscribe_path
+  # site_path: used in case your rails site is at a sub-path of your domain
+  mattr_accessor :site_path
+  # layout: layout used for mail manager administratin pages
+  mattr_accessor :layout
+  # public_layout: layout used for public facing pages like unsubscribing and opt-in pages
   mattr_accessor :public_layout
+  # subscribe_path: public path for double-opt-in 'subscribe' step which sends the email
   mattr_accessor :subscribe_path
+  # subscribe_thank_you_path: public path for double-opt-in 'thank you' default path
+  mattr_accessor :subscribe_thank_you_path
+  # honey_pot_field: used to set a field name which will ignore submissions to the subscribe action if filled
   mattr_accessor :honey_pot_field
+  # double_opt_in_path: path to route the double-opt-in confirmation action to
   mattr_accessor :double_opt_in_path
+  # signup_email_address: email address for the FROM: of a double opt in/subscribe email
   mattr_accessor :signup_email_address
-  mattr_accessor :requires_authentication
+  # exception_notification: (grouping for who gets notified of exceptions)
+  #   to_addresses: an array of recipients for exceptions
+  #   from_address: who the exception appears to be from
   mattr_accessor :exception_notification
+  # requires_authentication: whether the mail manager app requires login
+  mattr_accessor :requires_authentication
+  # authorized_roles: array of role names that can administer the mail manager
   mattr_accessor :authorized_roles
-  mattr_accessor :show_title
+  # roles_method: the method that your "current_user" object defines its role names(returns a list of strings)
   mattr_accessor :roles_method
+  
+  # The following 2 might be deprecated soon
+  # show_title: can be used in templates/layouts to see whether you should show a title
+  # use_show_for_resources: whether to have links to "show" actions - we don't use them really in this app..
+  # and the 'show' actions aren't really currently supported
+  mattr_accessor :show_title
+  mattr_accessor :use_show_for_resources
   class Engine < ::Rails::Engine
     isolate_namespace MailManager 
     initializer "MailManager.config" do |app| 
