@@ -14,7 +14,7 @@
 <div style="background-color: #fff;">
   <div id="menu">
     <ul>
-      <li><span onClick="$('#mailings_submenu').toggle();return false">Mailings</span>
+      <li><span style="cursor: pointer;" onClick="$('#mailings_submenu').toggle();return false">Mailings</span>
         <ul id='mailings_submenu' <%= ' style="display:none"' unless request.path =~ %r|/mail_manager| %>>
           <%= content_tag(:li, link_to('Contacts', mail_manager.contacts_path)) if can?(:manage, MailManager::Contact) %>
           <%= content_tag(:li, link_to('Mailings', mail_manager.mailings_path)) if can?(:manage, MailManager::Mailing) %>

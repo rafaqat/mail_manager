@@ -1,3 +1,3 @@
 module MailManager
-  VERSION = "3.0.0"
+  VERSION = "3.2.0"
 end
