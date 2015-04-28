@@ -7,11 +7,11 @@ Gem::Specification.new do |gem|
   gem.name          = "mail_manager"
   gem.version       = MailManager::VERSION
   gem.authors       = ["Lone Star Internet"]
-  gem.email         = ["biz@lone-star.net"]
+  gem.email         = ["biz@lone-star.net", 'chauboldt@lone-star.net']
   gem.licenses      = ["MIT"]
   gem.description   = %q{Manages the delivery of mailable items. Handles bounces, unsubscribe, opt-in, etc.}
   gem.summary       = %q{Mailing list management tool}
-  gem.homepage      = "http://ireach.com"
+  gem.homepage      = "http://ireachnews.com"
 
   gem.add_dependency "rails", "~>3.2"
   gem.add_dependency 'jquery-rails', "~>3.1"

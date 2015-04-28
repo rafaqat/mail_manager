@@ -10,6 +10,16 @@ RSpec.describe MailManager::Mailing do
     Delayed::Worker.delay_jobs = false
     ActionMailer::Base.deliveries.clear
   end
+  it "allows a processing mailing to run(for resetting a failed job)" do
+    mailing = MailManager::Mailing.create(valid_attributes)
+    mailing.change_status(:processing)
+    expect(mailing.can_run?).to be true
+  end
+  it "allows a processing mailing to run(for resetting a failed job)" do
+    mailing = MailManager::Mailing.create(valid_attributes)
+    mailing.change_status(:processing)
+    expect(mailing.can_run?).to be true
+  end
   it "sets its initial status properly" do
     attributes = valid_attributes
     attributes.delete('status')

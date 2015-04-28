@@ -53,7 +53,7 @@ module MailManager
     def deliver
       Rails.logger.info "Starting to Process Mailing '#{subject}' ID:#{id}"
       Lock.with_lock("mail_mgr_mailing_send[#{id}]") do |lock|
-        unless status.to_s.eql?('scheduled')
+        unless can_run?
           raise Exception.new("Mailing was not scheduled when job tried to run!")
         end
         unless scheduled_at <= Time.now
@@ -210,6 +210,10 @@ module MailManager
     def can_cancel?
        ['pending','scheduled','processing'].include?(status.to_s)
     end
+
+    def can_run?
+       ['scheduled','processing'].include?(status.to_s)
+    end
   
     def can_schedule?
       ['pending'].include?(status.to_s) && scheduled_at.present?
@@ -230,7 +234,7 @@ module MailManager
     end
   
     def mailing_jobs
-      Delayed::Job.where("handler like ?","%MailManager::Mailing%#{subject}%")
+      Delayed::Job.where("handler like ?","%MailManager::Mailing%id: #{self.id}\n%")
     end
 
     def cancel
