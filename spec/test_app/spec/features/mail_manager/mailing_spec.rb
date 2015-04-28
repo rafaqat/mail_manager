@@ -27,7 +27,7 @@ RSpec.feature MailManager::Mailing, type: :feature do
       click_link "Schedule"
       expect(page).to have_content "Mailing scheduled"
       @mailing = MailManager::Mailing.find(@mailing)
-      expect(@mailing.status).to eq "scheduled"
+       expect(@mailing.status).to eq "scheduled"
       expect(Delayed::Job.count).to eq 1
       and_it "can then be cancelled and its job removed" do
         mailing2 = FactoryGirl.create(:mailing)

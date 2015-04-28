@@ -20,8 +20,9 @@
       <% if mailing.can_edit? %>
 			<%= link_to 'Edit', mail_manager.edit_mailing_path(mailing), :class => 'button' %>
 			<% if mailing.can_schedule? %>
-			<%= link_to 'Schedule', mail_manager.schedule_mailing_path(mailing), :method => :put, :class => 'button', :confirm => "Are you sure you want to start the mailing at #{l(mailing.scheduled_at) rescue "N/A"}?" %>
+			<%= link_to 'Schedule', mail_manager.schedule_mailing_path(mailing), :method => :put, :class => 'button', :id => "schedule_mailing_#{mailing.id}", :confirm => "Are you sure you want to start the mailing at #{l(mailing.scheduled_at) rescue "N/A"}?" %>
 			<% end %>
+      <% end %>
 			<% if mailing.can_cancel? %>
 			<%= link_to 'Cancel', mail_manager.cancel_mailing_path(mailing), :method => :put, :class => 'button', :id => "cancel_mailing_#{mailing.id}" %>
       <% end %>

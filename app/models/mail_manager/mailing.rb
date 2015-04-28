@@ -234,7 +234,7 @@ module MailManager
     end
   
     def mailing_jobs
-      Delayed::Job.where("handler like ?","%MailManager::Mailing%id: #{self.id}\n%")
+      Delayed::Job.where("handler like ?","%MailManager::Mailing% id: #{self.id}\n%")
     end
 
     def cancel
