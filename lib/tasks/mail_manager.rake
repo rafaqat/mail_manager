@@ -13,7 +13,8 @@ def get_config(env,filename='config/mail_manager.yml')
 end
 
 namespace :mail_manager do
-  desc "Upgrade tasks" do
+  desc "Upgrade tasks"
+  task :upgrade do
     Rake::Task['mail_manager:import_migrations'].invoke
     Rake::Task['db:migrate'].invoke
   end
