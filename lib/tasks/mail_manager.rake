@@ -13,6 +13,10 @@ def get_config(env,filename='config/mail_manager.yml')
 end
 
 namespace :mail_manager do
+  desc "Upgrade tasks" do
+    Rake::Task['mail_manager:import_migrations'].invoke
+    Rake::Task['db:migrate'].invoke
+  end
   desc "Add mlm defaults to config/mail_manager.yml"
   task :default_app_config, :table_prefix do |t,args|
     Rails.logger.warn "Adding defaults to config/mail_manager.yml"
