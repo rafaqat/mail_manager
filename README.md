@@ -3,7 +3,7 @@ Mail Manager
 
 The goal of this project will be to create a plugin for use in any site which will provide an interface to manage mailing lists, scheduling of email mailings, subscribe/unsubscribe from lists by contacts, and view reports of bounces and possible track views of emails. Currently, only one list is supported for subscribe/unsubscribe by contact. An interface is available to provide mailable objects from other plugins.
 
-See the latest docs at the [Wiki](https://github.com/LoneStarInternet/mail_manager/wiki)
+See the latest docs at the [Homepage](http://ireachnews.com) or the [Wiki](https://github.com/LoneStarInternet/mail_manager/wiki)
 
 Requirements
 ------------
