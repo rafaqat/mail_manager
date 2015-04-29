@@ -1,4 +1,4 @@
-Copyright (c) 2013 Lone Star Internet, Inc.
+Copyright (c) 2015 Lone Star Internet, Inc.
 
 MIT License
 
