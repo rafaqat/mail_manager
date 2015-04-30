@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ["Lone Star Internet"]
   gem.email         = ["biz@lone-star.net", 'chauboldt@lone-star.net']
   gem.licenses      = ["MIT"]
-  gem.description   = %q{Manages the delivery of mailable items. Handles bounces, unsubscribe, opt-in, etc.}
+  gem.description   = %q{Manages the delivery of mailable items. Handles contacts, mailing lists, bounces, unsubscribe, opt-in, etc. Also available with a newsletter manager (including newsletter designs and elements management, wysiwyg newsletter editor, and newsletter archive) as well as user access control as part of the iReach gem.}
   gem.summary       = %q{Mailing list management tool}
   gem.homepage      = "http://ireachnews.com"
 
