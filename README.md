@@ -3,7 +3,7 @@ Mail Manager
 
 The gem provides an interface to manage mailing lists, scheduling of email mailings, subscribe/unsubscribe from lists by contacts, and view reports of bounces and possible track views of emails. Currently unsubscribes a contact from all email lists. We might add a subscription management interface later to let a user unsubscribe selectively from a selection of mailing lists. An interface is provided to register mailable objects such as a newsletter from our newsletter gem. You can see how to do this in the Mailable Registry: app/models/mail_manager/mailable_registry.rb
 
-Also available as a stand alone application in the iReach gem including the newsletter manager (newsletter template and elements manager, simple wysiwyg interface to create newsletters, and newsletter archive) and user access management.
+Also available as a stand alone application called iReach (https://github.com/LoneStarInternet/iReach/releases) including the newsletter manager (newsletter template and elements manager, simple wysiwyg interface to create newsletters, and newsletter archive) and user access management. There is also the i_reach gem that ties mail_manager and newsletter together into one gem.
 
 See the latest docs at the [Homepage](http://ireachnews.com/mail_manager_documentation.html)
 
