@@ -1,9 +1,11 @@
 Mail Manager
 ============
 
-The goal of this project will be to create a plugin for use in any site which will provide an interface to manage mailing lists, scheduling of email mailings, subscribe/unsubscribe from lists by contacts, and view reports of bounces and possible track views of emails. Currently, only one list is supported for subscribe/unsubscribe by contact. An interface is available to provide mailable objects from other plugins.
+The gem provides an interface to manage mailing lists, scheduling of email mailings, subscribe/unsubscribe from lists by contacts, and view reports of bounces and possible track views of emails. Currently unsubscribes a contact from all email lists. We might add a subscription management interface later to let a user unsubscribe selectively from a selection of mailing lists. An interface is provided to register mailable objects such as a newsletter from our newsletter gem. You can see how to do this in the Mailable Registry: app/models/mail_manager/mailable_registry.rb
 
-See the latest docs at the [Homepage](http://ireachnews.com) or the [Wiki](https://github.com/LoneStarInternet/mail_manager/wiki)
+Also available as a stand alone application called [iReach](https://github.com/LoneStarInternet/iReach/releases) including the newsletter manager (newsletter template and elements manager, simple wysiwyg interface to create newsletters, and newsletter archive) and user access management. There is also the i_reach gem that ties mail_manager and newsletter together into one gem.
+
+See the latest docs at the [Homepage](http://ireachnews.com/mail_manager_documentation.html)
 
 Requirements
 ------------
@@ -14,7 +16,7 @@ Requirements
 
 Optional Dependencies
 ---------------------
-* [RVM](http://rvm.io) - How we control our ruby environment(mainly concerns development)
+* [RVM](http://rvm.io) - How we control our ruby environment (mainly concerns development)
 * currently we use github/git for our repository
 
 Installation
@@ -42,7 +44,7 @@ Generate delayed_jobs (this is the only job runner we support right now):
     rails g delayed_job:active_record
 ```
 
-**NOTE:** you need to create an email account that will receive bounces from your mailings(and allow POP)... configure in the following file:
+**NOTE:** you need to create an email account that will receive bounces from your mailings (and allow POP)... configure in the following file:
 
 Add your routes to config/routes.rb (you can say where with at: '/path')
 ```ruby
@@ -54,20 +56,23 @@ config/mail_manager.yml
 This is where amost all of your configuration options are for this gem... current generator will add documentation to it (preserving your current settings) .. we'll probably want to upgrade to something like: [AppConfig](https://github.com/Oshuma/app_config) gem
 
 
-You can generate this file like above(where table_prefix is for prefixing table names):
+You can generate this file like above (where table_prefix is for prefixing table names):
 ```
     rake mail_manager:default_app_config[table_prefix]
 ```
 * This generator adds settings documentation to the yml file
 * You can override values with a config/mail_manager.local.yml
-* For a full description [See the wiki](https://github.com/LoneStarInternet/mail_manager/wiki/config-mail_manager.yml)
+* For a full description [See the documentation](http://ireachnews.com/mail_manager_documentation.html)
 
 Securing your App
 -----------------
-We implemented [CanCan](https://github.com/CanCanCommunity/cancancan). If you'd like to secure your actions to certain users and don't currently have any authorization in your app, you can follow the following steps if you want an easy config.. or you could make it more finely grained.. currently its all or nothing:
-[See the wiki](https://github.com/LoneStarInternet/mail_manager/wiki/Securing-your-app)
+We implemented [CanCan](https://github.com/CanCanCommunity/cancancan). If you'd like to secure your actions to certain users and don't currently have any authorization in your app, you can follow the following steps if you want an easy config.. or you could make it more finely grained.. currently its all or nothing.
 
 Development
 -----------
 If you wish to contribute, you should follow these instructions to get up and running:
 [See the wiki](https://github.com/LoneStarInternet/mail_manager/wiki/Contributing)
+
+Please write tests for any new functionality and run the test suite to make sure all tests are passing.
+
+Thanks in advance for your contributions to the project!
