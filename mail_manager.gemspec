@@ -6,7 +6,7 @@ require 'mail_manager/version'
 Gem::Specification.new do |gem|
   gem.name          = "mail_manager"
   gem.version       = MailManager::VERSION
-  gem.authors       = ["Lone Star Internet"]
+  gem.authors       = ["Lone Star Internet", "Christopher Hauboldt"]
   gem.email         = ["biz@lone-star.net", 'chauboldt@lone-star.net']
   gem.licenses      = ["MIT"]
   gem.description   = %q{Manages the delivery of mailable items. Handles bounces, unsubscribe, opt-in, etc.}
