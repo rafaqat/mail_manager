@@ -141,7 +141,11 @@ module MailManager
     MailManager.site_url ||= conf.site_url || default_site_url rescue default_site_url
     MailManager.dont_include_images_domains ||= conf.dont_include_images_domains || [] rescue []
     MailManager.sleep_time_between_messages ||= conf.sleep_time_between_messages || 0.3 rescue 0.3
-    MailManager.table_prefix ||= conf.table_prefix || 'mail_manager_' rescue 'mail_manager_'
+    if conf.params.has_key?('table_prefix')
+      MailManager.table_prefix ||= conf.table_prefix.to_s # allow empty
+    else
+      MailManager.table_prefix ||= 'mail_manager_'
+    end
     MailManager.default_from_email_address ||= conf.default_from_email_address rescue nil
     MailManager.signup_email_address ||= conf.signup_email_address rescue nil
     MailManager.bounce ||= conf.bounce || {} rescue {}

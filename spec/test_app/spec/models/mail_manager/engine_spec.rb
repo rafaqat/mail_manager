@@ -76,4 +76,11 @@ RSpec.describe MailManager::Engine do
       end
     end
   end
+  it "can set table prefix to empty" do
+    MailManager.table_prefix = nil
+    conf = MailManager::Config.new(
+      'spec/support/files/mail_manager_empty_table_prefix.yml')
+    MailManager.initialize_with_config(conf)
+    expect(MailManager.table_prefix).to eq ''
+  end
 end
