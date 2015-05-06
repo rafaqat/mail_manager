@@ -16,7 +16,7 @@
 			<td><%=l(mailing.scheduled_at) rescue '' %></td>
 			<td><b><%=h mailing.status %></b></td>
 			<td align="center"><nobr><%= link_to 'Send Test', mail_manager.test_mailing_path(mailing), :id => 'Send_Test', :class => 'button' %></nobr></td>
-      <td>
+      <td><div class="mailing_buttons">
       <% if mailing.can_edit? %>
 			<%= link_to 'Edit', mail_manager.edit_mailing_path(mailing), :class => 'button' %>
 			<% if mailing.can_schedule? %>
@@ -33,7 +33,7 @@
 			<%= link_to 'Bounces', mail_manager.bounces_path(:mailing_id => mailing.id), :class => 'button' %>
       <% end %>
 			<%= link_to 'Delete', mail_manager.mailing_path(mailing), :method => :delete, :confirm => "Are you sure?", :class => 'button' %>
-      </td>
+      </div></td>
 		</tr>
 		<% end %>
 	</table>
@@ -43,7 +43,7 @@ No mailings exist.<br /><br />
 
 <%= content_for :page_navigation do %>
 <div>
-  <%= will_paginate @mailings %>
+  <%= will_paginate @mailings %><br /><br />
   <%= link_to "New Mailing", mail_manager.new_mailing_path, :class => 'button' %>
 </div>
 <% end %>
