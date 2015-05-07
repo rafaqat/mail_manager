@@ -1,4 +1,4 @@
-<%= title "Listing Bounces #{"for #{@mailing.subject}" if @mailing.present?}" %>
+<%= title "Listing Bounces#{" for #{@mailing.subject}" if @mailing.present?}" %>
 
 
 <%= form_tag mail_manager.bounces_path, :id => 'search_form', :method => 'GET' do %>
