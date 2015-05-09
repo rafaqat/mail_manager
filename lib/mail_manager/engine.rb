@@ -182,6 +182,7 @@ MailManager::Engine.config.to_prepare do
   rescue LoadError => le
   end
   load File.join(MailManager::PLUGIN_ROOT,'lib','delayed_overrides','worker.rb')
+  load File.join(MailManager::PLUGIN_ROOT,'lib','delayed_overrides','job.rb')
 end
 
 require 'will_paginate'

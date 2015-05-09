@@ -16,8 +16,8 @@
 #     end
 #   end
 # end
-class ::Delayed::StatusJob < ::Delayed::Job
+class ::Delayed::StatusJob < Struct.new(:next_run)
   def perform
-    ::Delayed::StatusJob.enqueue ::Delayed::StatusJob.new, run_at: 1.minute.from_now
+    ::Delayed::StatusJob.enqueue ::Delayed::StatusJob.new, run_at: (next_run || 1.minute.from_now)
   end
 end
