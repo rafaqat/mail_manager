@@ -19,4 +19,12 @@ Feature: view messages for mailings
      And I follow "Messages"
      And I select "Any Status" from "Status"
     Then I should see "bobo@example.com"
+    When I select "Pending" from "Status"
+    Then I should not see "bobo@example.com"
+    When I select "Sent" from "Status"
+    Then I should see "bobo@example.com"
+    When I select "Failed" from "Status"
+    Then I should not see "bobo@example.com"
+    When I select "Any Status" from "Status"
+    Then I should see "bobo@example.com"
      

@@ -11,7 +11,7 @@ module ::Debugging
         end
       rescue Exception, StandardError, RuntimeError => te
         Rails.logger.warn "Uncaught/Unpried exception: #{te.message} #{te.backtrace.join("\n")}"
-        raise e
+        raise te
       end
     end
   end
@@ -52,7 +52,7 @@ module ::Debugging
         Rails.logger.warn "Waiting for something.. trying: #{Kernel.caller[0..5].join("\n")}" if log
         yield
         true
-      rescue => e
+      rescue Exception, StandardError, RuntimeError => e
         Rails.logger.warn "Waiting for something.. failure: #{e.message} #{e.backtrace.join}"
         false
       end

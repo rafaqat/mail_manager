@@ -45,7 +45,7 @@ module MailManager
         conditions[0] += " AND #{MailManager.table_prefix}messages.mailing_id=?"
         conditions << params[:mailing_id]
       end
-      if params[:status]
+      if params[:status].present?
         conditions[0] += " AND #{MailManager.table_prefix}messages.status=?"
         conditions << params[:status]
       end

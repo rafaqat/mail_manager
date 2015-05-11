@@ -95,11 +95,15 @@ When /^I attach the file at "([^\"]*)" to "([^\"]*)"$/ do |path, field|
 end
 
 Then /^I should see "([^\"]*)"$/ do |text|
-  expect(page.body).to have_content(text)
+  Debugging::wait_until_success(5) do
+    expect(page.body).to have_content(text)
+  end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |text|
-  expect(page.body).not_to have_content(text)
+  Debugging::wait_until_success(5) do
+    expect(page.body).not_to have_content(text)
+  end
 end
 
 Then /^the "([^\"]*)" field should contain "([^\"]*)"$/ do |field, value|
