@@ -9,7 +9,9 @@ module MailManager
       @bounces = Bounce.scoped
       @bounces = @bounces.by_mailing_id(@mailing.id) if @mailing.present?
       @bounces = @bounces.by_status(status) if status.present?
-      @bounces = @bounces.paginate(:page => params[:page])
+      @bounces = @bounces.order("created_at desc").paginate(
+        :page => (params[:page] || 1)
+      )
     end
 
     def show

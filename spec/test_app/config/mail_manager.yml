@@ -80,7 +80,9 @@ development:
   site_url: http://example.dev
   secret: !binary |-
     ZDgxNDViNzJhOWExMDI1NmU1OTkwZDEzYTgyODcy
+  register_generic_mailable: true
 test:
   site_url: http://mail-manager.lvh.me:4460
   secret: !binary |-
     ZjU0MDU2YWU4M2Q0MjU4MTM2ZWIwYzM2ZTNjMDRj
+  register_generic_mailable: true

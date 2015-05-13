@@ -92,10 +92,8 @@ module MailManager
     end
   
     def get_mailables_for_select
-      #@mailables_for_select = [['Choose Mailable', @mailable.is_a?(Mailable)  ? 
-      #  'Mailable_new' : '']]+@mailables.collect{|mailable| 
-      #  [mailable.name,"#{mailable.class.name}_#{mailable.id}"]}
-      @mailables_for_select = @mailables.collect{|mailable| 
+      @mailables_for_select = @mailables.sort{|a,b| b.created_at <=> a.created_at}.
+        collect{|mailable| 
         [mailable.name,"#{mailable.class.name}_#{mailable.id}"]}
     end
   end

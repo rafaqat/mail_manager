@@ -81,6 +81,18 @@ RSpec.describe MailManager::MailingsController, :type => :controller do
       expect(assigns(:mailing)).to be_a_new(MailManager::Mailing)
       expect(response.body).to have_content("New Mailing")
     end
+    it "assigns mailables in created_at desc order" do
+      Timecop.travel 2.hours.ago
+      mailable = FactoryGirl.create(:mailable)
+      Timecop.return
+      mailable_new = FactoryGirl.create(:mailable)
+      get :new, {}, valid_session
+      expect(assigns(:mailing)).to be_a_new(MailManager::Mailing)
+      expect(assigns(:mailables_for_select)).to eq([mailable_new,mailable].map{|m|
+        [m.name, "#{m.class.name}_#{m.id}"]
+      })
+      expect(response.body).to have_content("New Mailing")
+    end
   end
 
   describe "GET #edit" do

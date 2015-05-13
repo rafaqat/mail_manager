@@ -45,6 +45,15 @@ RSpec.describe MailManager::BouncesController, :type => :controller do
       expect(assigns(:bounces)).to eq([bounce])
       expect(response.body).to match /Listing Bounces/
     end
+    it "orders bounces create date desc" do
+      Timecop.travel 2.hours.ago
+      bounce = MailManager::Bounce.create! valid_attributes
+      Timecop.return
+      bounce_new = MailManager::Bounce.create! valid_attributes
+      get :index, {}, valid_session
+      expect(assigns(:bounces)).to eq([bounce_new,bounce])
+      expect(response.body).to match /Listing Bounces/
+    end
   end
 
   describe "GET #show" do
