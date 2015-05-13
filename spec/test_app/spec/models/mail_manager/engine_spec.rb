@@ -83,4 +83,19 @@ RSpec.describe MailManager::Engine do
     MailManager.initialize_with_config(conf)
     expect(MailManager.table_prefix).to eq ''
   end
+  context "with respect to the mailables object" do
+    it "can turn on its registration" do
+      MailManager.register_generic_mailable = nil
+      conf = MailManager::Config.new(
+        'spec/support/files/mail_manager_use_generic_mailables.yml')
+      MailManager.initialize_with_config(conf)
+      expect(MailManager.register_generic_mailable).to be true
+    end
+    it "can turn off its registration(default behaviour in mail_manager.yml)" do
+      MailManager.register_generic_mailable = nil
+      conf = MailManager::Config.new('config/mail_manager.yml')
+      MailManager.initialize_with_config(conf)
+      expect(MailManager.register_generic_mailable).to be false
+    end
+  end
 end

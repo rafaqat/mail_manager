@@ -48,6 +48,8 @@ module MailManager
   mattr_accessor :authorized_roles
   # roles_method: the method that your "current_user" object defines its role names(returns a list of strings)
   mattr_accessor :roles_method
+  # sets whether the generic mailable is registered as available
+  mattr_accessor :register_generic_mailable
   
   # The following 2 might be deprecated soon
   # show_title: can be used in templates/layouts to see whether you should show a title
@@ -162,6 +164,7 @@ module MailManager
     MailManager.requires_authentication ||= conf.requires_authentication || false rescue false
     MailManager.authorized_roles ||= conf.authorized_roles || [] rescue []
     MailManager.roles_method ||= conf.roles_method || nil rescue nil
+    MailManager.register_generic_mailable ||= conf.register_generic_mailable || false rescue false
     MailManager.exception_notification = {}
     MailManager.exception_notification[:to_addresses] ||= conf.exception_notification['to_addresses'] || [] rescue []
     MailManager.exception_notification[:from_address] ||= conf.exception_notification['from_address'] || nil rescue nil

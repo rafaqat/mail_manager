@@ -4,12 +4,13 @@ class MailManager::Mailable < ActiveRecord::Base
   default_scope where(reusable: true)
   include MailManager::MailableRegistry::Mailable
 end
-
-MailManager::MailableRegistry.register('MailManager::Mailable',{
-  :find_mailables => :all,
-  :name => :name,
-  :parts => [
-    ['text/plain', :email_text],
-    ['text/html', :email_html]
-  ]
-})
+if MailManager.register_generic_mailable
+  MailManager::MailableRegistry.register('MailManager::Mailable',{
+    :find_mailables => :all,
+    :name => :name,
+    :parts => [
+      ['text/plain', :email_text],
+      ['text/html', :email_html]
+    ]
+  })
+end
