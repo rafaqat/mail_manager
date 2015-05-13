@@ -17,7 +17,6 @@ Feature: view messages for mailings
   Scenario:
     When I go to the mailings page
      And I follow "Messages"
-     And I select "Any Status" from "Status"
     Then I should see "bobo@example.com"
     When I select "Pending" from "Status"
     Then I should not see "bobo@example.com"

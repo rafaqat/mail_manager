@@ -13,7 +13,7 @@ export CUC_SQLITE_SUCCESS=0
 DBADAPTER=sqlite bundle exec rspec spec && export SQLITE_SUCCESS=1
 DBADAPTER=sqlite bundle exec cucumber features && export CUC_SQLITE_SUCCESS=1
 
-if [ $POSTGRES -eq 1 ]; then
+if [ "$POSTGRES" -eq 1 ]; then
   #RUN FOR Postgresql
   cp config/database.postgres.local.yml config/database.yml
 
@@ -32,7 +32,7 @@ cp config/database.mysql.local.yml config/database.yml
 bundle exec rake db:schema:load
 
 export MYSQL_SUCCESS=0
-export CUCMYSQL_SUCCESS=0
+export CUC_MYSQL_SUCCESS=0
 
 DBADAPTER=mysql bundle exec rspec spec && export MYSQL_SUCCESS=1
 DBADAPTER=mysql bundle exec cucumber features && export CUC_MYSQL_SUCCESS=1
@@ -46,5 +46,7 @@ if [ $MYSQL_SUCCESS -eq 0 ] ; then echo "Rspec Mysql Failed" && exit 1; fi
 if [ $PGSQL_SUCCESS -eq 0 ] ; then echo "Rspec Pgsql Failed" && exit 1; fi
 if [ $SQLITE_SUCCESS -eq 0 ] ; then  echo "Rspec SQLite Failed" && exit 1; fi
 if [ $CUC_MYSQL_SUCCESS -eq 0 ] ; then  echo "Cucumber Mysql Failed" && exit 1; fi
-if [ $CUC_PGSQL_SUCCESS -eq 0 ] ; then  echo "Cucumber Pgsql Failed" && exit 1; fi
-if [ $CUC_SQLITE_SUCCESS -eq 0 ] ; then  echo "Cucumber SQLite Failed" && exit 1; fi
+if [ "$POSTGRESQL" -eq 1 ] ; then 
+  if [ $CUC_PGSQL_SUCCESS -eq 0 ] ; then  echo "Cucumber Pgsql Failed" && exit 1; fi
+  if [ $CUC_SQLITE_SUCCESS -eq 0 ] ; then  echo "Cucumber SQLite Failed" && exit 1; fi
+fi
