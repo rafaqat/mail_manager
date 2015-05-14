@@ -1,7 +1,7 @@
 module MailManager
   class ContactsController < ::MailManager::ApplicationController
 
-    skip_before_filter :authorize, only: [:subscribe,:double_opt_in,:thank_you]
+    skip_authorization_check only: [:subscribe,:double_opt_in,:thank_you]
 
     include DeleteableActions
 
@@ -19,6 +19,7 @@ module MailManager
     end
 
     def thank_you
+      render layout: MailManager.public_layout
     end
 
     def double_opt_in

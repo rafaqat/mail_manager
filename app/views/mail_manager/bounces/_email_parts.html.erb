@@ -14,7 +14,9 @@
     <hr/>
   <h3>Headers</h3>
     <pre>
-      <%= this_part.header.inspect %>
+      <% this_part.header.each_entry do |header| %>
+        <%= header.name %>: <%= header.value %>
+      <% end %>
     </pre>
   <% if this_part.header['content-type'].to_s =~ /text\/html/i %>
   <h3>Body Part</h3>

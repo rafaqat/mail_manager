@@ -1,7 +1,6 @@
 module MailManager
   class SubscriptionsController < ::MailManager::ApplicationController
-    skip_before_filter :authorize_resource
-    skip_before_filter :load_resource
+    skip_authorization_check
 
     # unsubscribes an email adress by a message's guid(sent in the link)
     def unsubscribe

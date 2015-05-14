@@ -1,0 +1,113 @@
+Return-Path: <MAILER-DAEMON>
+Received: from mail.tu.edu (mail.tu.edu [76.247.118.135])
+	by nibbler.lnstar.com (8.14.0/8.14.0) with ESMTP id oAFJLwTW010392
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO)
+	for <bounce@austinflowers.com>; Mon, 15 Nov 2010 13:21:59 -0600
+Received: from mail-bw0-f48.google.com (mail-bw0-f48.google.com [209.85.214.48])
+	by mail.tu.edu (8.13.8/8.13.8) with ESMTP id oAFIwBdX022161
+	for <bounce@austinflowers.com>; Mon, 15 Nov 2010 10:58:43 -0800
+Received: by mail-bw0-f48.google.com with SMTP id 9so6489303bwz.7
+        for <bounce@austinflowers.com>; Mon, 15 Nov 2010 11:03:14 -0800 (PST)
+Received: by 10.204.61.16 with SMTP id r16mr6535656bkh.4.1289847794425;
+        Mon, 15 Nov 2010 11:03:14 -0800 (PST)
+Date: Mon, 15 Nov 2010 11:03:14 -0800
+From: "TUC Email Delivery Failure" <unknown_account+canned.response@tu.edu>
+To: bounce@austinflowers.com
+Message-ID: <AANLkTikNmXCTPcPXMQmp_MibwE8EF8kMTA2TeNWvB9c5@mail.gmail.com>
+In-Reply-To: <20101115190240.3610810E6F1@zapp.lnstar.com>
+References: <20101115190240.3610810E6F1@zapp.lnstar.com>
+Subject: Re: Mum Special
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_43466_21416032.1289847794408"
+Precedence: bulk
+X-Autoreply: yes
+Auto-Submitted: auto-replied
+X-TU-CA-MailScanner-Information: Please contact the ISP for more information
+X-MailScanner-ID: oAFIwBdX022161
+X-TU-CA-MailScanner: Found to be clean
+X-TU-CA-MailScanner-From: 
+X-Spam-Status: No, score=0.0 required=5.0 tests=HTML_MESSAGE
+	autolearn=disabled version=3.2.1
+X-Spam-Checker-Version: SpamAssassin 3.2.1 (2007-05-02) on nibbler.lnstar.com
+Status:  O
+
+
+------=_Part_43466_21416032.1289847794408
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+THIS IS AN AUTOMATED MESSAGE - PLEASE DO NOT REPLY TO THIS MESSAGE AS THE
+ACCOUNT IS NOT MONITORED FOR INCOMING EMAIL.
+
+A message with the above subject line was sent by you to the Touro
+University California email system but could not be delivered.
+
+The message contained at least one invalid address in the @tu.edu domain.
+The delivery failure could be the result of:
+
+1.  There is a typo or other error in one of the addresses in the to:, cc:,
+or bcc: fields.
+2.  The account belonging to one or your recipients has been deactivated
+because of LOA, withdrawal or resignation.
+
+
+Please review your most recent outgoing messages to ensure that all of your
+intended recipients receive your message. You can find a complete list of
+email addresses for faculty, staff and administration at
+http://www.tu.edu/faculty.php.
+
+If you have any questions or need help determining the exact cause of the
+delivery failure, please contact the TUC IT Department Service Desk at 707
+638-5424 or via email at servicedesk@tu.edu.
+
+Information Technology Department
+Touro University California
+
+-- 
+This message has been scanned for viruses and
+dangerous content by MailScanner, and is
+believed to be clean.
+
+
+------=_Part_43466_21416032.1289847794408
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+<div>THIS IS AN AUTOMATED MESSAGE - PLEASE DO NOT REPLY TO THIS MESSAGE AS =
+THE ACCOUNT IS NOT MONITORED FOR INCOMING EMAIL.</div><div><br></div>A mess=
+age with the above subject line was sent by you to the Touro University Cal=
+ifornia email system but could not be delivered.<br>
+
+<br>The message contained at least one invalid address in the @<a href=3D"h=
+ttp://tu.edu" target=3D"_blank">tu.edu</a>=A0domain. The delivery failure c=
+ould be the result of:<br>
+<br><blockquote style=3D"margin:0 0 0 40px;border:none;padding:0px">1.=A0 T=
+here is a typo or other error in one of the addresses in the to:, cc:, or b=
+cc: fields.<br>2.=A0 The account belonging to one or your recipients has be=
+en=A0deactivated because of LOA, withdrawal or resignation.</blockquote>
+
+
+<br>Please review your most recent outgoing messages to ensure that all of=
+=A0your intended recipients receive your message. You can find a complete=
+=A0list of email addresses for faculty, staff and administration at=A0<a hr=
+ef=3D"http://www.tu.edu/faculty.php" target=3D"_blank">http://www.tu.edu/fa=
+culty.php</a>.<br>
+
+
+<br>If you have any questions or need help determining the exact cause of=
+=A0the delivery failure, please contact the TUC IT Department Service=A0Des=
+k at 707 638-5424 or via email at <a href=3D"mailto:servicedesk@tu.edu" tar=
+get=3D"_blank">servicedesk@tu.edu</a>.<br>
+
+
+<br>Information Technology Department<br>Touro University California<br>
+<br>
+<br />-- <br />This message has been scanned for viruses and <br />dangerou=
+s content by <a href=3D"http://servicedesk.tu.edu/"><strong>MailScanner</st=
+rong></a>, and is <br />believed to be clean.
+
+
+------=_Part_43466_21416032.1289847794408--

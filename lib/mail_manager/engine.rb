@@ -133,6 +133,15 @@ module MailManager
     File.join(PLUGIN_ROOT,'assets')
   end
 
+  def self.public_path?(path)
+    [
+      MailManager.subscribe_path,
+      MailManager.unsubscribe_path,
+      MailManager.double_opt_in_path,
+      MailManager.subscribe_thank_you_path
+    ].detect{|public_path| public_path =~ /#{path}/i}.present?
+  end
+
   # sets up your MailManager.blah configuration options from 
   # config/mail_manager.yml and can override those with 
   # config/mail_manager.local.yml for development environments

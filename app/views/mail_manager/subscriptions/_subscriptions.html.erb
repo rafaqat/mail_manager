@@ -1,9 +1,12 @@
 <% unsubscribed_status ||= 'unsubscribed' %>
 <%= contactable_form.fields_for :subscriptions do |subscription_fields| %>
 	<% subscription = subscription_fields.object %>
-  <div class="field">
+  <div class="field subscription_status_<%= subscription.status %>">
     <%= subscription_fields.label :status, subscription.mailing_list.try(:name) %>
-    <%= subscription_fields.check_box :status, {}, 'active', subscription.status.eql?('active') ? unsubscribed_status : subscription.status %><br />
-    <%= subscription_fields.hidden_field :mailing_list_id %>
+    <%= subscription_fields.check_box :status, {}, 'active', subscription.status.eql?('active') ? unsubscribed_status : subscription.status %>
+    <%= subscription_fields.hidden_field :mailing_list_id %> 
+    <% unless ['pending','active'].include?(subscription.status) %>
+      <%= subscription.status.humanize %>
+    <% end %><br />
   </div>
 <% end %>
