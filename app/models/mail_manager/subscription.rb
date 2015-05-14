@@ -53,7 +53,13 @@ module MailManager
     #
 
     def self.unsubscribed_emails_hash
-      self.connection.execute("select distinct c.email_address from #{MailManager.table_prefix}contacts c inner join #{MailManager.table_prefix}subscriptions s on c.id=s.contact_id where s.status in ('unsubscribed')").inject(Hash.new){|h,r|h.merge!(r[0].to_s.strip.downcase => true)}
+      results = self.connection.execute(%Q|select distinct c.email_address 
+        from #{MailManager.table_prefix}contacts c 
+        inner join #{MailManager.table_prefix}subscriptions s on c.id=s.contact_id 
+        where s.status in ('unsubscribed')|
+      )
+      results = results.map(&:values) if results.first.is_a?(Hash)
+      results.inject(Hash.new){|h,r|h.merge!(r[0].to_s.strip.downcase => true)}
     end
   
     def contact_full_name

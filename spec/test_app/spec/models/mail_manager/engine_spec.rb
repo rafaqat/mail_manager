@@ -77,11 +77,13 @@ RSpec.describe MailManager::Engine do
     end
   end
   it "can set table prefix to empty" do
+    prefix = MailManager.table_prefix
     MailManager.table_prefix = nil
     conf = MailManager::Config.new(
       'spec/support/files/mail_manager_empty_table_prefix.yml')
     MailManager.initialize_with_config(conf)
     expect(MailManager.table_prefix).to eq ''
+    MailManager.table_prefix = prefix
   end
   context "with respect to the mailables object" do
     it "can turn on its registration" do
@@ -96,6 +98,7 @@ RSpec.describe MailManager::Engine do
       conf = MailManager::Config.new('config/mail_manager.yml')
       MailManager.initialize_with_config(conf)
       expect(MailManager.register_generic_mailable).to be false
+      MailManager.register_generic_mailable = true
     end
   end
 end
