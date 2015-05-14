@@ -50,6 +50,11 @@ module MailManager
     attr_protected :id
     
     #acts_as_audited rescue Rails.logger.warn "Audit Table not defined!"
+    #
+
+    def self.unsubscribed_emails_hash
+      self.connection.execute("select distinct c.email_address from #{MailManager.table_prefix}contacts c inner join #{MailManager.table_prefix}subscriptions s on c.id=s.contact_id where s.status in ('unsubscribed')").inject(Hash.new){|h,r|h.merge!(r[0].to_s.strip.downcase => true)}
+    end
   
     def contact_full_name
        contact.full_name
@@ -63,6 +68,7 @@ module MailManager
       subscription.contact = contact
       subscription.mailing_list = mailing_list
       subscription.change_status(status)
+      subscription
     end
 
     # subscribes the contact to the list

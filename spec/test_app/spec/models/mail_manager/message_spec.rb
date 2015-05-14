@@ -109,4 +109,20 @@ RSpec.describe MailManager::Message do
     end
   end
 
+  describe "self::email_address_hash_for_mailing_id" do
+    it "returns a hash of emails based on a mailing's messages" do
+      contact1 = FactoryGirl.create(:contact)
+      contact2 = FactoryGirl.create(:contact)
+      contact3 = FactoryGirl.create(:contact)
+      list1 = FactoryGirl.create(:mailing_list)
+      contact1.subscribe(list1)
+      contact2.subscribe(list1)
+      mailing = FactoryGirl.create(:mailing)
+      mailing.initialize_messages
+      expect([contact1,contact2].map(&:email_address).sort).to eq(
+        MailManager::Message.email_address_hash_for_mailing_id(mailing.id).keys.sort
+      )
+    end
+  end
+
 end

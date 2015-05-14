@@ -96,7 +96,8 @@ module MailManager
       end
 
       def subscribe(mailing_list, status='active')
-        set_contactable_data && MailManager::Subscription.subscribe(contact,mailing_list, status)
+        set_contactable_data
+        MailManager::Subscription.subscribe(contact,mailing_list, status)
       end
 
       def unsubscribe(mailing_list)

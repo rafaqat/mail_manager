@@ -23,6 +23,14 @@ module MailManager
     before_create :set_default_status
 
     attr_protected :id
+
+    def self.active_email_addresses_contact_ids_subscription_ids_for_mailing_list_ids(mailing_list_ids)
+      MailManager::MailingList.connection.execute(%Q|select c.email_address as email_address, c.id as contact_id, s.id as subscription_id 
+        from #{MailManager.table_prefix}contacts c inner join #{MailManager.table_prefix}subscriptions s on c.id=s.contact_id 
+        where s.status in ('active') and mailing_list_id in (#{mailing_list_ids.join(',')})|
+      ).inject(Hash.new){|h,r|h.merge!(r[0].to_s.strip.downcase => {contact_id: r[1], subscription_id: r[2]})}
+    end
+
     
     def active?
       deleted_at.nil?

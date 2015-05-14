@@ -65,4 +65,29 @@ RSpec.describe MailManager::Mailing do
     mailing.send_test_message('bobo@example.com')
     html_body = ActionMailer::Base.deliveries.last.to_s =~ /cid:=/
   end
+
+  it "includes emails from its lists" do
+    contact1 = FactoryGirl.create(:contact)
+    contact2 = FactoryGirl.create(:contact)
+    contact3 = FactoryGirl.create(:contact)
+    contact4 = FactoryGirl.create(:contact)
+    list1 = FactoryGirl.create(:mailing_list)
+    contact1.subscribe(list1)
+    contact2.subscribe(list1)
+    list2 = FactoryGirl.create(:mailing_list)
+    contact2.subscribe(list2)
+    contact3.subscribe(list2)
+    list3 = FactoryGirl.create(:mailing_list)
+    contact3.subscribe(list3)
+    contact4.subscribe(list3)
+    contact3.unsubscribe(list2)
+    mailing = FactoryGirl.create(:mailing)
+    mailing.mailing_lists << list1
+    mailing.mailing_lists << list2
+    mailing.initialize_messages
+    mailing.reload
+    expect(mailing.messages.map(&:email_address).sort).to eq (
+      [contact1,contact2].map(&:email_address).sort
+    )
+  end
 end

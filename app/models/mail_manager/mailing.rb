@@ -149,31 +149,19 @@ module MailManager
   
     # creates all of the Messages that will be sent for this mailing
     def initialize_messages
-      unless messages.length > 0
-        Rails.logger.info "Building mailing messages for mailing(#{id})"
-        transaction do 
-          emails_hash = messages.select{|m| m.type.eql?('MailManager::Message')}.inject(Hash.new){|emails_hash,message| emails_hash.merge(Mailing.clean_email_address(message.email_address)=>1)}
-          mailing_lists.each do |mailing_list|
-            mailing_list.subscriptions.active.each do |subscription|
-              contact = subscription.contact
-              next if contact.nil? or contact.deleted?
-              email_address = Mailing.clean_email_address(contact.email_address)
-              if emails_hash.has_key?(email_address)
-                Rails.logger.info "Skipping duplicate address: #{email_address}"
-              else
-                Rails.logger.info "Adding #{email_address} to mailing #{subject}"
-                emails_hash[email_address] = 1
-                message = Message.new
-                message.subscription = subscription
-                message.contact = contact
-                message.mailing = self
-                message.save
-              end
-            end
-          end
-        end
-        save
-      end
+      emails_hash = MailManager::Message.email_address_hash_for_mailing_id(self.id)
+      emails_hash.merge!(MailManager::Subscription.unsubscribed_emails_hash)
+      ids = self.mailing_lists.select('id').map(&:id)
+      active_subscriptions_hash = MailManager::MailingList.
+        active_email_addresses_contact_ids_subscription_ids_for_mailing_list_ids(ids)
+      active_subscriptions_hash.each_pair do | email, data |
+        next if emails_hash[email.to_s.strip.downcase].present?
+        message = MailManager::Message.create({
+          :subscription_id => data[:subscription_id],
+          :contact_id => data[:contact_id],
+          :mailing_id => self.id
+        })
+      end 
     end
   
     # clean up an email address for sending FIXME - maybe do a bit more

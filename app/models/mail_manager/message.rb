@@ -34,6 +34,14 @@ module MailManager
 
     attr_protected :id
 
+    def self.table_prefix
+      MailManager.table_prefix
+    end
+
+    def self.email_address_hash_for_mailing_id(mailing_id)
+      MailManager::Message.connection.execute("select distinct c.email_address from #{table_prefix}contacts c inner join #{table_prefix}messages m on c.id=m.contact_id where m.mailing_id=#{mailing_id}").inject(Hash.new){|h,r|h.merge!(r[0].to_s.strip.downcase => true)}
+    end
+
     def initialize(*args)
       super
       set_type
