@@ -3,9 +3,9 @@
 
 <% if @bounce.status.eql?('needs_manual_intervention') %>
 <div>
-  <%= link_to "Unsubscribe", mail_manager.fail_address_bounce_path(@bounce), :class => 'button' %>
+  <%= link_to "Remove Related Email/Subscriptions", mail_manager.fail_address_bounce_path(@bounce), :class => 'button', method: :put %>
     &nbsp;
-  <%= link_to "Dismiss", mail_manager.dismiss_bounce_path(@bounce), :class => 'button' %>
+  <%= link_to "Dismiss", mail_manager.dismiss_bounce_path(@bounce), :class => 'button', method: :put %>
 </div>
 <% end %>
 

@@ -65,4 +65,34 @@ RSpec.describe MailManager::BouncesController, :type => :controller do
     end
   end
 
+  describe "PUT #dismiss" do
+    it "dismisses a bounce from needing attention" do
+      bounce = FactoryGirl.create(:bounce, status: 'needs_manual_intervention')
+      put :dismiss, {id: bounce.id}, valid_session
+      expect(assigns(:bounce)).to eq(bounce)
+      bounce.reload
+      expect(bounce.status).to eq 'dismissed'
+    end
+  end
+
+  describe "PUT #dismiss" do
+    it "fails a bounce setting it to 'removed' and failing its email addresses from active subscriptions" do
+      contact = FactoryGirl.create(:contact)
+      list1 = FactoryGirl.create(:mailing_list)
+      list2 = FactoryGirl.create(:mailing_list)
+      sub1 = contact.subscribe(list1)
+      message = FactoryGirl.create(:message, contact_id: contact.id) 
+      bounce = FactoryGirl.create(:bounce, status: 'needs_manual_intervention',
+        message_id: message.id
+      )
+      put :fail_address, {id: bounce.id}, valid_session
+      expect(assigns(:bounce)).to eq(bounce)
+      bounce.reload
+      sub1.reload
+      expect(bounce.message.status).to eq('failed')
+      expect(sub1.status).to eq('failed_address')
+      expect(MailManager::Subscription.count).to eq 1
+      expect(bounce.status).to eq 'removed'
+    end
+  end
 end

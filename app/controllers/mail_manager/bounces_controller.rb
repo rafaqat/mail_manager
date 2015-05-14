@@ -16,6 +16,16 @@ module MailManager
 
     def show
     end
+
+    def dismiss
+      @bounce.dismiss
+      redirect_to @bounce
+    end
+
+    def fail_address
+      @bounce.fail_address
+      redirect_to @bounce
+    end
   
     protected 
   

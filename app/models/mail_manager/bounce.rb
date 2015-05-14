@@ -22,7 +22,7 @@ module MailManager
     belongs_to :message, :class_name => 'MailManager::Message'
     belongs_to :mailing, :class_name => 'MailManager::Mailing', counter_cache: true
     include StatusHistory
-    override_statuses(['needs_manual_intervention','unprocessed','dismissed','resolved','invalid'],'unprocessed')
+    override_statuses(['needs_manual_intervention','unprocessed','dismissed','resolved','invalid','removed','deferred'],'unprocessed')
     before_create :set_default_status
     #default_scope :order => "#{MailManager.table_prefix}contacts.last_name, #{MailManager.table_prefix}contacts.first_name, #{MailManager.table_prefix}contacts.email_address",
     #    :joins => 
@@ -47,11 +47,11 @@ module MailManager
           change_status(:invalid)
         elsif delivery_error_code =~ /4\.\d\.\d/ || delivery_error_message.to_s =~ /quota/i
           update_attribute(:comments, delivery_error_message)
-          change_status(:resolved)
+          change_status(:deferred)
         elsif delivery_error_code =~ /5\.\d\.\d/ && delivery_error_message.present?
           transaction do 
             update_attribute(:comments, delivery_error_message)
-            change_status(:resolved)
+            change_status(:removed)
             message.change_status(:failed)
             message.update_attribute(:result,"Failure Message from Bounce: #{delivery_error_message}")
             Subscription.fail_by_email_address(contact_email_address)
@@ -82,10 +82,12 @@ module MailManager
       raise "Status cannot be manually changed unless it needs manual intervention!"  unless
         status.eql?('needs_manual_intervention')
       transaction do 
-        Subscription.fail_by_email_address(contact_email_address)
-        message.result = message.result.to_s + "Failed by Administrator: (bounced, not auto resolved) "
-        message.change_status(:failed)
-        change_status(:resolved)
+        Subscription.fail_by_email_address(contact_email_address) if contact.present?
+        if message.present?
+          message.result = message.result.to_s + "Failed by Administrator: (bounced, not auto resolved) "
+          message.change_status(:failed)
+        end
+        change_status(:removed)
       end
     end
 

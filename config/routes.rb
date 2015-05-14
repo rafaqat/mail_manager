@@ -11,8 +11,8 @@ MailManager::Engine.routes.draw do
 
   resources :bounces, only: [:index, :show] do
     member do
-      get :dismiss
-      get :fail_address
+      put :dismiss
+      put :fail_address
     end
   end
 

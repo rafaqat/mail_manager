@@ -30,6 +30,37 @@ RSpec.describe MailManager::Bounce do
       )
       Delayed::Worker.delay_jobs = false
     end
+
+    it "deferred's 400's" do
+      bounce = MailManager::Bounce.create(
+        bounce_message: File.read('spec/support/files/bounce-400.txt')
+      )
+      bounce.process
+      expect(bounce.status).to eq 'deferred'
+    end
+
+    it "removed's 500's and 'failed_address's associated active subscriptions" do
+      contact = FactoryGirl.create(:contact)
+      mailing_list = FactoryGirl.create(:mailing_list)
+      mailing_list2 = FactoryGirl.create(:mailing_list)
+      sub1=contact.subscribe(mailing_list)
+      mailing = FactoryGirl.create(:mailing)
+      message = FactoryGirl.create(:message, 
+        mailing_id: mailing.id,
+        contact_id: contact.id
+      )
+      bounce_guid = '30-28-11376-fa351cf35e4012d37d8c13df8735fd13edfed563'
+
+      bounce = MailManager::Bounce.create(
+        bounce_message: File.read('spec/support/files/bounce-500.txt').gsub(
+        /#{bounce_guid}/,message.guid)
+      )
+      bounce.process
+      sub1.reload
+      expect(bounce.status).to eq 'removed'
+      expect(sub1.status).to eq 'failed_address'
+      expect(MailManager::Subscription.count).to eq 1
+    end
   end
   def send_bounce(filename)
     mail = Mail.new(File.read(File.join(Rails.root,'spec','support','files',filename)))
