@@ -119,6 +119,8 @@ module MailManager
           MailManager::Message
         ]
       end
+      can [:subscribe, :double_opt_in, :thank_you], MailManager::Contact 
+      can [:unsubscribe, :unsubscribe_by_email_address], MailManager::Subscription
     EOT
   end
 

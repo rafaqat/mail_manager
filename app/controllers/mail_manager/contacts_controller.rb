@@ -1,8 +1,6 @@
 module MailManager
   class ContactsController < ::MailManager::ApplicationController
 
-    skip_authorization_check only: [:subscribe,:double_opt_in,:thank_you]
-
     include DeleteableActions
 
     def subscribe

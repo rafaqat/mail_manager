@@ -1,6 +1,5 @@
 module MailManager
   class SubscriptionsController < ::MailManager::ApplicationController
-    skip_authorization_check
 
     # unsubscribes an email adress by a message's guid(sent in the link)
     def unsubscribe
