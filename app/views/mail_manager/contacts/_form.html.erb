@@ -6,6 +6,6 @@
        <%= f.text_field :last_name, :style => 'width: 300px;' %><br />
        <%= f.label :email_address %>
        <%= f.text_field :email_address, :style => 'width: 300px;' %><br />
-    <%= contactable_subscriptions_selector(f) %>
+    <%= contactable_subscriptions_selector(f, 'admin_unsubscribed') %>
       <div class="submit_button"><%= f.submit "Submit", :class => 'button' %></div>
 <% end %>

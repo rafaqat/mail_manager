@@ -74,6 +74,13 @@ Feature: Manage Contacts
      And I press "Submit"
     Then contact "Bobo Clown" should exist with email_address "bobo@example.com"
      And contact "Bobo Clown" should be subscribed to "Peeps" with the "active" status
+    When I follow "Edit"
+     And I check "Others"
+     And I uncheck "Peeps"
+     And I press "Submit"
+    Then contact "Bobo Clown" should exist with email_address "bobo@example.com"
+     And contact "Bobo Clown" should be subscribed to "Others" with the "active" status
+     And contact "Bobo Clown" should be subscribed to "Peeps" with the "admin_unsubscribed" status
   
   Scenario: Many contacts existing will show pagination
    Given 50 contacts exist
