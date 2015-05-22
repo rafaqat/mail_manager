@@ -118,6 +118,9 @@ module MailManager
           MailManager::Bounce,
           MailManager::Message
         ]
+        can [:send_test, :test, :schedule, :cancel], MailManager::Mailing
+        can [:dismiss, :fail_address], MailManager::Bounce
+        can [:delete, :undelete], MailManager::Contact
       end
       can [:subscribe, :double_opt_in, :thank_you], MailManager::Contact 
       can [:unsubscribe, :unsubscribe_by_email_address], MailManager::Subscription
