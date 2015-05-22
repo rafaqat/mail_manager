@@ -63,7 +63,24 @@ RSpec.describe MailManager::Mailing do
     mailing = FactoryGirl.create(:mailing, include_images: true)
     mailing.mailable.update_attribute(:email_html, mailing.mailable.email_html.gsub(%r#file://.*/iReach_logo.gif#,image_url))
     mailing.send_test_message('bobo@example.com')
-    html_body = ActionMailer::Base.deliveries.last.to_s =~ /cid:=/
+    html_body = ActionMailer::Base.deliveries.last.to_s
+    expect(html_body).to match /cid:=/
+  end
+
+  it "works for https images" do
+    pending "test https images!"
+    raise "BLARG!"
+  end
+
+  it "doesn't blow up when images are missing" do
+    image_url = "http://www.lone-star.net/graphics/not_here.png"
+    mailing = FactoryGirl.create(:mailing, include_images: true)
+    mailing.mailable.update_attribute(:email_html, mailing.mailable.email_html.gsub(%r#file://.*/iReach_logo.gif#,image_url))
+    mailing.send_test_message('bobo@example.com')
+    expect(ActionMailer::Base.deliveries.length).to eq 1 
+    html_body = ActionMailer::Base.deliveries.last.to_s 
+    expect(html_body).not_to match /cid:=/
+    expect(html_body).to include image_url
   end
 
   it "includes emails from its lists" do

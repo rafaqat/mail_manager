@@ -202,26 +202,34 @@ module MailManager
           if(index % 4 == 2)
             image = Hash.new()
             image[:cid] = Base64.encode64(data).gsub(/\s*/,'').reverse[0..59]
-            final_html << "cid:#{image[:cid]}"
+            if images.detect{|this_image| this_image[:cid].eql?(image[:cid])}
+              final_html << "cid:#{image[:cid]}"
+              next
+            end
             #only attach new images!
-            next if images.detect{|this_image| this_image[:cid].eql?(image[:cid])}
             begin
               image[:content] = fetch(data)
             rescue => e
-              image_errors += "Couldn't fetch url '#{data}'<!--, #{e.message} - #{e.backtrace.join("\n")}-->\n"
+              image_errors += "\n  Couldn't fetch url '#{data}'<!--, #{e.message} - #{e.backtrace.join("\n")}-->\n"
+            end
+            if image[:content].blank?
+              final_html << data
+              next
             end
             image[:filename] = filename = File.basename(data)
             extension = filename.gsub(/^.*\./,'').downcase
             Rails.logger.debug "Fetching Image for: #{filename} #{image[:content].to_s[0..30]}"
             extension = get_extension_from_data(image[:content]) if image_mime_types(extension).blank?
-            image_errors += "Couldn't find mime type for #{extension} on #{data}" if image_mime_types(extension).blank?
+            image_errors += "\n  Couldn't find mime type for #{extension} on #{data}" if image_mime_types(extension).blank?
             image[:content_type] = image_mime_types(extension)
+            final_html << "cid:#{image[:cid]}"
             images << image
           else
             final_html << data
           end
         end
-        raise image_errors unless image_errors.eql?('')
+        # FIXME: add warnings for missing images email or on the newsletter/mailing page
+        # raise image_errors unless image_errors.eql?('')
         [final_html,images]
       end
 
