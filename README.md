@@ -5,7 +5,10 @@ The gem provides an interface to manage mailing lists, scheduling of email maili
 
 Also available as a stand alone application called [iReach](https://github.com/LoneStarInternet/iReach/releases) including the newsletter manager (newsletter template and elements manager, simple wysiwyg interface to create newsletters, and newsletter archive) and user access management. There is also the i_reach gem that ties mail_manager and newsletter together into one gem.
 
-See the latest docs at the [Homepage](http://ireachnews.com/mail_manager_documentation.html)
+Online Documentation
+--------------------
+* [Homepage](http://ireachnews.com/mail_manager_documentation.html)
+* [Changelog](http://www.ireachnews.com/index.html#changelog)
 
 Requirements
 ------------
