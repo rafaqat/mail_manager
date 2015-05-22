@@ -22,8 +22,8 @@ Gem::Specification.new do |gem|
   gem.add_dependency "mini_magick", "~>4.1"
   gem.add_dependency "will_paginate", "~>3.0"
   gem.add_dependency 'unix_utils', "~>0.0"
-  gem.add_dependency "delayed_job", "~>4"
-  gem.add_dependency 'delayed_job_active_record', "~>4"
+  gem.add_dependency "delayed_job", ['>= 3.0', '< 4.1']
+  gem.add_dependency 'delayed_job_active_record', '=0.3.3'
   gem.add_dependency "dynamic_form", "~>1.1"
   gem.add_dependency 'cancancan', "~>1.9"
 
