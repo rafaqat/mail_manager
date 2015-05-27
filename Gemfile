@@ -25,12 +25,13 @@ group :test, :development do
   gem 'quiet_assets'
   gem "factory_girl_rails", "~>4.3"
   gem "faker"
+  gem 'post_office'
 end
 
-group :test, :development, :post_office do
-  gem 'dotenv'
-  gem 'post_office', "~>0.3"
-end
+#group :test, :development, :post_office do
+#  gem 'dotenv'
+#  gem 'post_office', "~>0.3"
+#end
 
 
 # Testing Gems

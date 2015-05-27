@@ -20,6 +20,9 @@ RSpec.feature MailManager::Bounce do
         @bounce1 = FactoryGirl.create(:bounce, mailing_id: @mailing1.id, status: 'needs_manual_intervention') 
         @bounce2 = FactoryGirl.create(:bounce, mailing_id: @mailing2.id, status: 'resolved') 
         @bounce3 = FactoryGirl.create(:bounce, status: 'invalid') 
+        @bounce6 = FactoryGirl.create(:bounce, status: 'unprocessed') 
+        @bounce4 = FactoryGirl.create(:bounce, mailing_id: @mailing1.id, status: 'removed') 
+        @bounce5 = FactoryGirl.create(:bounce, mailing_id: @mailing1.id, status: 'dismissed') 
         @mailing1.reload
         @mailing2.reload
       end
@@ -27,14 +30,19 @@ RSpec.feature MailManager::Bounce do
         visit "/mail_manager/bounces"
         select "#{@mailing1.subject} (#{I18n.l @mailing1.status_changed_at}) (#{@mailing1.bounces.size})", from: "Mailing:"
         expect(page).to have_css("#view_bounce_#{@bounce1.id}", count: 1)
-        expect(page).to have_content("View",count: 1)
+        expect(page).to have_css("#view_bounce_#{@bounce4.id}", count: 1)
+        expect(page).to have_css("#view_bounce_#{@bounce5.id}", count: 1)
+        expect(page).to have_content("View",count: 3)
       end
       it "shows them all", js: true do
         visit "/mail_manager/bounces"
         expect(page).to have_css("#view_bounce_#{@bounce1.id}", count: 1)
         expect(page).to have_css("#view_bounce_#{@bounce2.id}", count: 1)
         expect(page).to have_css("#view_bounce_#{@bounce3.id}", count: 1)
-        expect(page).to have_content("View",count: 3)
+        expect(page).to have_css("#view_bounce_#{@bounce4.id}", count: 1)
+        expect(page).to have_css("#view_bounce_#{@bounce5.id}", count: 1)
+        expect(page).to have_css("#view_bounce_#{@bounce6.id}", count: 1)
+        expect(page).to have_content("View",count: 6)
       end
       it "filters by 'Needs Attention' status" do
         visit "/mail_manager/bounces"
@@ -48,9 +56,29 @@ RSpec.feature MailManager::Bounce do
         expect(page).to have_css("#view_bounce_#{@bounce2.id}", count: 1)
         expect(page).to have_content("View",count: 1)
       end
-      it "doesn't show 'invalid' status" do
+      it "filters by 'Removed' status" do
         visit "/mail_manager/bounces"
-        expect{select "Invalid", from: "Status:"}.to raise_error
+        select "Removed", from: "Status:"
+        expect(page).to have_css("#view_bounce_#{@bounce4.id}", count: 1)
+        expect(page).to have_content("View",count: 1)
+      end
+      it "filters by 'Dismissed' status" do
+        visit "/mail_manager/bounces"
+        select "Dismissed", from: "Status:"
+        expect(page).to have_css("#view_bounce_#{@bounce5.id}", count: 1)
+        expect(page).to have_content("View",count: 1)
+      end
+      it "filters by 'Invalid' status" do
+        visit "/mail_manager/bounces"
+        select "Invalid", from: "Status:"
+        expect(page).to have_css("#view_bounce_#{@bounce3.id}", count: 1)
+        expect(page).to have_content("View",count: 1)
+      end
+      it "filters by 'Unprocessed' status" do
+        visit "/mail_manager/bounces"
+        select "Unprocessed", from: "Status:"
+        expect(page).to have_css("#view_bounce_#{@bounce6.id}", count: 1)
+        expect(page).to have_content("View",count: 1)
       end
       it "filters by 'Resolved' status and mailing" do
         visit "/mail_manager/bounces"

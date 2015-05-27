@@ -3,7 +3,7 @@
 
 <%= form_tag mail_manager.bounces_path, :id => 'search_form', :method => 'GET' do %>
  <label for="mailing_id">Mailing:</label><%= select_tag "mailing_id", options_for_select(@mailings.collect{|mailing| ["#{mailing.subject} (#{l mailing.status_changed_at if mailing.status_changed_at.present?}) (#{mailing.bounces.size})",mailing.id.to_s]},params[:mailing_id].to_i), :include_blank => true, :onChange => "$('#search_form').submit()" %><br />
-  <label for="bounce_status">Status:</label><%= select_tag "bounce[status]", options_for_select([['Needs Attention','needs_manual_intervention'],['Resolved','resolved']],params[:bounce][:status]), :include_blank => true,  :onChange => "$('#search_form').submit()" %><br />
+  <label for="bounce_status">Status:</label><%= select_tag "bounce[status]", options_for_select([['Needs Attention','needs_manual_intervention'],['Dismissed','dismissed'],['Removed','removed'],['Unprocessed','unprocessed'],['Invalid','invalid'],['Resolved','resolved']],params[:bounce][:status]), :include_blank => true,  :onChange => "$('#search_form').submit()" %><br />
 <% end %>
 <% if @bounces.length == 0 %>
   <h3>No bounces found for the Mailing with given status.</h3>
