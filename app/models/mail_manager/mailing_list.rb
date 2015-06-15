@@ -24,12 +24,14 @@ module MailManager
 
     attr_protected :id
 
+    # custom query to efficiently retrieve the active email addresses and contact ids and subscription ids for a 
+    # given list of mailing lists
     def self.active_email_addresses_contact_ids_subscription_ids_for_mailing_list_ids(mailing_list_ids)
       results = MailManager::MailingList.connection.execute(
         %Q|select c.email_address as email_address, c.id as contact_id, 
         s.id as subscription_id from #{MailManager.table_prefix}contacts c 
         inner join #{MailManager.table_prefix}subscriptions s on c.id=s.contact_id 
-        where s.status in ('active') and mailing_list_id in (#{
+        where s.status in ('active') and c.deleted_at is NULL and mailing_list_id in (#{
         mailing_list_ids.join(',')})|
       )
       results = results.map(&:values) if results.first.is_a?(Hash)
@@ -40,11 +42,12 @@ module MailManager
       }
     end
 
-    
+    # whether or not the mailing list has been soft deleted 
     def active?
       deleted_at.nil?
     end
     
+    # whether or not the mailing list has been soft deleted 
     def inactive?
       !active?
     end

@@ -49,6 +49,23 @@ RSpec.describe MailManager::MailingList do
           }
         }.sort
       ) 
+      and_it "doesn't include soft deleted contacts" do
+        contact2.delete
+        expect(MailManager::MailingList.
+          active_email_addresses_contact_ids_subscription_ids_for_mailing_list_ids(
+          [list1.id, list2.id]).sort).to eq (
+          {
+            contact1.email_address => {
+              contact_id: contact1.id,
+              subscription_id: sub1.id
+            },
+            contact3.email_address => {
+              contact_id: contact3.id,
+              subscription_id: sub4.id
+            }
+          }.sort
+        ) 
+      end
     end
   end
 end
