@@ -1,5 +1,7 @@
 module MailManager
   # set up accessors for configuration options from config/mail_manager.yml
+  # deliveries_per_run: how many emails to send per 'run' of a mailing job (it kicks off a new job after this number if more exist.. used to keep run time down)
+  mattr_accessor :deliveries_per_run
   # table_prefix: prefix for database table names to avoid collisions within another app
   mattr_accessor :table_prefix
   # secret: a secret for encrypting tokens and guids
@@ -163,6 +165,7 @@ module MailManager
       MailManager.table_prefix ||= 'mail_manager_'
     end
     MailManager.default_from_email_address ||= conf.default_from_email_address rescue nil
+    MailManager.deliveries_per_run ||= (conf.deliveries_per_run || 50) rescue 50
     MailManager.signup_email_address ||= conf.signup_email_address rescue nil
     MailManager.bounce ||= conf.bounce || {} rescue {}
     MailManager.unsubscribe_path ||= conf.unsubscribe_path || "/listmgr" rescue "/listmgr"

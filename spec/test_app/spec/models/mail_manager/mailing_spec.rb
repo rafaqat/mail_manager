@@ -1,5 +1,17 @@
 require 'rails_helper'
 
+class MyMailable < MailManager::Mailable
+  cattr_accessor :mailable_parts_call_count
+  def initialize(*args)
+    @@mailable_parts_call_count = 0
+    super
+  end
+
+  def mailable_parts
+    @@mailable_parts_call_count += 1
+    super
+  end
+end
 RSpec.describe MailManager::Mailing do
   let(:valid_attributes) {FactoryGirl.attributes_for(:mailing)}
   let(:invalid_attributes) {FactoryGirl.attributes_for(:mailing).delete(
@@ -9,11 +21,6 @@ RSpec.describe MailManager::Mailing do
     ActionMailer::Base.delivery_method = :test
     Delayed::Worker.delay_jobs = false
     ActionMailer::Base.deliveries.clear
-  end
-  it "allows a processing mailing to run(for resetting a failed job)" do
-    mailing = MailManager::Mailing.create(valid_attributes)
-    mailing.change_status(:processing)
-    expect(mailing.can_run?).to be true
   end
   it "allows a processing mailing to run(for resetting a failed job)" do
     mailing = MailManager::Mailing.create(valid_attributes)
@@ -106,5 +113,60 @@ RSpec.describe MailManager::Mailing do
     expect(mailing.messages.map(&:email_address).sort).to eq (
       [contact1,contact2].map(&:email_address).sort
     )
+  end
+
+  context "when sending a mailing" do
+    before(:each) do
+      if MailManager.register_generic_mailable
+        MailManager::MailableRegistry.register('MyMailable',{
+          :find_mailables => :all,
+          :name => :name,
+          :parts => [
+            ['text/plain', :email_text],
+            ['text/html', :email_html]
+        ]
+        })
+      end
+      Delayed::Worker.delay_jobs = true
+      @list = FactoryGirl.create(:mailing_list)
+      @contacts = FactoryGirl.create_list(:contact,random_int(4,10))
+      @contacts.each{|c| c.subscribe(@list)}
+      @mailable = MyMailable.create(FactoryGirl.attributes_for(:mailable))
+      @mailing = FactoryGirl.create(:mailing, mailable: @mailable)
+      @mailing.mailable = @mailable
+      @mailing.mailing_lists << @list
+      @mailing.schedule
+    end
+    after(:each) do
+      Delayed::Worker.delay_jobs = false
+      MailManager::MailableRegistry.unregister('MyMailable')
+    end
+    it "caches its mailable for use between messages" do
+      MyMailable.mailable_parts_call_count = 0
+      @mailing.deliver
+      expect(MyMailable.mailable_parts_call_count).to eq 1
+    end
+
+    it "sends a specified number of messages per job" do
+      expect(Delayed::Job.count).to eq 1
+      expect(MailManager.deliveries_per_run).to be > 0
+      MailManager.deliveries_per_run = 2
+      ActionMailer::Base.deliveries.clear
+      @mailing.deliver
+      expect(@mailing.status.to_s).to eq 'processing'
+      expect(Delayed::Job.count).to eq 2
+      expect(ActionMailer::Base.deliveries.count).to eq 2
+      expect(@mailing.messages.pending.count).to eq (@contacts.count - 2)
+    end
+    it 'finishes the mailing' do
+      MailManager.deliveries_per_run = 2
+      ActionMailer::Base.deliveries.clear
+      while ['scheduled','processing'].include?(@mailing.status) do
+        @mailing.deliver
+      end
+      expect(Delayed::Job.count).to eq (@contacts.count/2.0).ceil
+      expect(@mailing.status.to_s).to eq 'completed'
+      expect(ActionMailer::Base.deliveries.count).to eq @contacts.count
+    end
   end
 end

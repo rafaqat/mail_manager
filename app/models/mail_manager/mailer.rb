@@ -50,9 +50,10 @@ module MailManager
 
     class << self
       # send a mailing related to the message's data
-      def deliver_message(message)
+      def deliver_message(message, cached_parts=nil)
+        cached_parts ||= message.parts
         self.send_mail(message.subject,message.email_address_with_name,message.from_email_address,
-          message.parts,message.guid,message.mailing.include_images?)
+          cached_parts,message.guid,message.mailing.include_images?)
       end
 
       # create mailing; parsing html sources for images to attach/include

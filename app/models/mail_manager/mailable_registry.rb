@@ -75,6 +75,11 @@ module MailManager
       @@mailable_things.merge!({klass => methods})
     end
 
+    # unregister a mailable
+    def self.unregister(klass)
+      @@mailable_things.delete(klass)
+    end
+
 =begin rdoc
     Finds available mailable items by searching through all registered mailables, calling their finders and sorting by name.
 =end

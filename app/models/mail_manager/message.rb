@@ -80,7 +80,7 @@ module MailManager
     end
 
     # sends the message through Mailer
-    def deliver
+    def deliver(cached_parts=nil)
       # lock only needed until status is updated
       Lock.with_lock("deliver_message_#{self.id}") do
         reload
@@ -90,7 +90,12 @@ module MailManager
           Rails.logger.warn "Message(#{self.id})'s is no longer suitable to deliver.. staus: #{status}"
         end
       end
-      MailManager::Mailer.deliver_message(self)
+      cached_parts = if cached_parts.present? 
+        mailing.parts(substitutions, cached_parts.dup)
+      else
+        parts
+      end
+      MailManager::Mailer.deliver_message(self,cached_parts)
       change_status(:sent)
     # allow other errors to bubble up
     rescue MailManager::LockException => e

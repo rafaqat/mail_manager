@@ -51,6 +51,7 @@ namespace :mail_manager do
 # roles_method: the method that your "current_user" object defines its role names(returns a list of strings)
 # unsubscribe_path: public url for unsubscribing ... this is a prefix and is followed by a message 'guid', defaults to '/listmgr' and routes as '/listmgr/:guid'
 # dont_include_images_domains: a list of domains that won't include images in the email, whether or not the mailing is set to include them
+# deliveries_per_run: how many messages do deliver for a mailing job 'per run' this keeps the job limited to a short run allowing other jobs to run as well for larger lists and for the job to possibly be more graceful on a delayed job stoppage.
 # sleep_time_between_messages: a timeout between messages to slow the output of emails to your email server; you should probably limit with your mail server itself if possible
 # path_prefix: a prefix to the mail manager routes(defaults to /admin)
 # table_prefix: prefixes all mail manager tables with a string to avoid collisions with your app - should be set BEFORE running migrations

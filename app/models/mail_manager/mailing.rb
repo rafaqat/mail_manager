@@ -16,7 +16,7 @@ completed - Mailing has been sent
 module MailManager
   class Mailing < ActiveRecord::Base
     self.table_name =  "#{MailManager.table_prefix}mailings"
-    has_many :messages, :class_name => 'MailManager::Message'
+    has_many :messages, :class_name => 'MailManager::Message', inverse_of: :mailing
     has_many :test_messages, :class_name => 'MailManager::TestMessage'
     has_many :bounces, :class_name => 'MailManager::Bounce'
     has_and_belongs_to_many :mailing_lists, :class_name => 'MailManager::MailingList', 
@@ -63,15 +63,14 @@ module MailManager
         end     
         change_status(:processing)
         initialize_messages
-        messages.pending.each do |message|
+        messages.pending.limit(MailManager.deliveries_per_run).each do |message|
           if reload.status.to_s != 'processing'
             Rails.logger.warn "Mailing #{id} is no longer in processing status it was changed to #{status} while running"
             return false
           end
 	        begin
-            # use the cached mailing parts, set messages mailing to self
-            message.mailing=self
-            message.deliver
+            # should use the cached mailing parts as mailing object for message should be the same as its caller
+            message.deliver(raw_parts)
 	        rescue => e
 	          message.result = "Error: #{e.message} - #{e.backtrace.join("\n")}"
 	          message.change_status(:failed)
@@ -79,13 +78,17 @@ module MailManager
           Rails.logger.debug "Sleeping #{MailManager.sleep_time_between_messages} before next message"
           sleep MailManager.sleep_time_between_messages
         end
-        change_status(:completed) if status.to_s.eql?('processing')
+        if messages.pending.count == 0
+          change_status(:completed) 
+        else
+          self.delay(run_at: [scheduled_at,Time.now.utc].max).deliver
+        end
       end
     end
   
     def mailable
       return @mailable if @mailable
-      return self unless mailable_type and mailable_id
+      return (@mailable=nil) if mailable_type.nil? or mailable_id.nil?
       @mailable = mailable_type.constantize.find(mailable_id)
     end
 
@@ -121,9 +124,10 @@ module MailManager
       @raw_parts ||= mailable.mailable_parts
     end
 
-    def parts(substitutions={})
+    def parts(substitutions={}, cached_parts=nil)
+      cached_parts ||= raw_parts
       parts = []
-      raw_parts.each do |type,source|
+      cached_parts.each do |type,source|
         parts << [type, Mailing.substitute_values(source.dup,substitutions)]
       end
       parts
@@ -133,6 +137,7 @@ module MailManager
       return if value.nil?
       self[:mailable_type] = value.class.name
       self[:mailable_id] = value.id
+      @mailable = value
     end
   
     def mailable_class_and_id=(value)
@@ -200,6 +205,7 @@ module MailManager
     end
 
     def can_run?
+       # processing is allowed for failed job reset and is OK since we lock around whole job
        ['scheduled','processing'].include?(status.to_s)
     end
   
