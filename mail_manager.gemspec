@@ -12,13 +12,6 @@ Gem::Specification.new do |gem|
   gem.description   = %q{Manages the delivery of mailable items. Handles contacts, mailing lists, bounces, unsubscribe, opt-in, etc. Also available with a newsletter manager (including newsletter designs and elements management, wysiwyg newsletter editor, and newsletter archive) as well as user access control as part of the iReach gem.}
   gem.summary       = %q{Mailing list management tool}
   gem.homepage      = "http://ireachnews.com"
-  gem.post_install_message = <<-EOT
-    #** Mail Manager 3.2.6 messages **********************
-    #** Required Actions for every upgrade **
-      rake mail_manager:upgrade # this adds any new migrations and migrates your DB ...
-      #** NOTE! you should try this in development before pushing to your production site
-    #*END Mail Manager messages ********************
-  EOT
 
   gem.add_dependency "rails", "~>3.2"
   gem.add_dependency 'jquery-rails', "~>3.1"
