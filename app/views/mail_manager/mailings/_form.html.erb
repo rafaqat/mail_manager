@@ -37,7 +37,8 @@
            <p>
   		<% @all_mailing_lists.each do |mailing_list| %>
   				<%= check_box_tag 'mailing[mailing_list_ids][]', mailing_list.id, @mailing.mailing_lists.include?(mailing_list) %>
-  				<%= label_tag :mailing_mailing_list_ids_, "#{mailing_list.name}" %><br/>
+  				<%= label_tag :mailing_mailing_list_ids_, "#{mailing_list.name}" %>
+				<div style="clear: left;"></div>
   		<% end %>
   		    </p>
   		  </div>
